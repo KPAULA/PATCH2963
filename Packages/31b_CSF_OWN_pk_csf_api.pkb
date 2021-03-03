@@ -33959,7 +33959,7 @@ BEGIN
           from nota_fiscal nf
              , pessoa      pe
              , juridica    ju
-         where nf.nro_chave_nfe = trim(est_row_nf_referen.nro_chave_nfe)
+         where nf.nro_chave_nfe   = trim(est_row_nf_referen.nro_chave_nfe)
            and nf.id              = est_row_nf_referen.notafiscal_id
            and nf.dm_arm_nfe_terc = 0  -- 0-não armazena xml, 1-sim armazena xml
            and nf.dm_st_proc      = 4  -- autorizada
@@ -33967,23 +33967,65 @@ BEGIN
            and ju.pessoa_id   (+) = pe.id;
          --
       exception
-           when no_data_found then
+         when no_data_found then
             --
-            gv_mensagem_log := 'Não encontrada nf escriturada no compliance para a Nro_Chave_NF = '||est_row_nf_referen.nro_chave_nfe||'  Fase '||vn_fase||' ';
-            --
-            vn_loggenerico_id := null;
-            --
-            pkb_log_generico_nf ( sn_loggenericonf_id => vn_loggenerico_id
-                                , ev_mensagem         => gv_cabec_log
-                                , ev_resumo           => gv_mensagem_log
-                                , en_tipo_log         => informacao/*erro_de_validacao*/
-                                , en_referencia_id    => gn_referencia_id
-                                , ev_obj_referencia   => gv_obj_referencia );
-            -- Armazena o "loggenerico_id" na memória
-            /*pkb_gt_log_generico_nf ( en_loggenericonf_id => vn_loggenerico_id
-                                   , est_log_generico_nf => est_log_generico_nf );*/
-            --
-           when others then
+            begin
+               --
+               select nf.uf_ibge_emit
+                    , nf.dt_emiss
+                    , nf.modfiscal_id
+                    , nf.nro_nf
+                    , nf.serie
+                    , pe.id pessoa_id
+                    , nf.dm_ind_oper
+                    , nf.dm_ind_emit
+                    , case when ju.num_cnpj is not null
+                        then trim(to_char(ju.num_cnpj, '00000000'))||
+                             trim(to_char(ju.num_filial, '0000'))||
+                             trim(to_char(ju.dig_cnpj, '00'))
+                        else null
+                     end cnpj_emit
+                   , ju.ie
+                into est_row_nf_referen.ibge_estado_emit
+                   , est_row_nf_referen.dt_emiss
+                   , est_row_nf_referen.modfiscal_id
+                   , est_row_nf_referen.nro_nf
+                   , est_row_nf_referen.serie
+                   , est_row_nf_referen.pessoa_id
+                   , est_row_nf_referen.dm_ind_oper
+                   , est_row_nf_referen.dm_ind_emit
+                   , est_row_nf_referen.cnpj_emit
+                   , est_row_nf_referen.ie
+                from nota_fiscal nf
+                   , pessoa      pe
+                   , juridica    ju
+               where nf.nro_chave_nfe   = trim(est_row_nf_referen.nro_chave_nfe)
+                 and nf.id             <> est_row_nf_referen.notafiscal_id
+                 and nf.dm_arm_nfe_terc = 0  -- 0-não armazena xml, 1-sim armazena xml
+                 and nf.dm_st_proc      = 4  -- autorizada
+                 and pe.id              = nf.pessoa_id
+                 and ju.pessoa_id   (+) = pe.id;
+               --
+            exception
+               when no_data_found then
+                  --
+                  gv_mensagem_log := 'Não encontrada nf escriturada no compliance para a Nro_Chave_NF = '||est_row_nf_referen.nro_chave_nfe||'  Fase '||vn_fase||' ';
+                  --
+                  vn_loggenerico_id := null;
+                  --
+                  pkb_log_generico_nf ( sn_loggenericonf_id => vn_loggenerico_id
+                                      , ev_mensagem         => gv_cabec_log
+                                      , ev_resumo           => gv_mensagem_log
+                                      , en_tipo_log         => informacao/*erro_de_validacao*/
+                                      , en_referencia_id    => gn_referencia_id
+                                      , ev_obj_referencia   => gv_obj_referencia );
+                  -- Armazena o "loggenerico_id" na memória
+                  /*pkb_gt_log_generico_nf ( en_loggenericonf_id => vn_loggenerico_id
+                                           , est_log_generico_nf => est_log_generico_nf );*/
+                  --
+            end;				  
+            --			
+         when others then
             --
             gv_mensagem_log := 'Falha na execução da query  '||est_row_nf_referen.nro_chave_nfe||' Fase '||vn_fase||' Erro = '||sqlerrm||'.';
             --
@@ -33999,7 +34041,7 @@ BEGIN
             pkb_gt_log_generico_nf ( en_loggenericonf_id => vn_loggenerico_id
                                    , est_log_generico_nf => est_log_generico_nf );
             --
-             end;
+      end;
       --
       vn_fase := 8.2;
       --

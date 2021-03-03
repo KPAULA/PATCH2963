@@ -5,6 +5,11 @@ create or replace package csf_own.pk_csf_api is
 -- Especificação do pacote de integração de notas fiscais para o CSF
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --
+-- Em 01/03/2021   - Luis Marques - 2.9.5-6 / 2.9.6-3 / 2.9.7
+-- Redmine #76489  - Inserção de dados na nota_fiscal_referen (2)
+-- Rotina Alterada - PKB_INTEGR_NF_REFEREN - Incluido verificação de a chave_nfe existe para id de nota diferente do que está entrando no momento
+--                   para a recuperação dos dados da nota referenciada.
+--                
 -- Em 24/02/2021   - Wendel Albino - 2.9.5-5/ 2.9.6-2 / 2.9.7
 -- Redmine #75964  - Criar parametro geral do sistema VLR_PADRAO_IND_INTERMED e ajustar validação
 -- Rotina Alterada - PKB_VALIDA_NOTA_FISCAL -> Inclusao validacao do campo DM_IND_INTERMED
