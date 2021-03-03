@@ -5,6 +5,12 @@ create or replace package csf_own.pk_valida_ambiente_ct is
 -- Especificação do pacote da API para ler os Conhecimentos de Transportes com DM_ST_PROC = 0 (Não validada)
 -- e chamar os procedimentos para validar os dados
 --
+-- Em 01/03/2021   - Karina de Paula
+-- Redmine #76655  - Retorno do WS
+-- Rotina Alterada - pkb_ler_ct_int_ws => Alterado o local da verificação de qtd de erro, quando rodava
+--                   novamente a rotina alterava o dm_st_proc do lote para processado
+-- Liberado        - Release_2.9.7, Patch_2.9.6.3 e Patch_2.9.5.6
+--
 -- Em 17/02/2021   - Karina de Paula
 -- Redmine #76274  - Ajuste para contemplar anulação de CTe
 -- Rotina Alterada - pkb_ler_ct_int_ws => Incluído verificacao da qtd pendente e qtd com erro para as rotinas do cte

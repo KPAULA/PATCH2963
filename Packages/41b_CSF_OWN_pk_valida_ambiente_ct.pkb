@@ -8702,25 +8702,25 @@ begin
                   --
                end if;
                --
-               begin
-                  --
-                  select count(1)
-                    into vn_qtde
-                    from conhec_transp
-                   where id = rec.conhectransp_id
-                     and dm_st_proc in (5, 10, 11, 12, 13, 15, 16, 99);
-                  --
-               exception
-                  when others then
-                     vn_qtde := 0;
-               end;
+            end if;
+            --
+            begin
                --
-               vn_fase := 4.1;
+               select count(1)
+                 into vn_qtde
+                 from conhec_transp
+                where id = rec.conhectransp_id
+                  and dm_st_proc in (5, 10, 11, 12, 13, 15, 16, 99);
                --
-               if nvl(vn_qtde,0) > 0 then
-                  sn_erro := 1;
-               end if;
-               --
+            exception
+               when others then
+                 vn_qtde := 0;
+            end;
+            --
+            vn_fase := 4.1;
+            --
+            if nvl(vn_qtde,0) > 0 then
+               sn_erro := 1;
             end if;
             --
          end loop;
@@ -8775,25 +8775,25 @@ begin
                            , en_loteintws_id             => en_loteintws_id
                            );
                --
-               begin
-                  --
-                  select count(1)
-                    into vn_qtde
-                    from inutiliza_conhec_transp ict
-                   where id = rec_ict.inutilizaconhectransp_id
-                     and dm_situacao in (3, 4, 6);
-                  --
-               exception
-                  when others then
-                     vn_qtde := 0;
-               end;
+            end if;
+            --
+            begin
                --
-               vn_fase := 5.3;
+               select count(1)
+                 into vn_qtde
+                 from inutiliza_conhec_transp ict
+                where id = rec_ict.inutilizaconhectransp_id
+                  and dm_situacao in (3, 4, 6);
                --
-               if nvl(vn_qtde,0) > 0 then
-                  sn_erro := 1;
-               end if;
-               --
+            exception
+               when others then
+                  vn_qtde := 0;
+            end;
+            --
+            vn_fase := 5.3;
+            --
+            if nvl(vn_qtde,0) > 0 then
+               sn_erro := 1;
             end if;
             --
          end loop;
@@ -8837,28 +8837,30 @@ begin
                                      , en_loteintws_id       => en_loteintws_id
                                      );
             --
-            begin
-               --
-               select count(1)
-                 into vn_qtde
-                 from conhec_transp_cce
-                where id          = rec_cce.conhectranspcce_id
-                  and dm_st_proc in (0,1,2); -- 0-Não validado, 1-Validado, 2-Aguardando envio
-               --
-            exception
-               when others then
-                  vn_qtde := 0;
-            end;
-            --
-            vn_fase := 6.2;
-            --
-            if nvl(vn_qtde,0) > 0 then
-               sn_erro := 1;
-            end if;
-            --
          end loop;
          --
          commit;
+         --
+         begin
+            --
+            select count(1)
+              into vn_qtde
+              from r_loteintws_ct    rl
+                 , conhec_transp_cce cce
+             where cce.conhectransp_id = rl.conhectransp_id
+               and rl.loteintws_id     = en_loteintws_id
+               and dm_st_proc         in (0,1,2); -- 0-Não validado, 1-Validado, 2-Aguardando envio
+           --
+         exception
+            when others then
+               vn_qtde := 0;
+         end;
+         --
+         vn_fase := 6.2;
+         --
+         if nvl(vn_qtde,0) > 0 then
+            sn_erro := 1;
+         end if;
          --
          vn_fase := 6.3;
          -- verifica se há CCE Pendentes
