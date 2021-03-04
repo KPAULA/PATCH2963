@@ -130,6 +130,13 @@ prompt 148b_pk_csf_api_ddo.pkb
 @@148b_pk_csf_api_ddo.pkb
 show err
 
+prompt 171a_pk_vld_amb_sc
+@@171a_pk_vld_amb_sc.pks
+show err
+prompt 171b_pk_vld_amb_sc.pkb
+@@171b_pk_vld_amb_sc.pkb
+show err
+
 prompt 190a_pk_rel_erro_agend_integr
 @@190a_pk_rel_erro_agend_integr.pks
 show err
