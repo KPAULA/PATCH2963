@@ -967,6 +967,63 @@ Prompt FIM - Redmine #76568 Criação de padrão betha a adição de PASSO FUNDO - RS
 -------------------------------------------------------------------------------------------------------------------------------------------
 
 
+-------------------------------------------------------------------------------------------------------------------------------------------
+Prompt INICIO - Redmine #75026 - Funcionalidade - fechar período em massa para as empresas/objetos
+-------------------------------------------------------------------------------------------------------------------------------------------
+--wendel
+begin
+  --
+  -- Grant/Revoke object privileges 
+  begin
+    execute immediate 'grant execute, debug on csf_own.pb_fecha_periodo_fiscal to DESENV_GENERIC_ROLE';
+  exception
+    when others then
+     null;
+  end;
+  --
+  begin
+    execute immediate 'grant execute, debug on csf_own.pb_fecha_periodo_fiscal to SUPORTE_CONSULTORIA_ROLE';
+  exception
+    when others then
+     null;
+  end;
+  --
+  begin
+    execute immediate 'grant execute, debug on csf_own.pb_fecha_periodo_fiscal to DESENV_MASTER_ROLE';
+  exception
+    when others then
+     null;
+  end;
+  --
+  -- Grant/Revoke object privileges 
+  begin
+    execute immediate 'grant all on csf_own.pb_fecha_periodo_fiscal to CSF_WORK';
+  exception
+    when others then
+     null;
+  end;   
+  --
+  begin
+    execute immediate 'grant all on csf_own.pb_fecha_periodo_fiscal to CONSULTORIA';
+  exception
+    when others then
+     null;
+  end;   
+  --
+  begin
+    execute immediate 'grant all on csf_own.pb_fecha_periodo_fiscal to DESENV_USER';
+  exception
+    when others then
+     null;
+  end;
+  --  
+end;
+/
+-------------------------------------------------------------------------------------------------------------------------------------------
+Prompt INICIO - Redmine #75026 - Funcionalidade - fechar período em massa para as empresas/objetos
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+
 --------------------------------------------------------------------------------------------------------------------------------------
 Prompt FIM Redmine #
 -------------------------------------------------------------------------------------------------------------------------------
