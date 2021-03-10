@@ -13859,7 +13859,7 @@ begin
                -- Se a nota já existe no sistema, então
                vn_dm_st_proc := pk_csf.fkg_st_proc_nf ( en_notafiscal_id => vn_notafiscal_id );
                --
-               if vn_dm_st_proc in ( 0, 1, 2, 3, 4, 6, 7, 8, 14, 17, 18, 19, 21 ) then
+               if vn_dm_st_proc in ( 0, 1, 2, 3, 4, 6, 7, 8, 9, 14, 17, 18, 19, 21 ) then
                   -- Sai do processo
                   goto sair_integr;
                end if;

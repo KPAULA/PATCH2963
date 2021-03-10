@@ -3,6 +3,11 @@ create or replace package csf_own.pk_integr_view_nfce is
 -- ============================================================================================================================================= --
 -- Especificação do pacote de integração de Notas Fiscais a partir de leitura de views
 --
+-- Em 08/03/2021     - Luis Marques - 2.9.5-6 / 2.9.6-3 / 2.9.7
+-- Redmine #71633    - Ajustes para evitar erros na conciliação EPEC
+-- Rotina Alterada   - pkb_ler_Nota_Fiscal - Incluido validação de DM_ST_PROC (9 - Conciliação EPEC Rejeitada) para não ser processado
+--                     no processo de integração.
+--
 -- Em 11 e 18/02/2021 - Karina de Paula
 -- Redmine #75462  - Retorno de Mensagem de Cancelamento
 -- Rotina Alterada - pkb_int_ret_infor_erp_ff/pkb_int_infor_erp_neo/pkb_ret_infor_erp_neo => Alterado o cod_msg para retornar da tabela nota_fiscal_canc quando a msg for de cancelamento
