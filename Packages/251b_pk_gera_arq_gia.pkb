@@ -31342,6 +31342,8 @@ procedure pkb_gera_arq_gia_sc is
   vn_filial                     number := 0;
   vv_cod_receita                varchar2(100);
   vn_erro_registro              number := 0;
+  --#76847
+  vn_c_cfop_item                number := 0;
   --
   -- TP20 - Dados do Contabilista / Responsável
   type tab_tp20 is record(
@@ -33985,9 +33987,15 @@ begin
           --
         else
           --
+          vn_fase := 10.111;
+          vn_c_cfop_item := 0;
+          --
           -- Recupera o valor do imposto diferencial alíquota por CFOP
           for rec_item in c_cfop_item(rec.itemnf_id) loop
             exit when c_cfop_item%notfound or(c_cfop_item%notfound) is null;
+            --
+            --variavel q mostra se entrou no cursor
+            vn_c_cfop_item := 1 ;
             --
             vn_fase := 10.11;
             --
@@ -34022,8 +34030,32 @@ begin
             end if;
             --
           end loop;
-          --
-          vt_bi_tab_tp22(1)(vn_cfop).dif_aliq  := vt_bi_tab_tp22(1)(vn_cfop).dif_aliq + (nvl(vn_vl_dif_aliq, 0) * 100); -- Valor do imposto diferencial de alíquota --76025
+		  --
+          --#76847
+          if vn_c_cfop_item = 0 then
+            --
+            vn_fase := 10.151;
+            begin
+              vt_bi_tab_tp22(1)(vn_cfop).dif_aliq  := 0;
+            exception 
+              when others then 
+                vt_bi_tab_tp22(1)(vn_cfop).dif_aliq  := 0;
+            end;
+            --
+          else 
+            --
+            vn_fase := 10.152;
+            begin  
+               vt_bi_tab_tp22(1)(vn_cfop).dif_aliq  := nvl(vt_bi_tab_tp22(1)(vn_cfop).dif_aliq,0) + (nvl(vn_vl_dif_aliq, 0) * 100); -- Valor do imposto diferencial de alíquota --76025
+            exception 
+              when no_data_found then
+                vt_bi_tab_tp22(1)(vn_cfop).dif_aliq := 0;
+              when others then 
+                raise_application_error(-20101, ' Erro ao atribuir o calculo de dif. aliquota ('||vn_vl_dif_aliq||') para o cfop ('||vn_cfop 
+                                              ||') para o registro TP22 - Valores Fiscais Entradas na fase: '||vn_fase);
+            end;
+            --
+          end if;
           --
         end if;
         --
@@ -34501,11 +34533,18 @@ begin
           --
         else
           --
+          --#76847
+          vn_fase := 11.511;          
+          vn_c_cfop_item := 0;
+          --
           -- Recupera o valor do imposto diferencial alíquota por CFOP
           for rec_item in c_ct_dif_aliq(rec.conhectransp_id) loop
             exit when c_ct_dif_aliq%notfound or(c_ct_dif_aliq%notfound) is null;
             --
             vn_fase := 11.52;
+            --#76847
+            --variavel q mostra se entrou no cursor
+            vn_c_cfop_item := 1 ;
             --
             if substr(vn_cfop,1,1) = 2 then
               --
@@ -34517,7 +34556,35 @@ begin
             --
           end loop;
           --
-          vt_bi_tab_tp22(1)(vn_cfop).dif_aliq  := vt_bi_tab_tp22(1)(vn_cfop).dif_aliq + (nvl(vn_vl_dif_aliq_ct, 0) * 100); -- Valor do imposto diferencial de alíquota --76025
+          vn_fase := 11.521;   
+		  --
+          --#76847
+          if vn_c_cfop_item = 0 then
+            --    
+            vn_fase := 11.522;
+            --        
+            begin
+                vt_bi_tab_tp22(1)(vn_cfop).dif_aliq := 0;
+            exception 
+              when others then 
+                vt_bi_tab_tp22(1)(vn_cfop).dif_aliq := 0;
+            end;
+            --
+          else   
+            --
+            vn_fase := 11.523;
+            --
+            begin  
+               vt_bi_tab_tp22(1)(vn_cfop).dif_aliq  := vt_bi_tab_tp22(1)(vn_cfop).dif_aliq + (nvl(vn_vl_dif_aliq_ct, 0) * 100); -- Valor do imposto diferencial de alíquota --76025
+            exception 
+             when no_data_found then
+                vt_bi_tab_tp22(1)(vn_cfop).dif_aliq  := 0; 
+             when others then 
+                raise_application_error(-20101, ' Erro ao atribuir o calculo de dif. aliquota ('||vn_vl_dif_aliq_ct||') para o cfop ('||vn_cfop 
+                                              ||') para o registro TP22 de CTE - Valores Fiscais Entradas na fase: '||vn_fase);
+            end;
+            --
+          end if;
           --
         end if; --76025
         --
@@ -35538,8 +35605,8 @@ begin
     */
     --
     vn_fase := 14.12;
-    --
-    if ((nvl(rec.vl_total_ajust_deb, 0) + nvl(rec.vl_ajust_debito, 0)) - (nvl(vn_vl_dif_aliq20, 0) + nvl(vn_vl_dif_aliq30, 0) + nvl(vn_vl_dif_aliq40, 0)) - nvl(vn_tp30_020_vl_aj_apur, 0)) > 0 then
+    --#76025
+    if ((nvl(rec.vl_total_ajust_deb, 0) + nvl(rec.vl_ajust_debito, 0)) - (nvl(vn_vl_dif_aliq20, 0) + nvl(vn_vl_dif_aliq30, 0) + nvl(vn_vl_dif_aliq40, 0) + nvl(vn_vl_dif_aliq30_ct, 0) + nvl(vn_vl_dif_aliq40_ct, 0)) - nvl(vn_tp30_020_vl_aj_apur, 0)) > 0 then
       --
       vn_fase := 14.13;
       --
@@ -35549,7 +35616,7 @@ begin
       vt_tab_tp25(k).tp_reg := '25'; -- Tipo de registro
       vt_tab_tp25(k).quadro := '04'; -- Quadro
       vt_tab_tp25(k).item   := '070'; -- Item
-      vt_tab_tp25(k).valor  := (((nvl(rec.vl_total_ajust_deb, 0) + nvl(rec.vl_ajust_debito, 0)) - (nvl(vn_vl_dif_aliq20, 0) + nvl(vn_vl_dif_aliq30, 0) + nvl(vn_vl_dif_aliq40, 0))) - nvl(vn_tp30_020_vl_aj_apur, 0)) * 100; -- Outros débitos
+      vt_tab_tp25(k).valor  := (((nvl(rec.vl_total_ajust_deb, 0) + nvl(rec.vl_ajust_debito, 0)) - (nvl(vn_vl_dif_aliq20, 0) + nvl(vn_vl_dif_aliq30, 0) + nvl(vn_vl_dif_aliq40, 0) + nvl(vn_vl_dif_aliq30_ct, 0) + nvl(vn_vl_dif_aliq40_ct, 0))) - nvl(vn_tp30_020_vl_aj_apur, 0)) * 100; -- Outros débitos
       --
       vn_qtde_tp25 := nvl(vn_qtde_tp25, 0) + 1;
       --
@@ -37052,8 +37119,8 @@ begin
   end if;
   --
   vn_fase := 20.14;
-  --
-  if (nvl(vn_vl_dif_aliq20, 0) + nvl(vn_vl_dif_aliq30, 0) + nvl(vn_vl_dif_aliq40, 0)) > 0 then
+  --#76025
+  if (nvl(vn_vl_dif_aliq20, 0) + nvl(vn_vl_dif_aliq30, 0) + nvl(vn_vl_dif_aliq40, 0) + nvl(vn_vl_dif_aliq30_ct, 0) + nvl(vn_vl_dif_aliq40_ct, 0)) > 0 then
     --
     k := k + 1;
     --
@@ -37063,7 +37130,7 @@ begin
     vt_tab_tp24(k).tp_reg := '24'; -- Tipo de registro
     vt_tab_tp24(k).quadro := '03'; -- Quadro
     vt_tab_tp24(k).item   := '057'; -- Item
-    vt_tab_tp24(k).valor  := (nvl(vn_vl_dif_aliq20, 0) + nvl(vn_vl_dif_aliq30, 0) + nvl(vn_vl_dif_aliq40, 0)) * 100; -- Valor
+    vt_tab_tp24(k).valor  := (nvl(vn_vl_dif_aliq20, 0) + nvl(vn_vl_dif_aliq30, 0) + nvl(vn_vl_dif_aliq40, 0) + nvl(vn_vl_dif_aliq30_ct, 0) + nvl(vn_vl_dif_aliq40_ct, 0)) * 100; -- Valor
     --
     vn_qtde_tp24 := nvl(vn_qtde_tp24, 0) + 1;
     --
