@@ -81,6 +81,13 @@ prompt 65b_pk_csf_api_d100.pkb
 @@65b_pk_csf_api_d100.pkb
 show err
 
+prompt 67a_pk_int_view_sc
+@@67a_pk_int_view_sc.pks
+show err
+prompt 67b_pk_int_view_sc
+@@67b_pk_int_view_sc.pkb
+show err
+
 prompt 73a_pk_gera_arq_efd
 @@73a_pk_gera_arq_efd.pks
 show err
@@ -130,6 +137,13 @@ prompt 148b_pk_csf_api_ddo.pkb
 @@148b_pk_csf_api_ddo.pkb
 show err
 
+prompt 171a_pk_vld_amb_sc
+@@171a_pk_vld_amb_sc.pks
+show err
+prompt 171b_pk_vld_amb_sc.pkb
+@@171b_pk_vld_amb_sc.pkb
+show err
+
 prompt 190a_pk_rel_erro_agend_integr
 @@190a_pk_rel_erro_agend_integr.pks
 show err
@@ -149,6 +163,13 @@ prompt 221a_csf_own_pk_csf_api_nfs.pks
 show err
 prompt 221b_csf_own_pk_csf_api_nfs.pkb
 @@221b_csf_own_pk_csf_api_nfs.pkb
+show err
+
+prompt 223a_csf_own_pk_integr_view_nfs
+@@223a_csf_own_pk_integr_view_nfs.pks
+show err
+prompt 223b_csf_own_pk_integr_view_nfs
+@@223b_csf_own_pk_integr_view_nfs.pkb
 show err
 
 prompt 251a_pk_gera_arq_gia

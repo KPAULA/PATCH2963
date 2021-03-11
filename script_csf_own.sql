@@ -971,6 +971,128 @@ Prompt FIM - Redmine #76568 Criação de padrão betha a adição de PASSO FUNDO - RS
 Prompt FIM Redmine #
 -------------------------------------------------------------------------------------------------------------------------------
 
+-------------------------------------------------------------------------------------------------------------------------------
+Prompt INI Redmine #76565 - Verificar e caso não tenha colocar DT_COMPET nos resumos de CFOP (CST/ALIQ/UF)
+-------------------------------------------------------------------------------------------------------------------------------
+
+declare
+  vn_qtde    number;
+begin
+  begin
+     select count(1) 
+       into vn_qtde
+       from all_tab_columns a
+      where a.OWNER       = 'CSF_OWN'
+        and a.TABLE_NAME  = 'REL_RESUMO_CFOP_ALIQ'
+        and a.COLUMN_NAME = 'DT_COMPET';
+   exception
+      when others then
+         vn_qtde := 0;
+   end;	
+   --   
+   if vn_qtde = 0 then
+      -- Add/modify columns 
+      BEGIN
+         EXECUTE IMMEDIATE 'alter table CSF_OWN.REL_RESUMO_CFOP_ALIQ add dt_compet date';
+      EXCEPTION
+         WHEN OTHERS THEN
+            RAISE_APPLICATION_ERROR ( -20101, 'Erro ao criar coluna DT_COMPET em REL_RESUMO_CFOP_ALIQ - '||SQLERRM );
+      END;	  
+      -- Add comments to the columns 
+      BEGIN
+         EXECUTE IMMEDIATE 'comment on column CSF_OWN.REL_RESUMO_CFOP_ALIQ.dt_compet is ''Recebe a data do parametro EN_DT_INI''';
+      EXCEPTION
+         WHEN OTHERS THEN
+            RAISE_APPLICATION_ERROR ( -20101, 'Erro ao criar comentario de REL_RESUMO_CFOP_ALIQ - '||SQLERRM );
+      END;	  
+      --  
+      commit;
+      --   
+   end if;
+   --   
+end;
+/
+
+declare
+  vn_qtde    number;
+begin
+  begin
+     select count(1) 
+       into vn_qtde
+       from all_tab_columns a
+      where a.OWNER       = 'CSF_OWN'
+        and a.TABLE_NAME  = 'REL_RESUMO_CFOP_CST'
+        and a.COLUMN_NAME = 'DT_COMPET';
+   exception
+      when others then
+         vn_qtde := 0;
+   end;	
+   --   
+   if vn_qtde = 0 then
+      -- Add/modify columns 
+      BEGIN
+         EXECUTE IMMEDIATE 'alter table CSF_OWN.REL_RESUMO_CFOP_CST add dt_compet date';
+      EXCEPTION
+         WHEN OTHERS THEN
+            RAISE_APPLICATION_ERROR ( -20101, 'Erro ao criar coluna DT_COMPET em REL_RESUMO_CFOP_CST - '||SQLERRM );
+      END;	  
+      -- Add comments to the columns 
+      BEGIN
+         EXECUTE IMMEDIATE 'comment on column CSF_OWN.REL_RESUMO_CFOP_CST.dt_compet is ''Recebe a data do parametro EN_DT_INI''';
+      EXCEPTION
+         WHEN OTHERS THEN
+            RAISE_APPLICATION_ERROR ( -20101, 'Erro ao criar comentario de REL_RESUMO_CFOP_CST - '||SQLERRM );
+      END;	  
+      --  
+      commit;
+      --   
+   end if;
+   --   
+end;
+/
+
+declare
+  vn_qtde    number;
+begin
+  begin
+     select count(1) 
+       into vn_qtde
+       from all_tab_columns a
+      where a.OWNER       = 'CSF_OWN'
+        and a.TABLE_NAME  = 'REL_RESUMO_CFOP_UF'
+        and a.COLUMN_NAME = 'DT_COMPET';
+   exception
+      when others then
+         vn_qtde := 0;
+   end;	
+   --   
+   if vn_qtde = 0 then
+      -- Add/modify columns 
+      BEGIN
+         EXECUTE IMMEDIATE 'alter table CSF_OWN.REL_RESUMO_CFOP_UF add dt_compet date';
+      EXCEPTION
+         WHEN OTHERS THEN
+            RAISE_APPLICATION_ERROR ( -20101, 'Erro ao criar coluna DT_COMPET em REL_RESUMO_CFOP_UF - '||SQLERRM );
+      END;	  
+      -- Add comments to the columns 
+      BEGIN
+         EXECUTE IMMEDIATE 'comment on column CSF_OWN.REL_RESUMO_CFOP_UF.dt_compet is ''Recebe a data do parametro EN_DT_INI''';
+      EXCEPTION
+         WHEN OTHERS THEN
+            RAISE_APPLICATION_ERROR ( -20101, 'Erro ao criar comentario de REL_RESUMO_CFOP_UF - '||SQLERRM );
+      END;	  
+      --  
+      commit;
+      --   
+   end if;
+   --   
+end;
+/
+
+--------------------------------------------------------------------------------------------------------------------------------------
+Prompt FIM Redmine #76565 - Verificar e caso não tenha colocar DT_COMPET nos resumos de CFOP (CST/ALIQ/UF)
+--------------------------------------------------------------------------------------------------------------------------------------
+
 ------------------------------------------------------------------------------------------
 Prompt FIM Patch 2.9.6.3 - Alteracoes no CSF_OWN
 ------------------------------------------------------------------------------------------
