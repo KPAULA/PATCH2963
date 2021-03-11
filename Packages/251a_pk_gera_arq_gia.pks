@@ -4,7 +4,14 @@ create or replace package csf_own.pk_gera_arq_gia is
 -- Especificação do pacote de Geração do Arquivo da GIA
 -------------------------------------------------------------------------------------------------------
 --
--- Em 15/02/2020    - wendel albino
+-- Em 10/03/2021    - Wendel Albino - 2.9.6-3 / 2.9.5-6 / 2.9.7
+-- Redmine #76847   - DIME - Erro na geração do Arquivo
+-- Rotina Alterada  - pkb_gera_arq_gia_SC -> DIME- ajuste no parametro (vt_bi_tab_tp22(1)(vn_cfop).dif_aliq) do tp22 
+--                  -  que caso retornasse nulo do cursor (c_cfop_item) dava erro ao atribuir variavel citada.
+--                  - Ajuste no parametro (vt_tab_tp24(k).valor ) do item '057' referente a tarefa 76025 do denadai.
+--                  -  foi incluido no calculo os valores nvl(vn_vl_dif_aliq30_ct, 0) + nvl(vn_vl_dif_aliq40_ct, 0).
+--
+-- Em 15/02/2021    - wendel albino - 2.9.6-2 / 2.9.5-5 / 2.9.7
 -- Redmine #75580   - DAPI-MG - Apuração com ICMS-ST 
 -- Rotina Alterada  - pkb_gera_arq_gia_mg -> DAPI, valores dos registros 77,80,82,102,105 corrigidos.
 --
