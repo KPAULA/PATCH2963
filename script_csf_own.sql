@@ -1315,6 +1315,195 @@ end;
 --------------------------------------------------------------------------------------------------------------------------------------
 Prompt FIM Redmine #76872 - Criação de view
 --------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------------
+Prompt INI - Redmine #76828 Criação de padrão IPM Fiscal a adição de Cascavel - PR ao padrão
+-------------------------------------------------------------------------------------------------------------------------------------------
+--
+--CIDADE  : Cascavel - PR 
+--IBGE    : 4104808
+--PADRAO  : IPM Fiscal
+--HABIL   : SIM
+--WS_CANC : SIM
+
+--PRD
+--http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1
+--HML
+--Não possui
+
+declare 
+   --   
+   -- dm_tp_amb (Tipo de Ambiente 1-Producao; 2-Homologacao)
+   cursor c_dados is
+      select   ( select id from csf_own.cidade where ibge_cidade = '4104808' ) id, dm_situacao,  versao,  dm_tp_amb,  dm_tp_soap,  dm_tp_serv, descr, url_wsdl, dm_upload, dm_ind_emit 
+        from ( --Produção
+			   select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'Geração de NFS-e'                               descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'Recepção e Processamento de lote de RPS'        descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de Situação de lote de RPS'            descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  4 dm_tp_serv, 'Consulta de NFS-e por RPS'                      descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  5 dm_tp_serv, 'Consulta de NFS-e'                              descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  6 dm_tp_serv, 'Cancelamento de NFS-e'                          descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'Substituição de NFS-e'                          descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  8 dm_tp_serv, 'Consulta de Empresas Autorizadas a emitir NFS-e'descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  9 dm_tp_serv, 'Login'                                          descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap, 10 dm_tp_serv, 'Consulta de Lote de RPS'                        descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               --Homologação
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'Geração de NFS-e'                               descr, 'Não possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'Recepção e Processamento de lote de RPS'        descr, 'Não possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de Situação de lote de RPS'            descr, 'Não possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  4 dm_tp_serv, 'Consulta de NFS-e por RPS'                      descr, 'Não possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  5 dm_tp_serv, 'Consulta de NFS-e'                              descr, 'Não possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  6 dm_tp_serv, 'Cancelamento de NFS-e'                          descr, 'Não possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'Substituição de NFS-e'                          descr, 'Não possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  8 dm_tp_serv, 'Consulta de Empresas Autorizadas a emitir NFS-e'descr, 'Não possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  9 dm_tp_serv, 'Login'                                          descr, 'Não possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap, 10 dm_tp_serv, 'Consulta de Lote de RPS'                        descr, 'Não possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual
+              );
+--   
+begin   
+   --
+      for rec_dados in c_dados loop
+         exit when c_dados%notfound or (c_dados%notfound) is null;
+         --
+         begin  
+            insert into csf_own.cidade_webserv_nfse (  id
+                                                    ,  cidade_id
+                                                    ,  dm_situacao
+                                                    ,  versao
+                                                    ,  dm_tp_amb
+                                                    ,  dm_tp_soap
+                                                    ,  dm_tp_serv
+                                                    ,  descr
+                                                    ,  url_wsdl
+                                                    ,  dm_upload
+                                                    ,  dm_ind_emit  )    
+                                             values (  csf_own.cidadewebservnfse_seq.nextval
+                                                    ,  rec_dados.id
+                                                    ,  rec_dados.dm_situacao
+                                                    ,  rec_dados.versao
+                                                    ,  rec_dados.dm_tp_amb
+                                                    ,  rec_dados.dm_tp_soap
+                                                    ,  rec_dados.dm_tp_serv
+                                                    ,  rec_dados.descr
+                                                    ,  rec_dados.url_wsdl
+                                                    ,  rec_dados.dm_upload
+                                                    ,  rec_dados.dm_ind_emit  ); 
+            --
+            commit;        
+            --
+         exception  
+            when dup_val_on_index then 
+               begin 
+                  update csf_own.cidade_webserv_nfse 
+                     set versao      = rec_dados.versao
+                       , dm_tp_soap  = rec_dados.dm_tp_soap
+                       , descr       = rec_dados.descr
+                       , url_wsdl    = rec_dados.url_wsdl
+                       , dm_upload   = rec_dados.dm_upload
+                   where cidade_id   = rec_dados.id 
+                     and dm_tp_amb   = rec_dados.dm_tp_amb 
+                     and dm_tp_serv  = rec_dados.dm_tp_serv 
+                     and dm_ind_emit = rec_dados.dm_ind_emit; 
+                  --
+                  commit; 
+                  --
+               exception when others then 
+                  raise_application_error(-20101, 'Erro no script Redmine #76828 Atualização URL ambiente de homologação e Produção Cascavel - PR' || sqlerrm);
+               end; 
+               --
+         end;
+         -- 
+      --
+      end loop;
+   --
+   commit;
+   --
+exception
+   when others then
+      raise_application_error(-20102, 'Erro no script Redmine #76828 Atualização URL ambiente de homologação e Produção Cascavel - PR' || sqlerrm);
+end;
+/
+
+declare
+--
+vn_dm_tp_amb1  number  := 0;
+vn_dm_tp_amb2  number  := 0;
+vv_ibge_cidade csf_own.cidade.ibge_cidade%type;
+vv_padrao      csf_own.dominio.descr%type;    
+vv_habil       csf_own.dominio.descr%type;
+vv_ws_canc     csf_own.dominio.descr%type;
+
+--
+Begin
+	-- Popula variáveis
+	vv_ibge_cidade := '4104808';
+	vv_padrao      := 'IPM Fiscal';     
+	vv_habil       := 'SIM';
+	vv_ws_canc     := 'SIM';
+
+    begin
+      --
+      SELECT count(*)
+        into vn_dm_tp_amb1
+        from csf_own.empresa
+       where dm_tp_amb = 1
+       group by dm_tp_amb;
+      exception when others then
+        vn_dm_tp_amb1 := 0; 
+      --
+    end;
+   --
+    Begin
+      --
+      SELECT count(*)
+        into vn_dm_tp_amb2
+        from csf_own.empresa
+       where dm_tp_amb = 2
+       group by dm_tp_amb;
+      --
+	  exception when others then 
+        vn_dm_tp_amb2 := 0;
+     --
+    end;
+--
+	if vn_dm_tp_amb2 > vn_dm_tp_amb1 then
+	  --
+	  begin
+	    --  
+	    update csf_own.cidade_webserv_nfse
+		   set url_wsdl = 'DESATIVADO AMBIENTE DE PRODUCAO'
+	     where cidade_id in (select id
+							   from csf_own.cidade
+							  where ibge_cidade in (vv_ibge_cidade))
+		   and dm_tp_amb = 1;
+	  exception 
+		 when others then
+		   null;
+	  end;
+	  --  
+	  commit;
+	  --
+	end if;
+--
+	begin
+		--
+		update csf_own.cidade_nfse set dm_padrao    = (select distinct vl from csf_own.dominio where upper(dominio) = upper('cidade_nfse.dm_padrao') and upper(descr) = upper(vv_padrao))
+								       , dm_habil   = (select distinct vl from csf_own.dominio where upper(dominio) = upper('cidade_nfse.dm_habil') and upper(descr) = upper(vv_habil))
+								       , dm_ws_canc = (select distinct vl from csf_own.dominio where upper(dominio) = upper('cidade_nfse.dm_ws_canc') and upper(descr) = upper(vv_ws_canc))
+         where cidade_id = (select distinct id from csf_own.cidade where ibge_cidade in (vv_ibge_cidade));
+		exception when others then
+			raise_application_error(-20103, 'Erro no script Redmine #76828 Atualização do Padrão Cascavel - PR' || sqlerrm);
+    end;
+	--
+	commit;
+	--
+--
+end;
+--
+/  
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+Prompt FIM - Redmine #76828 Criação de padrão betha a adição de Cascavel - PR ao padrão
+-------------------------------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------
 Prompt FIM Patch 2.9.6.3 - Alteracoes no CSF_OWN
