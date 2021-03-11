@@ -3,6 +3,11 @@ create or replace package csf_own.pk_integr_view is
 -- ============================================================================================================================================= --
 -- Especificação do pacote de integração de Notas Fiscais a partir de leitura de views
 --
+-- Em 08/03/2021     - Luis Marques - 2.9.5-6 / 2.9.6-3 / 2.9.7
+-- Redmine #71633    - Ajustes para evitar erros na conciliação EPEC
+-- Rotina Alterada   - pkb_ler_Nota_Fiscal - Incluido validação de DM_ST_PROC (9 - Conciliação EPEC Rejeitada) para não ser processado
+--                     no processo de integração.
+--
 -- Em 23/02/2021     - Luis Marques - 2.9.5-5 / 2.9.6-2 / 2.9.7
 -- Redmine #75175    - Analisar tratativa referente ao retorno dos códigos 539
 -- Rotinas Alteradas - pkb_int_infor_erp, pkb_int_infor_erp_neo, pkb_ret_infor_erp, pkb_ret_infor_erp_neo - Retirado o codigo 

@@ -3,6 +3,11 @@ create or replace package csf_own.pk_csf is
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Especificação do pacote de funções para o CSF
 --
+-- Em 05/03/2021 - Marcos Ferreira
+-- Distribuições: 2.9.7 / 2.9.6-3 / 2.9.5-6
+-- Redmine #76254: Criar estrutura para R2055
+-- Rotinas Alteradas: Criação da função fkg_tabela_existe
+--
 -- Em 16/02/2021      - Allan Magrini - 2.9.5-5 / 2.9.6-2 / 2.9.7
 -- Redmine #75526     - Limpeza indevida de caracteres NFSe (MSX)
 -- Rotina Alterada    - Criada pk_csf.fkg_converte_p para validação do parametro NF_RET_CARAC_ESPEC
@@ -3882,6 +3887,11 @@ function fkg_codstcidade_Id (ev_cod_st    in  cod_st_cidade.cod_st%TYPE,
 procedure pkb_cria_dominio (ev_dominio    varchar2,
                             ev_valor      varchar2,
                             ev_descricao  varchar2);
+-------------------------------------------------------------------------------------------------------
+--| Função para checar se uma tabela já existe
+--
+function fkg_tabela_existe (ev_tabela_nome varchar2)
+                             return boolean;
 --
 end pk_csf;
 /

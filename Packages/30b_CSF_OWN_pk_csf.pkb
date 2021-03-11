@@ -16985,6 +16985,30 @@ exception
    when others then
       null;
 end pkb_cria_dominio;    
--- 
+-------------------------------------------------------------------------------------------------------
+--| Função para checar se uma tabela já existe
+-------------------------------------------------------------------------------------------------------
+function fkg_tabela_existe (ev_tabela_nome varchar2)
+                             return boolean
+is
+  vn_existe number(1) := 0;
+begin
+   begin
+      select 1 
+         into vn_existe
+      from user_tables ut
+      where upper(ut.table_name) = upper(trim(ev_tabela_nome));
+   exception
+      when no_data_found then
+         return false;
+   end;   
+   --
+   return true;
+   -- 
+exception
+   when others then
+      raise;
+end fkg_tabela_existe;
+--
 end pk_csf;
 /
