@@ -1093,6 +1093,418 @@ end;
 Prompt FIM Redmine #76565 - Verificar e caso não tenha colocar DT_COMPET nos resumos de CFOP (CST/ALIQ/UF)
 --------------------------------------------------------------------------------------------------------------------------------------
 
+-------------------------------------------------------------------------------------------------------------------------------
+Prompt INI Redmine #76872 - Criação de view
+-------------------------------------------------------------------------------------------------------------------------------
+
+begin
+   -- 
+   -- Create view
+   --
+   BEGIN
+      EXECUTE IMMEDIATE 'CREATE OR REPLACE VIEW CSF_OWN.V_DACTE_DUTOVIARIO AS 
+select --DADOS DO CABEÇALHO
+       ct.id conhectransp_id
+     , ct.nro_ct
+     , ct.serie
+     , mfi.cod_mod
+     , to_char(ct.dt_hr_emissao,''DD/MM/RRRR HH:MI:SS'') dt_hr_emissao
+     , ct.dm_tp_amb
+     , ct.nro_protocolo
+     , ct.cod_msg
+     , to_char(lt.dt_recibo,''DD/MM/RRRR HH:MI:SS'') dt_recibo
+     , ct.dm_tp_cte
+     , ct.dm_tp_serv
+     , ct.dm_global
+     , ct.dm_forma_emiss
+     , ct.obs_global
+     , cf.cd cfop
+     , cf.descr natPrest
+     , ct.ibge_cidade_ini
+     , ct.descr_cidade_ini
+     , ct.sigla_uf_ini
+     , ct.ibge_cidade_Fim
+     , ct.descr_cidade_fim
+     , ct.sigla_uf_Fim
+       --DADOS DO EMITENTE
+     , ctem.nome nomeEmit
+     , ctem.nome_fant nomeFantEmit
+     , ctem.cnpj cnpjEmit
+     , ctem.ie ieEmit
+     , ctem.lograd logrEmit
+     , ctem.nro nroEmit
+     , ctem.compl complEmit
+     , ctem.bairro bairroEmit
+     , ctem.descr_cidade municipioEmit
+     , ctem.uf ufEmit
+     , ctem.fone foneEmit
+     , ctem.cep cepEmit
+       --DADOS DO DESTINATARIO
+     , ctde.suframa
+     , ctde.nome nomeDest
+     , ctde.cnpj cnpjDest
+     , ctde.cpf cpfDest
+     , ctde.ie ieDest
+     , ctde.lograd logradDest
+     , ctde.nro nroDest
+     , ctde.compl complDest
+     , ctde.bairro bairroDest
+     , ctde.descr_cidade municipioDest
+     , ctde.uf ufDest
+     , ctde.descr_pais paisDest
+     , ctde.fone foneDest
+     , ctde.cep cepDest
+       --DADOS DO REMETENTE
+     , ctre.nome nomeRem
+     , ctre.cnpj cnpjRem
+     , ctre.cpf cpfRem
+     , ctre.ie ieRem
+     , ctre.lograd logradRem
+     , ctre.nro nroRem
+     , ctre.compl complRem
+     , ctre.bairro bairroRem
+     , ctre.descr_cidade municipioRem
+     , ctre.uf ufRem
+     , ctre.descr_pais paisRem
+     , ctre.fone foneRem
+     , ctre.cep cepRem
+       --DADOS DO EXPEDIDOR
+     , ctex.nome nomeExp
+     , ctex.cnpj cnpjExp
+     , ctex.cpf cpfExp
+     , ctex.ie ieExp
+     , ctex.lograd logradExp
+     , ctex.nro nroExp
+     , ctex.compl complExp
+     , ctex.bairro bairroExp
+     , ctex.descr_cidade municipioExp
+     , ctex.uf ufExp
+     , ctex.descr_pais paisExp
+     , ctex.fone foneExp
+     , ctex.cep cepExp
+       --DADOS DO RECEBEDOR
+     , ctrec.nome nomeRec
+     , ctrec.cnpj cnpjRec
+     , ctrec.cpf cpfRec
+     , ctrec.ie ieRec
+     , ctrec.lograd logradRec
+     , ctrec.nro nroRec
+     , ctrec.compl complRec
+     , ctrec.bairro bairroRec
+     , ctrec.descr_cidade municipioRec
+     , ctrec.uf ufRec
+     , ctrec.descr_pais paisRec
+     , ctrec.fone foneRec
+     , ctrec.cep cepRec
+       --DADOS DO TOMADOR
+     , cttom.nome nomeTom
+     , cttom.cnpj cnpjTom
+     , cttom.cpf cpfTom
+     , cttom.ie ieTom
+     , cttom.lograd logradTom
+     , cttom.nro nroTom
+     , cttom.compl complTom
+     , cttom.bairro bairroTom
+     , cttom.descr_cidade municipioTom
+     , cttom.uf ufTom
+     , cttom.descr_pais paisTom
+     , cttom.fone foneTom
+     , cttom.cep cepTom 
+       --PROD PREDOMINANTE
+     , infcarga.prod_predom
+     , infcarga.outra_caract
+     , infcarga.vl_total_merc
+       --DADOS DUTO
+     , to_char(dt.dt_ini,''DD/MM/RRRR HH:MI:SS'') dt_ini
+     , to_char(dt.dt_fin,''DD/MM/RRRR HH:MI:SS'') dt_fim
+     , dt.vl_tarifa
+       --PESAGEM
+     , (select max(c1.qtde_carga) from csf_own.ctinfcarga_qtde c1, csf_own.conhec_transp_infcarga inf1
+         where inf1.conhectransp_id       = ct.id
+           and c1.conhectranspinfcarga_id = inf1.id 
+           and c1.dm_cod_unid             = ''01'') peso_bruto      
+     , (select max(c2.qtde_carga) from csf_own.ctinfcarga_qtde c2, csf_own.conhec_transp_infcarga inf2
+         where inf2.conhectransp_id       = ct.id
+           and c2.conhectranspinfcarga_id = inf2.id
+           and c2.dm_cod_unid             = ''02'') peso_base_calc
+     , (select max(c3.qtde_carga) from csf_own.ctinfcarga_qtde c3, csf_own.conhec_transp_infcarga inf3
+         where inf3.conhectransp_id       = ct.id 
+           and c3.conhectranspinfcarga_id = inf3.ID
+           and c3.dm_cod_unid             = ''00'') peso_cubagem
+     , (select max(c4.qtde_carga) from csf_own.ctinfcarga_qtde c4, csf_own.conhec_transp_infcarga inf4
+         where inf4.conhectransp_id       = ct.id 
+           and c4.conhectranspinfcarga_id = inf4.ID
+           and c4.dm_cod_unid             = ''03'') peso_volume 
+     , compl.obs_geral
+       --VALORES PRESTADOS
+     , ctvlprest.vl_prest_serv
+     , ctvlprest.vl_receb
+        --IMPOSTO
+     , st.cod_st
+     , st.descr_st
+     , imp.tipoimp_id
+     , imp.codst_id
+     , imp.vl_base_calc
+     , imp.aliq_apli
+     , imp.vl_imp_trib
+     , imp.perc_reduc
+     , imp.vl_cred
+     , imp.dm_inf_imp
+     , imp.dm_outra_uf
+     , imp.dm_tipo
+     , imp.tiporetimp_id
+     , imp.tiporetimpreceita_id
+     , imp.vl_deducao
+     , imp.vl_base_outro
+     , imp.vl_imp_outro
+     , imp.vl_base_isenta
+     , imp.aliq_aplic_outro 
+     , (select ct_obs1.texto from csf_own.ct_compl_obs ct_obs1
+         where ct_obs1.conhectranspcompl_id = compl.id
+           and ct_obs1.dm_tipo              = 0
+           and ROWNUM                       = 1) texto_contribuinte
+     , (select ct_obs2.texto from csf_own.ct_compl_obs ct_obs2
+         where ct_obs2.conhectranspcompl_id = compl.id
+           and ct_obs2.dm_tipo              = 1
+           and ROWNUM                       = 1) texto_fisco 
+  from csf_own.conhec_transp ct
+   inner join csf_own.conhec_transp_emit ctem        on ctem.conhectransp_id      = ct.id
+   inner join csf_own.conhec_transp_dest ctde        on ctde.conhectransp_id      = ct.id
+   inner join csf_own.mod_fiscal mfi                 on mfi.id                    = ct.modfiscal_id
+   left join csf_own.conhec_transp_duto dt           on dt.conhectransp_id        = ct.id
+   left join csf_own.conhec_transp_rem ctre          on ctre.conhectransp_id      = ct.id
+   left join csf_own.conhec_transp_exped ctex        on ctex.conhectransp_id      = ct.id
+   left join csf_own.conhec_transp_receb ctrec       on ctrec.conhectransp_id     = ct.id
+   left join csf_own.v_conhec_transp_tomador cttom   on cttom.conhectransp_id     = ct.id
+   left join csf_own.conhec_Transp_infcarga infcarga on infcarga.conhectransp_id  = ct.id
+   left Join csf_own.cfop cf                         on ct.cfop_id                = cf.id
+   left join csf_own.conhec_transp_vlprest ctvlprest on ctvlprest.conhectransp_id = ct.id
+   left Join csf_own.conhec_transp_compl compl       on compl.conhectransp_id     = ct.id
+   left join csf_own.conhec_transp_imp imp           on imp.conhectransp_id       = ct.id
+   left join csf_own.cod_st st                       on st.id                     = imp.codst_id
+   left join csf_own.lote_cte lt                     on lt.id                     = ct.lotecte_id
+ where ct.dm_st_proc       in (4,14)
+   and ct.dm_impressa       = 0
+   and mfi.cod_mod         in (''57'',''67'')';
+   EXCEPTION
+      WHEN OTHERS THEN
+         RAISE_APPLICATION_ERROR ( -20101, 'Erro ao criar view de V_DACTE_DUTOVIARIO - '||SQLERRM );
+   END;	  
+   -- 
+   commit;
+   --	  
+   begin
+      execute immediate 'GRANT ALL ON CSF_OWN.V_DACTE_DUTOVIARIO TO DESENV_USER';
+   exception
+       when others then
+          null;
+   end;   
+   --
+   begin
+      execute immediate 'CREATE OR REPLACE SYNONYM DESENV_USER.V_DACTE_DUTOVIARIO for CSF_OWN.V_DACTE_DUTOVIARIO';
+   exception
+       when others then
+          null;
+   end;   
+   --
+   commit;   
+   --
+end;
+/
+
+--------------------------------------------------------------------------------------------------------------------------------------
+Prompt FIM Redmine #76872 - Criação de view
+--------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------------
+Prompt INI - Redmine #76828 Criação de padrão IPM Fiscal a adição de Cascavel - PR ao padrão
+-------------------------------------------------------------------------------------------------------------------------------------------
+--
+--CIDADE  : Cascavel - PR 
+--IBGE    : 4104808
+--PADRAO  : IPM Fiscal
+--HABIL   : SIM
+--WS_CANC : SIM
+
+--PRD
+--http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1
+--HML
+--Não possui
+
+declare 
+   --   
+   -- dm_tp_amb (Tipo de Ambiente 1-Producao; 2-Homologacao)
+   cursor c_dados is
+      select   ( select id from csf_own.cidade where ibge_cidade = '4104808' ) id, dm_situacao,  versao,  dm_tp_amb,  dm_tp_soap,  dm_tp_serv, descr, url_wsdl, dm_upload, dm_ind_emit 
+        from ( --Produção
+			   select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'Geração de NFS-e'                               descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'Recepção e Processamento de lote de RPS'        descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de Situação de lote de RPS'            descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  4 dm_tp_serv, 'Consulta de NFS-e por RPS'                      descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  5 dm_tp_serv, 'Consulta de NFS-e'                              descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  6 dm_tp_serv, 'Cancelamento de NFS-e'                          descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'Substituição de NFS-e'                          descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  8 dm_tp_serv, 'Consulta de Empresas Autorizadas a emitir NFS-e'descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  9 dm_tp_serv, 'Login'                                          descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap, 10 dm_tp_serv, 'Consulta de Lote de RPS'                        descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               --Homologação
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'Geração de NFS-e'                               descr, 'Não possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'Recepção e Processamento de lote de RPS'        descr, 'Não possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de Situação de lote de RPS'            descr, 'Não possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  4 dm_tp_serv, 'Consulta de NFS-e por RPS'                      descr, 'Não possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  5 dm_tp_serv, 'Consulta de NFS-e'                              descr, 'Não possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  6 dm_tp_serv, 'Cancelamento de NFS-e'                          descr, 'Não possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'Substituição de NFS-e'                          descr, 'Não possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  8 dm_tp_serv, 'Consulta de Empresas Autorizadas a emitir NFS-e'descr, 'Não possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  9 dm_tp_serv, 'Login'                                          descr, 'Não possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap, 10 dm_tp_serv, 'Consulta de Lote de RPS'                        descr, 'Não possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual
+              );
+--   
+begin   
+   --
+      for rec_dados in c_dados loop
+         exit when c_dados%notfound or (c_dados%notfound) is null;
+         --
+         begin  
+            insert into csf_own.cidade_webserv_nfse (  id
+                                                    ,  cidade_id
+                                                    ,  dm_situacao
+                                                    ,  versao
+                                                    ,  dm_tp_amb
+                                                    ,  dm_tp_soap
+                                                    ,  dm_tp_serv
+                                                    ,  descr
+                                                    ,  url_wsdl
+                                                    ,  dm_upload
+                                                    ,  dm_ind_emit  )    
+                                             values (  csf_own.cidadewebservnfse_seq.nextval
+                                                    ,  rec_dados.id
+                                                    ,  rec_dados.dm_situacao
+                                                    ,  rec_dados.versao
+                                                    ,  rec_dados.dm_tp_amb
+                                                    ,  rec_dados.dm_tp_soap
+                                                    ,  rec_dados.dm_tp_serv
+                                                    ,  rec_dados.descr
+                                                    ,  rec_dados.url_wsdl
+                                                    ,  rec_dados.dm_upload
+                                                    ,  rec_dados.dm_ind_emit  ); 
+            --
+            commit;        
+            --
+         exception  
+            when dup_val_on_index then 
+               begin 
+                  update csf_own.cidade_webserv_nfse 
+                     set versao      = rec_dados.versao
+                       , dm_tp_soap  = rec_dados.dm_tp_soap
+                       , descr       = rec_dados.descr
+                       , url_wsdl    = rec_dados.url_wsdl
+                       , dm_upload   = rec_dados.dm_upload
+                   where cidade_id   = rec_dados.id 
+                     and dm_tp_amb   = rec_dados.dm_tp_amb 
+                     and dm_tp_serv  = rec_dados.dm_tp_serv 
+                     and dm_ind_emit = rec_dados.dm_ind_emit; 
+                  --
+                  commit; 
+                  --
+               exception when others then 
+                  raise_application_error(-20101, 'Erro no script Redmine #76828 Atualização URL ambiente de homologação e Produção Cascavel - PR' || sqlerrm);
+               end; 
+               --
+         end;
+         -- 
+      --
+      end loop;
+   --
+   commit;
+   --
+exception
+   when others then
+      raise_application_error(-20102, 'Erro no script Redmine #76828 Atualização URL ambiente de homologação e Produção Cascavel - PR' || sqlerrm);
+end;
+/
+
+declare
+--
+vn_dm_tp_amb1  number  := 0;
+vn_dm_tp_amb2  number  := 0;
+vv_ibge_cidade csf_own.cidade.ibge_cidade%type;
+vv_padrao      csf_own.dominio.descr%type;    
+vv_habil       csf_own.dominio.descr%type;
+vv_ws_canc     csf_own.dominio.descr%type;
+
+--
+Begin
+	-- Popula variáveis
+	vv_ibge_cidade := '4104808';
+	vv_padrao      := 'IPM Fiscal';     
+	vv_habil       := 'SIM';
+	vv_ws_canc     := 'SIM';
+
+    begin
+      --
+      SELECT count(*)
+        into vn_dm_tp_amb1
+        from csf_own.empresa
+       where dm_tp_amb = 1
+       group by dm_tp_amb;
+      exception when others then
+        vn_dm_tp_amb1 := 0; 
+      --
+    end;
+   --
+    Begin
+      --
+      SELECT count(*)
+        into vn_dm_tp_amb2
+        from csf_own.empresa
+       where dm_tp_amb = 2
+       group by dm_tp_amb;
+      --
+	  exception when others then 
+        vn_dm_tp_amb2 := 0;
+     --
+    end;
+--
+	if vn_dm_tp_amb2 > vn_dm_tp_amb1 then
+	  --
+	  begin
+	    --  
+	    update csf_own.cidade_webserv_nfse
+		   set url_wsdl = 'DESATIVADO AMBIENTE DE PRODUCAO'
+	     where cidade_id in (select id
+							   from csf_own.cidade
+							  where ibge_cidade in (vv_ibge_cidade))
+		   and dm_tp_amb = 1;
+	  exception 
+		 when others then
+		   null;
+	  end;
+	  --  
+	  commit;
+	  --
+	end if;
+--
+	begin
+		--
+		update csf_own.cidade_nfse set dm_padrao    = (select distinct vl from csf_own.dominio where upper(dominio) = upper('cidade_nfse.dm_padrao') and upper(descr) = upper(vv_padrao))
+								       , dm_habil   = (select distinct vl from csf_own.dominio where upper(dominio) = upper('cidade_nfse.dm_habil') and upper(descr) = upper(vv_habil))
+								       , dm_ws_canc = (select distinct vl from csf_own.dominio where upper(dominio) = upper('cidade_nfse.dm_ws_canc') and upper(descr) = upper(vv_ws_canc))
+         where cidade_id = (select distinct id from csf_own.cidade where ibge_cidade in (vv_ibge_cidade));
+		exception when others then
+			raise_application_error(-20103, 'Erro no script Redmine #76828 Atualização do Padrão Cascavel - PR' || sqlerrm);
+    end;
+	--
+	commit;
+	--
+--
+end;
+--
+/  
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+Prompt FIM - Redmine #76828 Criação de padrão betha a adição de Cascavel - PR ao padrão
+-------------------------------------------------------------------------------------------------------------------------------------------
+
 ------------------------------------------------------------------------------------------
 Prompt FIM Patch 2.9.6.3 - Alteracoes no CSF_OWN
 ------------------------------------------------------------------------------------------
