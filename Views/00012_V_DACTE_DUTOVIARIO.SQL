@@ -4,11 +4,11 @@ select --DADOS DO CABEÇALHO
      , ct.nro_ct
      , ct.serie
      , mfi.cod_mod
-     , to_char(ct.dt_hr_emissao,''DD/MM/RRRR HH:MI:SS'') dt_hr_emissao
+     , to_char(ct.dt_hr_emissao,'DD/MM/RRRR HH:MI:SS') dt_hr_emissao
      , ct.dm_tp_amb
      , ct.nro_protocolo
      , ct.cod_msg
-     , to_char(lt.dt_recibo,''DD/MM/RRRR HH:MI:SS'') dt_recibo
+     , to_char(lt.dt_recibo,'DD/MM/RRRR HH:MI:SS') dt_recibo
      , ct.dm_tp_cte
      , ct.dm_tp_serv
      , ct.dm_global
@@ -111,26 +111,46 @@ select --DADOS DO CABEÇALHO
      , infcarga.outra_caract
      , infcarga.vl_total_merc
        --DADOS DUTO
-     , to_char(dt.dt_ini,''DD/MM/RRRR HH:MI:SS'') dt_ini
-     , to_char(dt.dt_fin,''DD/MM/RRRR HH:MI:SS'') dt_fim
+     , to_char(dt.dt_ini,'DD/MM/RRRR HH:MI:SS') dt_ini
+     , to_char(dt.dt_fin,'DD/MM/RRRR HH:MI:SS') dt_fim
      , dt.vl_tarifa
        --PESAGEM
      , (select max(c1.qtde_carga) from csf_own.ctinfcarga_qtde c1, csf_own.conhec_transp_infcarga inf1
          where inf1.conhectransp_id       = ct.id
            and c1.conhectranspinfcarga_id = inf1.id 
-           and c1.dm_cod_unid             = ''01'') peso_bruto      
+           and c1.dm_cod_unid             = '01') peso_bruto      
+     , (select c11.tipo_medida from csf_own.ctinfcarga_qtde c11, csf_own.conhec_transp_infcarga inf11
+         where inf11.conhectransp_id       = ct.id
+           and c11.conhectranspinfcarga_id = inf11.id 
+           and c11.dm_cod_unid             = '01'
+           and ROWNUM                      = 1) tipo_medida_bruto
      , (select max(c2.qtde_carga) from csf_own.ctinfcarga_qtde c2, csf_own.conhec_transp_infcarga inf2
          where inf2.conhectransp_id       = ct.id
            and c2.conhectranspinfcarga_id = inf2.id
-           and c2.dm_cod_unid             = ''02'') peso_base_calc
+           and c2.dm_cod_unid             = '02') peso_base_calc
+     , (select c21.tipo_medida from csf_own.ctinfcarga_qtde c21, csf_own.conhec_transp_infcarga inf21
+         where inf21.conhectransp_id       = ct.id
+           and c21.conhectranspinfcarga_id = inf21.id 
+           and c21.dm_cod_unid             = '02'
+           and ROWNUM                      = 1) tipo_medida_base_calc
      , (select max(c3.qtde_carga) from csf_own.ctinfcarga_qtde c3, csf_own.conhec_transp_infcarga inf3
          where inf3.conhectransp_id       = ct.id 
            and c3.conhectranspinfcarga_id = inf3.ID
-           and c3.dm_cod_unid             = ''00'') peso_cubagem
+           and c3.dm_cod_unid             = '00') peso_cubagem
+     , (select c31.tipo_medida from csf_own.ctinfcarga_qtde c31, csf_own.conhec_transp_infcarga inf31
+         where inf31.conhectransp_id       = ct.id
+           and c31.conhectranspinfcarga_id = inf31.id 
+           and c31.dm_cod_unid             = '00'
+           and ROWNUM                      = 1) tipo_medida_cubagem
      , (select max(c4.qtde_carga) from csf_own.ctinfcarga_qtde c4, csf_own.conhec_transp_infcarga inf4
          where inf4.conhectransp_id       = ct.id 
            and c4.conhectranspinfcarga_id = inf4.ID
-           and c4.dm_cod_unid             = ''03'') peso_volume 
+           and c4.dm_cod_unid             = '03') peso_volume 
+     , (select c41.tipo_medida from csf_own.ctinfcarga_qtde c41, csf_own.conhec_transp_infcarga inf41
+         where inf41.conhectransp_id       = ct.id
+           and c41.conhectranspinfcarga_id = inf41.id 
+           and c41.dm_cod_unid             = '03'
+           and ROWNUM                      = 1) tipo_medida_volume
      , compl.obs_geral
        --VALORES PRESTADOS
      , ctvlprest.vl_prest_serv
@@ -181,6 +201,6 @@ select --DADOS DO CABEÇALHO
    left join csf_own.lote_cte lt                     on lt.id                     = ct.lotecte_id
  where ct.dm_st_proc       in (4,14)
    and ct.dm_impressa       = 0
-   and mfi.cod_mod         in (''57'',''67'')';
+   and mfi.cod_mod         in ('57','67');
 /
    
