@@ -1590,7 +1590,123 @@ end;
 --------------------------------------------------------------------------------------------------------------------------------------
 Prompt FIM Redmine #76351 - Desenvolver relatório para apoio da geração da DUB
 --------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------------
+Prompt INI - Redmine #75140 Inclusão de valor de domínio para a tabela SUBGRUPO_PAT
+-------------------------------------------------------------------------------------------------------------------------------------------
 
+begin 
+	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IND_UTIL_BEM_IMOB'', ''1'', ''Produção de Bens Destinados a Venda'', csf_own.dominio_seq.nextval)';
+   commit;
+exception
+   when dup_val_on_index then
+      null;      
+   when others then
+      raise_application_error(-20001, 'Erro no script #75140. Domínio SUBGRUPO_PAT.DM_IND_UTIL_BEM_IMOB e Valor "1". Erro: ' || sqlerrm);      
+end;
+/
+begin 
+	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IND_UTIL_BEM_IMOB'', ''2'', ''Prestação de Serviços'', csf_own.dominio_seq.nextval)';
+   commit;
+exception
+   when dup_val_on_index then
+      null;      
+   when others then
+      raise_application_error(-20001, 'Erro no script #75140. Domínio SUBGRUPO_PAT.DM_IND_UTIL_BEM_IMOB e Valor "2". Erro: ' || sqlerrm);      
+end;
+/
+begin 
+	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IND_UTIL_BEM_IMOB'', ''3'', ''Locação a Terceiros'', csf_own.dominio_seq.nextval)';
+   commit;
+exception
+   when dup_val_on_index then
+      null;      
+   when others then
+      raise_application_error(-20001, 'Erro no script #75140. Domínio SUBGRUPO_PAT.DM_IND_UTIL_BEM_IMOB e Valor "3". Erro: ' || sqlerrm);      
+end;
+/
+begin 
+	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IND_UTIL_BEM_IMOB'', ''9'', ''Outros'', csf_own.dominio_seq.nextval)';
+   commit;
+exception
+   when dup_val_on_index then
+      null;      
+   when others then
+      raise_application_error(-20001, 'Erro no script #75140. Domínio SUBGRUPO_PAT.DM_IND_UTIL_BEM_IMOB e Valor "9". Erro: ' || sqlerrm);      
+end;
+/
+begin 
+	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IDENT_BEM_IMOB'', ''01'', ''Edificações e Benfeitorias em Imóveis Próprios'', csf_own.dominio_seq.nextval)';
+   commit;
+exception
+   when dup_val_on_index then
+      null;      
+   when others then
+      raise_application_error(-20001, 'Erro no script #75140. Domínio SUBGRUPO_PAT.DM_IDENT_BEM_IMOB e Valor "01". Erro: ' || sqlerrm);      
+end;
+/
+begin 
+	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IDENT_BEM_IMOB'', ''02'', ''Edificações e Benfeitorias em Imóveis de Terceiros'', csf_own.dominio_seq.nextval)';
+   commit;
+exception
+   when dup_val_on_index then
+      null;      
+   when others then
+      raise_application_error(-20001, 'Erro no script #75140. Domínio SUBGRUPO_PAT.DM_IDENT_BEM_IMOB e Valor "02". Erro: ' || sqlerrm);      
+end;
+/
+begin 
+	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IDENT_BEM_IMOB'', ''03'', ''Instalações'', csf_own.dominio_seq.nextval)';
+   commit;
+exception
+   when dup_val_on_index then
+      null;      
+   when others then
+      raise_application_error(-20001, 'Erro no script #75140. Domínio SUBGRUPO_PAT.DM_IDENT_BEM_IMOB e Valor "03". Erro: ' || sqlerrm);      
+end;
+/
+begin 
+	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IDENT_BEM_IMOB'', ''04'', ''Máquinas'', csf_own.dominio_seq.nextval)';
+   commit;
+exception
+   when dup_val_on_index then
+      null;      
+   when others then
+      raise_application_error(-20001, 'Erro no script #75140. Domínio SUBGRUPO_PAT.DM_IDENT_BEM_IMOB e Valor "04". Erro: ' || sqlerrm);      
+end;
+/
+begin 
+	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IDENT_BEM_IMOB'', ''05'', ''Equipamentos'', csf_own.dominio_seq.nextval)';
+   commit;
+exception
+   when dup_val_on_index then
+      null;      
+   when others then
+      raise_application_error(-20001, 'Erro no script #75140. Domínio SUBGRUPO_PAT.DM_IDENT_BEM_IMOB e Valor "05". Erro: ' || sqlerrm);      
+end;
+/
+begin 
+	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IDENT_BEM_IMOB'', ''06'', ''Veículos'', csf_own.dominio_seq.nextval)';
+   commit;
+exception
+   when dup_val_on_index then
+      null;      
+   when others then
+      raise_application_error(-20001, 'Erro no script #75140. Domínio SUBGRUPO_PAT.DM_IDENT_BEM_IMOB e Valor "06". Erro: ' || sqlerrm);      
+end;
+/	
+begin 	
+	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IDENT_BEM_IMOB'', ''99'', ''Outros Bens Incorporados ao Ativo Imobilizado'', csf_own.dominio_seq.nextval)';
+   commit;
+exception
+   when dup_val_on_index then
+      null;      
+   when others then
+      raise_application_error(-20001, 'Erro no script #75140. Domínio SUBGRUPO_PAT.DM_IDENT_BEM_IMOB e Valor "99". Erro: ' || sqlerrm);      
+end;
+/	
+-------------------------------------------------------------------------------------------------------------------------------------------
+Prompt FIM - Redmine #75140 Inclusão de valor de domínio para a tabela SUBGRUPO_PAT
+-------------------------------------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------
 Prompt FIM Patch 2.9.6.3 - Alteracoes no CSF_OWN
 ------------------------------------------------------------------------------------------
