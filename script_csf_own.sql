@@ -1707,6 +1707,47 @@ end;
 -------------------------------------------------------------------------------------------------------------------------------------------
 Prompt FIM - Redmine #75140 Inclusão de valor de domínio para a tabela SUBGRUPO_PAT
 -------------------------------------------------------------------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------------------------------------------------------
+Prompt INI Redmine #70214 - Integração de modelo Danfe
+-------------------------------------------------------------------------------------------------------------------------------
+begin
+   --
+   begin
+      insert into csf_own.ff_obj_util_integr( id
+                                            , objutilintegr_id
+                                            , atributo
+                                            , descr
+                                            , dm_tipo_campo
+                                            , tamanho
+                                            , qtde_decimal )
+                                     values ( csf_own.ffobjutilintegr_seq.nextval
+                                            , (select o.id from csf_own.obj_util_integr o where o.obj_name = 'VW_CSF_NOTA_FISCAL_FF')
+                                            , 'MODELO_DANFE'
+                                            , 'Modelo do DANFE'
+                                            , 2
+                                            , 60
+                                            , 0 );    
+   exception
+      when others then
+         update csf_own.ff_obj_util_integr
+            set descr = 'Modelo do DANFE'
+              , dm_tipo_campo = 2
+              , tamanho       = 60
+              , qtde_decimal  = 0
+          where objutilintegr_id = (select o.id from csf_own.obj_util_integr o where o.obj_name = 'VW_CSF_NOTA_FISCAL_FF')
+            and upper(atributo)     = 'MODELO_DANFE';
+   end;	
+   --	
+   commit;
+   --   
+end;
+/
+
+--------------------------------------------------------------------------------------------------------------------------------------
+Prompt FIM Redmine #70214 - Integração de modelo Danfe
+--------------------------------------------------------------------------------------------------------------------------------------
+									  
 ------------------------------------------------------------------------------------------
 Prompt FIM Patch 2.9.6.3 - Alteracoes no CSF_OWN
 ------------------------------------------------------------------------------------------
