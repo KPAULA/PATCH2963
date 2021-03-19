@@ -17010,5 +17010,30 @@ exception
       raise;
 end fkg_tabela_existe;
 --
+-------------------------------------------------------------------------------------------------------
+--| Função retorna o ID da tabela Modelo_Danfe
+-------------------------------------------------------------------------------------------------------
+function fkg_Modelo_Danfe_id ( ev_cd          in modelo_danfe.codigo%TYPE )
+         return modelo_danfe.id%TYPE
+is
+
+   vn_modelodanfe_id  modelo_danfe.id%TYPE;
+
+begin
+
+   select id
+     into vn_modelodanfe_id
+     from modelo_danfe
+    where codigo = ev_cd;
+
+   return vn_modelodanfe_id;
+
+exception
+   when no_data_found then
+      return (null);
+   when others then
+      raise_application_error(-20101, 'Erro na fkg_Modelo_Danfe_id:' || sqlerrm);
+end fkg_Modelo_Danfe_id;
+--
 end pk_csf;
 /

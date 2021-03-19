@@ -4,6 +4,11 @@ create or replace package csf_own.pk_csf_api_nfce is
 --   
 -- Especificação do pacote integração de notas fiscais NFCE modelo 65 para o CSF
 --
+-- Em 26/11/2020   - Luis Marques - 2.9.6-3 / 2.9.7
+-- Redmine #70214  - Integração de modelo Danfe
+-- Rotina Alterada - PKB_INTEGR_NOTA_FISCAL_FF - Incluido novo atributo "MODELO_DANFE" para a integração do modelo do
+--                   DANFE.
+--
 -- Em 10/02/2021      - Karina de Paula
 -- Redmine #75685     - Falha na consulta de status da NF-e (Terceiros)
 -- Rotina Alterada    - PKB_CONS_NFE_TERC => Retirado o nf.* e incluído os campos que estão sendo utilizados, alterada a forma de busca do
