@@ -5,6 +5,30 @@ create or replace package csf_own.pk_csf_api is
 -- Especificação do pacote de integração de notas fiscais para o CSF
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --
+-- Em 16/03/2021   - Wendel Albino - patchs 2.9.6-3/ 2.9.5-6/ 297
+-- Redmine #77116  - Ajuste para adequar regra B25c-10 da NT2020.006
+-- Rotina Alterada - PKB_VALIDA_NOTA_FISCAL -> alteracao da regra de validacao DM_IND_INTERMED com base na publicação da V1.10 na NT2020.006
+--                 - Houve ajuste na regra descrita na atividade #75964, incluindo uma condição e alterada data de inicio de vigencia.
+--
+-- Em 16/03/2021   - Wendel Albino - patchs 2.9.6-3/ 2.9.5-6/ 297
+-- Redmine #77044  - Erro ao gerar DANFE Simplificado automaticamente
+-- Rotina Alterada - PKB_INTEGR_NOTA_FISCAL -> alterada a regra de validacao do modelodanfe_id.
+--
+-- Em 26/11/2020   - Luis Marques - 2.9.6-3 / 2.9.7
+-- Redmine #70214  - Integração de modelo Danfe
+-- Rotina Alterada - PKB_INTEGR_NOTA_FISCAL_FF - Incluido novo atributo "MODELO_DANFE" para a integração do modelo do
+--                   DANFE.
+--
+-- Em 15/03/2021   - Wendel Albino - patchs 2.9.6-3/ 2.9.5-6/ 297
+-- Redmine #76598  - Validação do FCp - Total X Itens inválida para ICMS-ST
+-- Rotina Alterada - PKB_VALIDA_TOTAL_NF -> alterada select que soma valores dos imposstos dos itens da nota 
+--                 -   para validacao de FCP retido por ST .("Valor Total do FCP retido por Subst.Trib." está divergente da soma do "Soma do FCP" do Item da Nota fiscal)
+-- 
+-- Em 03/03/2021   - Wendel Albino - patch - 2.9.5-6 / 2.9.6-3 / 2.9.7
+-- Redmine #73567  - Criar validação para valores que compõe o total da NFe  
+-- Rotina Alterada - pkb_ajusta_total_nf_empresa -> criacao validacao e chamada da nova procedure de validacao abaixo
+-- Rotina criada   - criacao procedure pkb_valida_composic_total_nf
+--
 -- Em 01/03/2021   - Luis Marques - 2.9.5-6 / 2.9.6-3 / 2.9.7
 -- Redmine #76489  - Inserção de dados na nota_fiscal_referen (2)
 -- Rotina Alterada - PKB_INTEGR_NF_REFEREN - Incluido verificação de a chave_nfe existe para id de nota diferente do que está entrando no momento
@@ -4026,6 +4050,13 @@ procedure pkb_busca_vlr_aprox_ibpt ( ev_cod_mod         in mod_fiscal.cod_mod%ty
                                      sv_chave_ibpt     out valor_aprox_tributo.chave_ibpt%type,
                                      sn_fonte          out valor_aprox_tributo.fonte%type,
                                      sn_erro           out number);
+--#73567    
+----------------------------------------------------------------------
+-- Procedimento de valida composicao dos valores do total da NFe --
+----------------------------------------------------------------------
+procedure pkb_valida_composic_total_nf ( est_log_generico_nf  in out nocopy dbms_sql.number_table
+                                        , en_notafiscal_id    in nota_fiscal.id%type ); 
 
+-- 
 end pk_csf_api;
 /

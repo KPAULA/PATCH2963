@@ -4,6 +4,10 @@ create or replace package csf_own.pk_valida_ambiente is
 -- Especificação do pacote da API para ler as notas fiscais com DM_ST_PROC = 0 (Não validada)
 -- e chamar os procedimentos para validar os dados
 --
+-- Em 16/03/2021   - Wendel Albino - patchs 2.9.6-3/ 2.9.5-6/ 297
+-- Redmine #77044  - Erro ao gerar DANFE Simplificado automaticamente
+-- Rotina Alterada - pkb_ler_Nota_Fiscal -> incluida "pk_csf_api.gt_row_nota_fiscal.modelodanfe_id := rec.modelodanfe_id;"
+--
 -- Em 12/02/2021      - Karina de Paula
 -- Redmine #76077     - Erro validação e campo 'ITEM_NOTA_FISCAL.VL_ABAT_NT' sendo apagado na validação.
 -- Rotina Alterada    - pkb_ler_Item_Nota_Fiscal => Incluidos os campos INF_CPL_IMP_ITEM, VL_ABAT_NT e COD_INF_ADIC_VLR_DECL nas chamadas da pkb_ler_Item_Nota_Fiscal

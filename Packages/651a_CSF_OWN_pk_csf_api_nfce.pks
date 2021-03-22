@@ -4,6 +4,16 @@ create or replace package csf_own.pk_csf_api_nfce is
 --   
 -- Especificação do pacote integração de notas fiscais NFCE modelo 65 para o CSF
 --
+-- Em 26/11/2020   - Luis Marques - 2.9.6-3 / 2.9.7
+-- Redmine #70214  - Integração de modelo Danfe
+-- Rotina Alterada - PKB_INTEGR_NOTA_FISCAL_FF - Incluido novo atributo "MODELO_DANFE" para a integração do modelo do
+--                   DANFE.
+--
+-- Em 15/03/2021   - Wendel Albino - patchs 2.9.6-3/ 2.9.5-6/ 2.9.7
+-- Redmine #76598  - Validação do FCp - Total X Itens inválida para ICMS-ST
+-- Rotina Alterada - PKB_VALIDA_TOTAL_NF -> alterada select que soma valores dos imposstos dos itens da nota 
+--                 -   para validacao de FCP retido por ST .("Valor Total do FCP retido por Subst.Trib." está divergente da soma do "Soma do FCP" do Item da Nota fiscal)
+-- 
 -- Em 10/02/2021      - Karina de Paula
 -- Redmine #75685     - Falha na consulta de status da NF-e (Terceiros)
 -- Rotina Alterada    - PKB_CONS_NFE_TERC => Retirado o nf.* e incluído os campos que estão sendo utilizados, alterada a forma de busca do
