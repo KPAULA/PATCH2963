@@ -1747,7 +1747,46 @@ end;
 --------------------------------------------------------------------------------------------------------------------------------------
 Prompt FIM Redmine #70214 - Integração de modelo Danfe
 --------------------------------------------------------------------------------------------------------------------------------------
-									  
+	
+-------------------------------------------------------------------------------------------------------------------------------
+Prompt INI Redmine #76937 - Impossível gerar erro em NFe (Com carta de correção)
+-------------------------------------------------------------------------------------------------------------------------------
+
+declare
+  vn_qtde    number;
+begin
+  begin
+     select count(1)
+       into vn_qtde
+       from all_triggers a
+      where a.OWNER = 'CSF_OWN'
+        and a.TRIGGER_NAME = 'T_B_I_U_NOTA_FISCAL_99';  
+   exception
+      when others then
+         vn_qtde := 0;
+   end;	
+   --   
+   if vn_qtde > 0 then
+      --	  
+      -- Drop Trigger  
+      BEGIN
+         EXECUTE IMMEDIATE 'drop trigger CSF_OWN.T_B_I_U_NOTA_FISCAL_99';
+      EXCEPTION
+         WHEN OTHERS THEN
+            RAISE_APPLICATION_ERROR ( -20101, 'Erro ao dropar trigger T_B_I_U_NOTA_FISCAL_99 - '||SQLERRM );
+      END;	  
+      -- 
+   end if;
+   --
+   commit;
+   --   
+end;
+/
+
+--------------------------------------------------------------------------------------------------------------------------------------
+Prompt FIM Redmine #76937 - Impossível gerar erro em NFe (Com carta de correção)
+--------------------------------------------------------------------------------------------------------------------------------------
+     	
 ------------------------------------------------------------------------------------------
 Prompt FIM Patch 2.9.6.3 - Alteracoes no CSF_OWN
 ------------------------------------------------------------------------------------------
