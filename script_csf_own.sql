@@ -1707,6 +1707,85 @@ end;
 -------------------------------------------------------------------------------------------------------------------------------------------
 Prompt FIM - Redmine #75140 Inclusão de valor de domínio para a tabela SUBGRUPO_PAT
 -------------------------------------------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------------------------------------
+Prompt INI Redmine #76108 - Novo processo de integração contabil
+--------------------------------------------------------------------------------------------------------------------------------------
+declare
+vn_count integer;
+begin
+  vn_count:=0;
+  begin
+    select count(1) into vn_count
+    from sys.all_constraints where constraint_name ='TMPTIPOCTRLARQ_PK';
+  exception
+    when others then
+    vn_count:=0;
+  end;
+  if vn_count = 0 then
+    execute immediate 'ALTER TABLE csf_own.TMP_TIPO_CTRL_ARQ ADD CONSTRAINT TMPTIPOCTRLARQ_PK PRIMARY KEY(ID)';
+  end if;
+end;
+/
+
+
+declare
+   vn_existe number := null;
+begin
+   select count(*)
+     into vn_existe
+     from sys.all_tables
+    where OWNER       = 'CSF_OWN'
+      and TABLE_NAME  = 'TMP_CTRL_ARQ_SALDO';
+   --
+   if nvl(vn_existe,0) = 0 then
+      --
+      execute immediate 'CREATE TABLE csf_own.TMP_CTRL_ARQ_SALDO(ID NUMBER,TMPTIPOCTRLARQ_ID NUMBER NOT NULL,LOTEINTWS_ID NUMBER NOT NULL)';
+      --
+      execute immediate 'ALTER TABLE csf_own.TMP_CTRL_ARQ_SALDO ADD CONSTRAINT TMPCTRLARQSALDO_PK PRIMARY KEY(ID)';
+      execute immediate 'ALTER TABLE csf_own.TMP_CTRL_ARQ_SALDO ADD CONSTRAINT TMPTIPOCTRLARQ_FK FOREIGN KEY (TMPTIPOCTRLARQ_ID) REFERENCES csf_own.TMP_TIPO_CTRL_ARQ(ID)';
+      execute immediate 'ALTER TABLE csf_own.TMP_CTRL_ARQ_SALDO ADD CONSTRAINT LOTEINTWS_FK FOREIGN KEY(LOTEINTWS_ID) REFERENCES csf_own.LOTE_INT_WS(ID)';      
+      ---      
+      execute immediate 'grant select, insert, update, delete on CSF_OWN.TMP_CTRL_ARQ_SALDO to CSF_WORK';
+      --
+   end if;
+   --
+exception
+   when others then
+      raise_application_error(-20001, 'Erro no script 77343. Criacao da tabela TMP_CTRL_ARQ_SALDO. Erro: ' || sqlerrm);
+end;
+/
+
+declare
+   vn_existe number := null;
+begin
+   select count(*)
+     into vn_existe
+     from sys.all_sequences s
+    where s.SEQUENCE_OWNER = 'CSF_OWN'
+      and s.SEQUENCE_NAME  = 'TMPCTRLARQSALDO_SEQ';
+   --
+   if nvl(vn_existe,0) = 0 then
+      --
+      execute immediate 'create sequence CSF_OWN.TMPCTRLARQSALDO_SEQ minvalue 1 maxvalue 9999999999999999999999999999 start with 1 increment by 1 nocache';
+      execute immediate 'grant select on CSF_OWN.TMPCTRLARQSALDO_SEQ to CSF_WORK';
+      --
+   elsif nvl(vn_existe,0) > 0 then
+      --
+      execute immediate 'grant select on CSF_OWN.TMPCTRLARQSALDO_SEQ to CSF_WORK';
+      --
+   end if;
+   --
+exception
+   when others then
+      raise_application_error(-20001, 'Erro no script 77343. Criacao da sequence TMPCTRLARQSALDO_SEQ. Erro: ' || sqlerrm);
+end;
+/
+
+-------------------------------------------------------------------------------------------------------------------------------
+Prompt FIM - Redmine #76108 - Novo processo de integração contabil
+-------------------------------------------------------------------------------------------------------------------------------
+
 ------------------------------------------------------------------------------------------
 Prompt FIM Patch 2.9.6.3 - Alteracoes no CSF_OWN
 ------------------------------------------------------------------------------------------
