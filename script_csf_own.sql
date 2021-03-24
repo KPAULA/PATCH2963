@@ -19,7 +19,7 @@ commit
 Prompt INI Redmine #
 -------------------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------------------------------------
-Prompt INI - Redmine #76690 CriaÁ„o de padr„o betha a adiÁ„o de Serra - ES ao padr„o
+Prompt INI - Redmine #76690 Cria√ß√£o de padr√£o betha a adi√ß√£o de Serra - ES ao padr√£o
 -------------------------------------------------------------------------------------------------------------------------------------------
 --
 --CIDADE  : Serra - ES
@@ -44,25 +44,25 @@ declare
    -- dm_tp_amb (Tipo de Ambiente 1-Producao; 2-Homologacao)
    cursor c_dados is
       select   ( select id from csf_own.cidade where ibge_cidade = '3205002' ) id, dm_situacao,  versao,  dm_tp_amb,  dm_tp_soap,  dm_tp_serv, descr, url_wsdl, dm_upload, dm_ind_emit 
-        from ( --ProduÁ„o
-			   select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'GeraÁ„o de NFS-e'                               descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSEntrada?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'RecepÁ„o e Processamento de lote de RPS'        descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSEntrada?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de SituaÁ„o de lote de RPS'            descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSEntrada?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+        from ( --Produ√ß√£o
+			   select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'Gera√ß√£o de NFS-e'                               descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSEntrada?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'Recep√ß√£o e Processamento de lote de RPS'        descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSEntrada?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de Situa√ß√£o de lote de RPS'            descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSEntrada?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  4 dm_tp_serv, 'Consulta de NFS-e por RPS'                      descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSSaida?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  5 dm_tp_serv, 'Consulta de NFS-e'                              descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSSaida?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  6 dm_tp_serv, 'Cancelamento de NFS-e'                          descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSEntrada?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'SubstituiÁ„o de NFS-e'                          descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSEntrada?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'Substitui√ß√£o de NFS-e'                          descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSEntrada?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  8 dm_tp_serv, 'Consulta de Empresas Autorizadas a emitir NFS-e'descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSEntrada?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  9 dm_tp_serv, 'Login'                                          descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSEntrada?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap, 10 dm_tp_serv, 'Consulta de Lote de RPS'                        descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSSaida?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               --HomologaÁ„o
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'GeraÁ„o de NFS-e'                               descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSEntrada?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'RecepÁ„o e Processamento de lote de RPS'        descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSEntrada?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de SituaÁ„o de lote de RPS'            descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSEntrada?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               --Homologa√ß√£o
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'Gera√ß√£o de NFS-e'                               descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSEntrada?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'Recep√ß√£o e Processamento de lote de RPS'        descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSEntrada?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de Situa√ß√£o de lote de RPS'            descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSEntrada?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  4 dm_tp_serv, 'Consulta de NFS-e por RPS'                      descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSSaida?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  5 dm_tp_serv, 'Consulta de NFS-e'                              descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSSaida?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  6 dm_tp_serv, 'Cancelamento de NFS-e'                          descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSEntrada?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'SubstituiÁ„o de NFS-e'                          descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSEntrada?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'Substitui√ß√£o de NFS-e'                          descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSEntrada?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  8 dm_tp_serv, 'Consulta de Empresas Autorizadas a emitir NFS-e'descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSEntrada?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  9 dm_tp_serv, 'Login'                                          descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSEntrada?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap, 10 dm_tp_serv, 'Consulta de Lote de RPS'                        descr, 'http://apps.serra.es.gov.br:8080/tbw/services/WSSaida?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual
@@ -116,7 +116,7 @@ begin
                   commit; 
                   --
                exception when others then 
-                  raise_application_error(-20101, 'Erro no script Redmine #76690 AtualizaÁ„o URL ambiente de homologaÁ„o e ProduÁ„o Serra - ES' || sqlerrm);
+                  raise_application_error(-20101, 'Erro no script Redmine #76690 Atualiza√ß√£o URL ambiente de homologa√ß√£o e Produ√ß√£o Serra - ES' || sqlerrm);
                end; 
                --
          end;
@@ -128,7 +128,7 @@ begin
    --
 exception
    when others then
-      raise_application_error(-20102, 'Erro no script Redmine #76690 AtualizaÁ„o URL ambiente de homologaÁ„o e ProduÁ„o Serra - ES' || sqlerrm);
+      raise_application_error(-20102, 'Erro no script Redmine #76690 Atualiza√ß√£o URL ambiente de homologa√ß√£o e Produ√ß√£o Serra - ES' || sqlerrm);
 end;
 /
 
@@ -143,7 +143,7 @@ vv_ws_canc     csf_own.dominio.descr%type;
 
 --
 Begin
-	-- Popula vari·veis
+	-- Popula vari√°veis
 	vv_ibge_cidade := '3205002';
 	vv_padrao      := 'smarapd';     
 	vv_habil       := 'SIM';
@@ -200,7 +200,7 @@ Begin
 								       , dm_ws_canc = (select distinct vl from csf_own.dominio where upper(dominio) = upper('cidade_nfse.dm_ws_canc') and upper(descr) = upper(vv_ws_canc))
          where cidade_id = (select distinct id from csf_own.cidade where ibge_cidade in (vv_ibge_cidade));
 		exception when others then
-			raise_application_error(-20103, 'Erro no script Redmine #76690 AtualizaÁ„o do Padr„o Serra - ES' || sqlerrm);
+			raise_application_error(-20103, 'Erro no script Redmine #76690 Atualiza√ß√£o do Padr√£o Serra - ES' || sqlerrm);
     end;
 	--
 	commit;
@@ -211,13 +211,13 @@ end;
 /  
 
 -------------------------------------------------------------------------------------------------------------------------------------------
-Prompt FIM - Redmine #76690 CriaÁ„o de padr„o betha a adiÁ„o de Serra - ES ao padr„o
+Prompt FIM - Redmine #76690 Cria√ß√£o de padr√£o betha a adi√ß√£o de Serra - ES ao padr√£o
 -------------------------------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------------------------------------
-Prompt INI - Redmine #76664 CriaÁ„o de padr„o betha a adiÁ„o de SumarÈ - SP ao padr„o
+Prompt INI - Redmine #76664 Cria√ß√£o de padr√£o betha a adi√ß√£o de Sumar√© - SP ao padr√£o
 -------------------------------------------------------------------------------------------------------------------------------------------
 --
---CIDADE  : SumarÈ - SP
+--CIDADE  : Sumar√© - SP
 --IBGE    : 3552403
 --PADRAO  : SigissWeb
 --HABIL   : SIM
@@ -235,25 +235,25 @@ declare
    -- dm_tp_amb (Tipo de Ambiente 1-Producao; 2-Homologacao)
    cursor c_dados is
       select   ( select id from csf_own.cidade where ibge_cidade = '3552403' ) id, dm_situacao,  versao,  dm_tp_amb,  dm_tp_soap,  dm_tp_serv, descr, url_wsdl, dm_upload, dm_ind_emit 
-        from ( --ProduÁ„o
-			   select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'GeraÁ„o de NFS-e'                               descr, 'https://wssumare.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'RecepÁ„o e Processamento de lote de RPS'        descr, 'https://wssumare.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de SituaÁ„o de lote de RPS'            descr, 'https://wssumare.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+        from ( --Produ√ß√£o
+			   select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'Gera√ß√£o de NFS-e'                               descr, 'https://wssumare.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'Recep√ß√£o e Processamento de lote de RPS'        descr, 'https://wssumare.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de Situa√ß√£o de lote de RPS'            descr, 'https://wssumare.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  4 dm_tp_serv, 'Consulta de NFS-e por RPS'                      descr, 'https://wssumare.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  5 dm_tp_serv, 'Consulta de NFS-e'                              descr, 'https://wssumare.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  6 dm_tp_serv, 'Cancelamento de NFS-e'                          descr, 'https://wssumare.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'SubstituiÁ„o de NFS-e'                          descr, 'https://wssumare.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'Substitui√ß√£o de NFS-e'                          descr, 'https://wssumare.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  8 dm_tp_serv, 'Consulta de Empresas Autorizadas a emitir NFS-e'descr, 'https://wssumare.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  9 dm_tp_serv, 'Login'                                          descr, 'https://wssumare.sigissweb.com/rest/login' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap, 10 dm_tp_serv, 'Consulta de Lote de RPS'                        descr, 'https://wssumare.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               --HomologaÁ„o
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'GeraÁ„o de NFS-e'                               descr, 'https://wshml.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'RecepÁ„o e Processamento de lote de RPS'        descr, 'https://wshml.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de SituaÁ„o de lote de RPS'            descr, 'https://wshml.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               --Homologa√ß√£o
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'Gera√ß√£o de NFS-e'                               descr, 'https://wshml.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'Recep√ß√£o e Processamento de lote de RPS'        descr, 'https://wshml.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de Situa√ß√£o de lote de RPS'            descr, 'https://wshml.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  4 dm_tp_serv, 'Consulta de NFS-e por RPS'                      descr, 'https://wshml.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  5 dm_tp_serv, 'Consulta de NFS-e'                              descr, 'https://wshml.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  6 dm_tp_serv, 'Cancelamento de NFS-e'                          descr, 'https://wshml.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'SubstituiÁ„o de NFS-e'                          descr, 'https://wshml.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'Substitui√ß√£o de NFS-e'                          descr, 'https://wshml.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  8 dm_tp_serv, 'Consulta de Empresas Autorizadas a emitir NFS-e'descr, 'https://wshml.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  9 dm_tp_serv, 'Login'                                          descr, 'https://wshml.sigissweb.com/rest/login' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap, 10 dm_tp_serv, 'Consulta de Lote de RPS'                        descr, 'https://wshml.sigissweb.com/rest/' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual
@@ -307,7 +307,7 @@ begin
                   commit; 
                   --
                exception when others then 
-                  raise_application_error(-20101, 'Erro no script Redmine #76664 AtualizaÁ„o URL ambiente de homologaÁ„o e ProduÁ„o SumarÈ - SP' || sqlerrm);
+                  raise_application_error(-20101, 'Erro no script Redmine #76664 Atualiza√ß√£o URL ambiente de homologa√ß√£o e Produ√ß√£o Sumar√© - SP' || sqlerrm);
                end; 
                --
          end;
@@ -319,7 +319,7 @@ begin
    --
 exception
    when others then
-      raise_application_error(-20102, 'Erro no script Redmine #76664 AtualizaÁ„o URL ambiente de homologaÁ„o e ProduÁ„o SumarÈ - SP' || sqlerrm);
+      raise_application_error(-20102, 'Erro no script Redmine #76664 Atualiza√ß√£o URL ambiente de homologa√ß√£o e Produ√ß√£o Sumar√© - SP' || sqlerrm);
 end;
 /
 
@@ -334,7 +334,7 @@ vv_ws_canc     csf_own.dominio.descr%type;
 
 --
 Begin
-	-- Popula vari·veis
+	-- Popula vari√°veis
 	vv_ibge_cidade := '3552403';
 	vv_padrao      := 'SigissWeb';     
 	vv_habil       := 'SIM';
@@ -391,7 +391,7 @@ Begin
 								       , dm_ws_canc = (select distinct vl from csf_own.dominio where upper(dominio) = upper('cidade_nfse.dm_ws_canc') and upper(descr) = upper(vv_ws_canc))
          where cidade_id = (select distinct id from csf_own.cidade where ibge_cidade in (vv_ibge_cidade));
 		exception when others then
-			raise_application_error(-20103, 'Erro no script Redmine #76664 AtualizaÁ„o do Padr„o SumarÈ - SP' || sqlerrm);
+			raise_application_error(-20103, 'Erro no script Redmine #76664 Atualiza√ß√£o do Padr√£o Sumar√© - SP' || sqlerrm);
     end;
 	--
 	commit;
@@ -402,10 +402,10 @@ end;
 /  
 
 -------------------------------------------------------------------------------------------------------------------------------------------
-Prompt FIM - Redmine #76664 CriaÁ„o de padr„o betha a adiÁ„o de SumarÈ - SP ao padr„o
+Prompt FIM - Redmine #76664 Cria√ß√£o de padr√£o betha a adi√ß√£o de Sumar√© - SP ao padr√£o
 -------------------------------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------------------------------------
-Prompt INI - Redmine #76668 CriaÁ„o de padr„o betha a adiÁ„o de Blumenau - SC ao padr„o
+Prompt INI - Redmine #76668 Cria√ß√£o de padr√£o betha a adi√ß√£o de Blumenau - SC ao padr√£o
 -------------------------------------------------------------------------------------------------------------------------------------------
 --
 --CIDADE  : Blumenau - SC 
@@ -422,25 +422,25 @@ declare
    -- dm_tp_amb (Tipo de Ambiente 1-Producao; 2-Homologacao)
    cursor c_dados is
       select   ( select id from csf_own.cidade where ibge_cidade = '4202404' ) id, dm_situacao,  versao,  dm_tp_amb,  dm_tp_soap,  dm_tp_serv, descr, url_wsdl, dm_upload, dm_ind_emit 
-        from ( --ProduÁ„o
-			   select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'GeraÁ„o de NFS-e'                               descr, 'http://wsblumenau.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'RecepÁ„o e Processamento de lote de RPS'        descr, 'http://wsblumenau.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de SituaÁ„o de lote de RPS'            descr, 'http://wsblumenau.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+        from ( --Produ√ß√£o
+			   select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'Gera√ß√£o de NFS-e'                               descr, 'http://wsblumenau.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'Recep√ß√£o e Processamento de lote de RPS'        descr, 'http://wsblumenau.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de Situa√ß√£o de lote de RPS'            descr, 'http://wsblumenau.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  4 dm_tp_serv, 'Consulta de NFS-e por RPS'                      descr, 'http://wsblumenau.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  5 dm_tp_serv, 'Consulta de NFS-e'                              descr, 'http://wsblumenau.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  6 dm_tp_serv, 'Cancelamento de NFS-e'                          descr, 'http://wsblumenau.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'SubstituiÁ„o de NFS-e'                          descr, 'http://wsblumenau.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'Substitui√ß√£o de NFS-e'                          descr, 'http://wsblumenau.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  8 dm_tp_serv, 'Consulta de Empresas Autorizadas a emitir NFS-e'descr, 'http://wsblumenau.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  9 dm_tp_serv, 'Login'                                          descr, 'http://wsblumenau.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap, 10 dm_tp_serv, 'Consulta de Lote de RPS'                        descr, 'http://wsblumenau.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               --HomologaÁ„o
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'GeraÁ„o de NFS-e'                               descr, 'http://wshomologacaoabrasf.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'RecepÁ„o e Processamento de lote de RPS'        descr, 'http://wshomologacaoabrasf.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de SituaÁ„o de lote de RPS'            descr, 'http://wshomologacaoabrasf.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               --Homologa√ß√£o
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'Gera√ß√£o de NFS-e'                               descr, 'http://wshomologacaoabrasf.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'Recep√ß√£o e Processamento de lote de RPS'        descr, 'http://wshomologacaoabrasf.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de Situa√ß√£o de lote de RPS'            descr, 'http://wshomologacaoabrasf.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  4 dm_tp_serv, 'Consulta de NFS-e por RPS'                      descr, 'http://wshomologacaoabrasf.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  5 dm_tp_serv, 'Consulta de NFS-e'                              descr, 'http://wshomologacaoabrasf.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  6 dm_tp_serv, 'Cancelamento de NFS-e'                          descr, 'http://wshomologacaoabrasf.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'SubstituiÁ„o de NFS-e'                          descr, 'http://wshomologacaoabrasf.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'Substitui√ß√£o de NFS-e'                          descr, 'http://wshomologacaoabrasf.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  8 dm_tp_serv, 'Consulta de Empresas Autorizadas a emitir NFS-e'descr, 'http://wshomologacaoabrasf.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  9 dm_tp_serv, 'Login'                                          descr, 'http://wshomologacaoabrasf.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap, 10 dm_tp_serv, 'Consulta de Lote de RPS'                        descr, 'http://wshomologacaoabrasf.simplissweb.com.br/nfseservice.svc?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual
@@ -494,7 +494,7 @@ begin
                   commit; 
                   --
                exception when others then 
-                  raise_application_error(-20101, 'Erro no script Redmine #76668 AtualizaÁ„o URL ambiente de homologaÁ„o e ProduÁ„o Blumenau - SC' || sqlerrm);
+                  raise_application_error(-20101, 'Erro no script Redmine #76668 Atualiza√ß√£o URL ambiente de homologa√ß√£o e Produ√ß√£o Blumenau - SC' || sqlerrm);
                end; 
                --
          end;
@@ -506,7 +506,7 @@ begin
    --
 exception
    when others then
-      raise_application_error(-20102, 'Erro no script Redmine #76668 AtualizaÁ„o URL ambiente de homologaÁ„o e ProduÁ„o Blumenau - SC' || sqlerrm);
+      raise_application_error(-20102, 'Erro no script Redmine #76668 Atualiza√ß√£o URL ambiente de homologa√ß√£o e Produ√ß√£o Blumenau - SC' || sqlerrm);
 end;
 /
 
@@ -521,7 +521,7 @@ vv_ws_canc     csf_own.dominio.descr%type;
 
 --
 Begin
-	-- Popula vari·veis
+	-- Popula vari√°veis
 	vv_ibge_cidade := '4202404';
 	vv_padrao      := 'Simpliss';     
 	vv_habil       := 'SIM';
@@ -578,7 +578,7 @@ Begin
 								       , dm_ws_canc = (select distinct vl from csf_own.dominio where upper(dominio) = upper('cidade_nfse.dm_ws_canc') and upper(descr) = upper(vv_ws_canc))
          where cidade_id = (select distinct id from csf_own.cidade where ibge_cidade in (vv_ibge_cidade));
 		exception when others then
-			raise_application_error(-20103, 'Erro no script Redmine #76668 AtualizaÁ„o do Padr„o Blumenau - SC' || sqlerrm);
+			raise_application_error(-20103, 'Erro no script Redmine #76668 Atualiza√ß√£o do Padr√£o Blumenau - SC' || sqlerrm);
     end;
 	--
 	commit;
@@ -589,10 +589,10 @@ end;
 /  
 
 -------------------------------------------------------------------------------------------------------------------------------------------
-Prompt FIM - Redmine #76668 CriaÁ„o de padr„o betha a adiÁ„o de Blumenau - SC ao padr„o
+Prompt FIM - Redmine #76668 Cria√ß√£o de padr√£o betha a adi√ß√£o de Blumenau - SC ao padr√£o
 -------------------------------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------------------------------------
-Prompt INI - Redmine #76691 CriaÁ„o de padr„o betha a adiÁ„o de Contagem - MG ao padr„o
+Prompt INI - Redmine #76691 Cria√ß√£o de padr√£o betha a adi√ß√£o de Contagem - MG ao padr√£o
 -------------------------------------------------------------------------------------------------------------------------------------------
 --
 --CIDADE  : Contagem - MG
@@ -602,9 +602,9 @@ Prompt INI - Redmine #76691 CriaÁ„o de padr„o betha a adiÁ„o de Contagem - MG ao
 --WS_CANC : SIM
 
 
---URL ProduÁ„o:
+--URL Produ√ß√£o:
 --https://producao.ginfes.com.br/ServiceGinfesImpl?wsdl
---URL HomologaÁ„o:
+--URL Homologa√ß√£o:
 --https://homologacao.ginfes.com.br/ServiceGinfesImpl?wsdl
 
 declare 
@@ -612,25 +612,25 @@ declare
    -- dm_tp_amb (Tipo de Ambiente 1-Producao; 2-Homologacao)
    cursor c_dados is
       select   ( select id from csf_own.cidade where ibge_cidade = '3118601' ) id, dm_situacao,  versao,  dm_tp_amb,  dm_tp_soap,  dm_tp_serv, descr, url_wsdl, dm_upload, dm_ind_emit 
-        from ( --ProduÁ„o
-			   select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'GeraÁ„o de NFS-e'                               descr, 'https://producao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'RecepÁ„o e Processamento de lote de RPS'        descr, 'https://producao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de SituaÁ„o de lote de RPS'            descr, 'https://producao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+        from ( --Produ√ß√£o
+			   select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'Gera√ß√£o de NFS-e'                               descr, 'https://producao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'Recep√ß√£o e Processamento de lote de RPS'        descr, 'https://producao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de Situa√ß√£o de lote de RPS'            descr, 'https://producao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  4 dm_tp_serv, 'Consulta de NFS-e por RPS'                      descr, 'https://producao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  5 dm_tp_serv, 'Consulta de NFS-e'                              descr, 'https://producao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  6 dm_tp_serv, 'Cancelamento de NFS-e'                          descr, 'https://producao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'SubstituiÁ„o de NFS-e'                          descr, 'https://producao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'Substitui√ß√£o de NFS-e'                          descr, 'https://producao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  8 dm_tp_serv, 'Consulta de Empresas Autorizadas a emitir NFS-e'descr, 'https://producao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  9 dm_tp_serv, 'Login'                                          descr, 'https://producao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap, 10 dm_tp_serv, 'Consulta de Lote de RPS'                        descr, 'https://producao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               --HomologaÁ„o
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'GeraÁ„o de NFS-e'                               descr, 'https://homologacao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'RecepÁ„o e Processamento de lote de RPS'        descr, 'https://homologacao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de SituaÁ„o de lote de RPS'            descr, 'https://homologacao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               --Homologa√ß√£o
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'Gera√ß√£o de NFS-e'                               descr, 'https://homologacao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'Recep√ß√£o e Processamento de lote de RPS'        descr, 'https://homologacao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de Situa√ß√£o de lote de RPS'            descr, 'https://homologacao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  4 dm_tp_serv, 'Consulta de NFS-e por RPS'                      descr, 'https://homologacao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  5 dm_tp_serv, 'Consulta de NFS-e'                              descr, 'https://homologacao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  6 dm_tp_serv, 'Cancelamento de NFS-e'                          descr, 'https://homologacao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'SubstituiÁ„o de NFS-e'                          descr, 'https://homologacao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'Substitui√ß√£o de NFS-e'                          descr, 'https://homologacao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  8 dm_tp_serv, 'Consulta de Empresas Autorizadas a emitir NFS-e'descr, 'https://homologacao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  9 dm_tp_serv, 'Login'                                          descr, 'https://homologacao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap, 10 dm_tp_serv, 'Consulta de Lote de RPS'                        descr, 'https://homologacao.ginfes.com.br/ServiceGinfesImpl?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual
@@ -684,7 +684,7 @@ begin
                   commit; 
                   --
                exception when others then 
-                  raise_application_error(-20101, 'Erro no script Redmine #76691 AtualizaÁ„o URL ambiente de homologaÁ„o e ProduÁ„o Contagem - MG' || sqlerrm);
+                  raise_application_error(-20101, 'Erro no script Redmine #76691 Atualiza√ß√£o URL ambiente de homologa√ß√£o e Produ√ß√£o Contagem - MG' || sqlerrm);
                end; 
                --
          end;
@@ -696,7 +696,7 @@ begin
    --
 exception
    when others then
-      raise_application_error(-20102, 'Erro no script Redmine #76691 AtualizaÁ„o URL ambiente de homologaÁ„o e ProduÁ„o Contagem - MG' || sqlerrm);
+      raise_application_error(-20102, 'Erro no script Redmine #76691 Atualiza√ß√£o URL ambiente de homologa√ß√£o e Produ√ß√£o Contagem - MG' || sqlerrm);
 end;
 /
 
@@ -711,7 +711,7 @@ vv_ws_canc     csf_own.dominio.descr%type;
 
 --
 Begin
-	-- Popula vari·veis
+	-- Popula vari√°veis
 	vv_ibge_cidade := '3118601';
 	vv_padrao      := 'Ginfes';     
 	vv_habil       := 'SIM';
@@ -768,7 +768,7 @@ Begin
 								       , dm_ws_canc = (select distinct vl from csf_own.dominio where upper(dominio) = upper('cidade_nfse.dm_ws_canc') and upper(descr) = upper(vv_ws_canc))
          where cidade_id = (select distinct id from csf_own.cidade where ibge_cidade in (vv_ibge_cidade));
 		exception when others then
-			raise_application_error(-20103, 'Erro no script Redmine #76691 AtualizaÁ„o do Padr„o Contagem - MG' || sqlerrm);
+			raise_application_error(-20103, 'Erro no script Redmine #76691 Atualiza√ß√£o do Padr√£o Contagem - MG' || sqlerrm);
     end;
 	--
 	commit;
@@ -779,10 +779,10 @@ end;
 /  
 
 -------------------------------------------------------------------------------------------------------------------------------------------
-Prompt FIM - Redmine #76691 CriaÁ„o de padr„o betha a adiÁ„o de Contagem - MG ao padr„o
+Prompt FIM - Redmine #76691 Cria√ß√£o de padr√£o betha a adi√ß√£o de Contagem - MG ao padr√£o
 -------------------------------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------------------------------------
-Prompt INI - Redmine #76568 CriaÁ„o de padr„o betha a adiÁ„o de PASSO FUNDO - RS ao padr„o
+Prompt INI - Redmine #76568 Cria√ß√£o de padr√£o betha a adi√ß√£o de PASSO FUNDO - RS ao padr√£o
 -------------------------------------------------------------------------------------------------------------------------------------------
 --
 --CIDADE  : PASSO FUNDO - RS
@@ -796,25 +796,25 @@ declare
    -- dm_tp_amb (Tipo de Ambiente 1-Producao; 2-Homologacao)
    cursor c_dados is
       select   ( select id from csf_own.cidade where ibge_cidade = '4314100' ) id, dm_situacao,  versao,  dm_tp_amb,  dm_tp_soap,  dm_tp_serv, descr, url_wsdl, dm_upload, dm_ind_emit 
-        from ( --ProduÁ„o
-			   select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'GeraÁ„o de NFS-e'                               descr, 'https://nfse.pmpf.rs.gov.br/thema-nfse/services/NFSEremessa?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'RecepÁ„o e Processamento de lote de RPS'        descr, 'https://nfse.pmpf.rs.gov.br/thema-nfse/services/NFSEremessa?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de SituaÁ„o de lote de RPS'            descr, 'https://nfse.pmpf.rs.gov.br/thema-nfse/services/NFSEconsulta?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+        from ( --Produ√ß√£o
+			   select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'Gera√ß√£o de NFS-e'                               descr, 'https://nfse.pmpf.rs.gov.br/thema-nfse/services/NFSEremessa?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'Recep√ß√£o e Processamento de lote de RPS'        descr, 'https://nfse.pmpf.rs.gov.br/thema-nfse/services/NFSEremessa?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de Situa√ß√£o de lote de RPS'            descr, 'https://nfse.pmpf.rs.gov.br/thema-nfse/services/NFSEconsulta?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  4 dm_tp_serv, 'Consulta de NFS-e por RPS'                      descr, 'https://nfse.pmpf.rs.gov.br/thema-nfse/services/NFSEconsulta?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  5 dm_tp_serv, 'Consulta de NFS-e'                              descr, 'https://nfse.pmpf.rs.gov.br/thema-nfse/services/NFSEconsulta?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  6 dm_tp_serv, 'Cancelamento de NFS-e'                          descr, 'https://nfse.pmpf.rs.gov.br/thema-nfse/services/NFSEcancelamento?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'SubstituiÁ„o de NFS-e'                          descr, 'https://nfse.pmpf.rs.gov.br/thema-nfse/services/NFSEremessa?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'Substitui√ß√£o de NFS-e'                          descr, 'https://nfse.pmpf.rs.gov.br/thema-nfse/services/NFSEremessa?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  8 dm_tp_serv, 'Consulta de Empresas Autorizadas a emitir NFS-e'descr, 'https://nfse.pmpf.rs.gov.br/thema-nfse/services/NFSEdadosCadastrais?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  9 dm_tp_serv, 'Login'                                          descr, 'https://nfse.pmpf.rs.gov.br/thema-nfse/services/NFSEconsulta?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap, 10 dm_tp_serv, 'Consulta de Lote de RPS'                        descr, 'https://nfse.pmpf.rs.gov.br/thema-nfse/services/NFSEconsulta?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               --HomologaÁ„o
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'GeraÁ„o de NFS-e'                               descr, 'http://hmlnfse.pmpf.rs.gov.br/thema-nfse/services/NFSEremessa?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'RecepÁ„o e Processamento de lote de RPS'        descr, 'http://hmlnfse.pmpf.rs.gov.br/thema-nfse/services/NFSEremessa?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de SituaÁ„o de lote de RPS'            descr, 'http://hmlnfse.pmpf.rs.gov.br/thema-nfse/services/NFSEconsulta?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               --Homologa√ß√£o
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'Gera√ß√£o de NFS-e'                               descr, 'http://hmlnfse.pmpf.rs.gov.br/thema-nfse/services/NFSEremessa?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'Recep√ß√£o e Processamento de lote de RPS'        descr, 'http://hmlnfse.pmpf.rs.gov.br/thema-nfse/services/NFSEremessa?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de Situa√ß√£o de lote de RPS'            descr, 'http://hmlnfse.pmpf.rs.gov.br/thema-nfse/services/NFSEconsulta?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  4 dm_tp_serv, 'Consulta de NFS-e por RPS'                      descr, 'http://hmlnfse.pmpf.rs.gov.br/thema-nfse/services/NFSEconsulta?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  5 dm_tp_serv, 'Consulta de NFS-e'                              descr, 'http://hmlnfse.pmpf.rs.gov.br/thema-nfse/services/NFSEconsulta?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  6 dm_tp_serv, 'Cancelamento de NFS-e'                          descr, 'http://hmlnfse.pmpf.rs.gov.br/thema-nfse/services/NFSEcancelamento?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'SubstituiÁ„o de NFS-e'                          descr, 'http://hmlnfse.pmpf.rs.gov.br/thema-nfse/services/NFSEremessa?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'Substitui√ß√£o de NFS-e'                          descr, 'http://hmlnfse.pmpf.rs.gov.br/thema-nfse/services/NFSEremessa?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  8 dm_tp_serv, 'Consulta de Empresas Autorizadas a emitir NFS-e'descr, 'http://hmlnfse.pmpf.rs.gov.br/thema-nfse/services/NFSEdadosCadastrais?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  9 dm_tp_serv, 'Login'                                          descr, 'http://hmlnfse.pmpf.rs.gov.br/thema-nfse/services/NFSEconsulta?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap, 10 dm_tp_serv, 'Consulta de Lote de RPS'                        descr, 'http://hmlnfse.pmpf.rs.gov.br/thema-nfse/services/NFSEconsulta?wsdl' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual
@@ -868,7 +868,7 @@ begin
                   commit; 
                   --
                exception when others then 
-                  raise_application_error(-20101, 'Erro no script Redmine #76568 AtualizaÁ„o URL ambiente de homologaÁ„o e ProduÁ„o PASSO FUNDO - RS' || sqlerrm);
+                  raise_application_error(-20101, 'Erro no script Redmine #76568 Atualiza√ß√£o URL ambiente de homologa√ß√£o e Produ√ß√£o PASSO FUNDO - RS' || sqlerrm);
                end; 
                --
          end;
@@ -880,7 +880,7 @@ begin
    --
 exception
    when others then
-      raise_application_error(-20102, 'Erro no script Redmine #76568 AtualizaÁ„o URL ambiente de homologaÁ„o e ProduÁ„o PASSO FUNDO - RS' || sqlerrm);
+      raise_application_error(-20102, 'Erro no script Redmine #76568 Atualiza√ß√£o URL ambiente de homologa√ß√£o e Produ√ß√£o PASSO FUNDO - RS' || sqlerrm);
 end;
 /
 
@@ -895,7 +895,7 @@ vv_ws_canc     csf_own.dominio.descr%type;
 
 --
 Begin
-	-- Popula vari·veis
+	-- Popula vari√°veis
 	vv_ibge_cidade := '4314100';
 	vv_padrao      := 'Thema';     
 	vv_habil       := 'SIM';
@@ -952,7 +952,7 @@ Begin
 								       , dm_ws_canc = (select distinct vl from csf_own.dominio where upper(dominio) = upper('cidade_nfse.dm_ws_canc') and upper(descr) = upper(vv_ws_canc))
          where cidade_id = (select distinct id from csf_own.cidade where ibge_cidade in (vv_ibge_cidade));
 		exception when others then
-			raise_application_error(-20103, 'Erro no script Redmine #76568 AtualizaÁ„o do Padr„o PASSO FUNDO - RS' || sqlerrm);
+			raise_application_error(-20103, 'Erro no script Redmine #76568 Atualiza√ß√£o do Padr√£o PASSO FUNDO - RS' || sqlerrm);
     end;
 	--
 	commit;
@@ -963,7 +963,7 @@ end;
 /  
 
 -------------------------------------------------------------------------------------------------------------------------------------------
-Prompt FIM - Redmine #76568 CriaÁ„o de padr„o betha a adiÁ„o de PASSO FUNDO - RS ao padr„o
+Prompt FIM - Redmine #76568 Cria√ß√£o de padr√£o betha a adi√ß√£o de PASSO FUNDO - RS ao padr√£o
 -------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -972,7 +972,7 @@ Prompt FIM Redmine #
 -------------------------------------------------------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------------------------------------------------------
-Prompt INI Redmine #76565 - Verificar e caso n„o tenha colocar DT_COMPET nos resumos de CFOP (CST/ALIQ/UF)
+Prompt INI Redmine #76565 - Verificar e caso n√£o tenha colocar DT_COMPET nos resumos de CFOP (CST/ALIQ/UF)
 -------------------------------------------------------------------------------------------------------------------------------
 
 declare
@@ -1090,11 +1090,11 @@ end;
 /
 
 --------------------------------------------------------------------------------------------------------------------------------------
-Prompt FIM Redmine #76565 - Verificar e caso n„o tenha colocar DT_COMPET nos resumos de CFOP (CST/ALIQ/UF)
+Prompt FIM Redmine #76565 - Verificar e caso n√£o tenha colocar DT_COMPET nos resumos de CFOP (CST/ALIQ/UF)
 --------------------------------------------------------------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------------------------------------------------------
-Prompt INI Redmine #76872 - CriaÁ„o de view
+Prompt INI Redmine #76872 - Cria√ß√£o de view
 -------------------------------------------------------------------------------------------------------------------------------
 
 begin
@@ -1103,7 +1103,7 @@ begin
    --
    BEGIN
       EXECUTE IMMEDIATE 'CREATE OR REPLACE VIEW CSF_OWN.V_DACTE_DUTOVIARIO AS 
-select --DADOS DO CABE«ALHO
+select --DADOS DO CABE√áALHO
        ct.id conhectransp_id
      , ct.nro_ct
      , ct.serie
@@ -1313,10 +1313,10 @@ end;
 /
 
 --------------------------------------------------------------------------------------------------------------------------------------
-Prompt FIM Redmine #76872 - CriaÁ„o de view
+Prompt FIM Redmine #76872 - Cria√ß√£o de view
 --------------------------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------------------------------------
-Prompt INI - Redmine #76828 CriaÁ„o de padr„o IPM Fiscal a adiÁ„o de Cascavel - PR ao padr„o
+Prompt INI - Redmine #76828 Cria√ß√£o de padr√£o IPM Fiscal a adi√ß√£o de Cascavel - PR ao padr√£o
 -------------------------------------------------------------------------------------------------------------------------------------------
 --
 --CIDADE  : Cascavel - PR 
@@ -1328,35 +1328,35 @@ Prompt INI - Redmine #76828 CriaÁ„o de padr„o IPM Fiscal a adiÁ„o de Cascavel - 
 --PRD
 --http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1
 --HML
---N„o possui
+--N√£o possui
 
 declare 
    --   
    -- dm_tp_amb (Tipo de Ambiente 1-Producao; 2-Homologacao)
    cursor c_dados is
       select   ( select id from csf_own.cidade where ibge_cidade = '4104808' ) id, dm_situacao,  versao,  dm_tp_amb,  dm_tp_soap,  dm_tp_serv, descr, url_wsdl, dm_upload, dm_ind_emit 
-        from ( --ProduÁ„o
-			   select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'GeraÁ„o de NFS-e'                               descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'RecepÁ„o e Processamento de lote de RPS'        descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de SituaÁ„o de lote de RPS'            descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+        from ( --Produ√ß√£o
+			   select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'Gera√ß√£o de NFS-e'                               descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'Recep√ß√£o e Processamento de lote de RPS'        descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de Situa√ß√£o de lote de RPS'            descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  4 dm_tp_serv, 'Consulta de NFS-e por RPS'                      descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  5 dm_tp_serv, 'Consulta de NFS-e'                              descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  6 dm_tp_serv, 'Cancelamento de NFS-e'                          descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'SubstituiÁ„o de NFS-e'                          descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'Substitui√ß√£o de NFS-e'                          descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  8 dm_tp_serv, 'Consulta de Empresas Autorizadas a emitir NFS-e'descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap,  9 dm_tp_serv, 'Login'                                          descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
                select 1 dm_situacao, '1' versao, 1 dm_tp_amb, 2 dm_tp_soap, 10 dm_tp_serv, 'Consulta de Lote de RPS'                        descr, 'http://sync.nfs-e.net/datacenter/include/nfw/importa_nfw/nfw_import_upload.php?eletron=1' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               --HomologaÁ„o
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'GeraÁ„o de NFS-e'                               descr, 'N„o possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'RecepÁ„o e Processamento de lote de RPS'        descr, 'N„o possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de SituaÁ„o de lote de RPS'            descr, 'N„o possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  4 dm_tp_serv, 'Consulta de NFS-e por RPS'                      descr, 'N„o possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  5 dm_tp_serv, 'Consulta de NFS-e'                              descr, 'N„o possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  6 dm_tp_serv, 'Cancelamento de NFS-e'                          descr, 'N„o possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'SubstituiÁ„o de NFS-e'                          descr, 'N„o possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  8 dm_tp_serv, 'Consulta de Empresas Autorizadas a emitir NFS-e'descr, 'N„o possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  9 dm_tp_serv, 'Login'                                          descr, 'N„o possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
-               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap, 10 dm_tp_serv, 'Consulta de Lote de RPS'                        descr, 'N„o possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual
+               --Homologa√ß√£o
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  1 dm_tp_serv, 'Gera√ß√£o de NFS-e'                               descr, 'N√£o possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  2 dm_tp_serv, 'Recep√ß√£o e Processamento de lote de RPS'        descr, 'N√£o possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  3 dm_tp_serv, 'Consulta de Situa√ß√£o de lote de RPS'            descr, 'N√£o possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  4 dm_tp_serv, 'Consulta de NFS-e por RPS'                      descr, 'N√£o possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  5 dm_tp_serv, 'Consulta de NFS-e'                              descr, 'N√£o possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  6 dm_tp_serv, 'Cancelamento de NFS-e'                          descr, 'N√£o possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  7 dm_tp_serv, 'Substitui√ß√£o de NFS-e'                          descr, 'N√£o possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  8 dm_tp_serv, 'Consulta de Empresas Autorizadas a emitir NFS-e'descr, 'N√£o possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap,  9 dm_tp_serv, 'Login'                                          descr, 'N√£o possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual union
+               select 1 dm_situacao, '1' versao, 2 dm_tp_amb, 2 dm_tp_soap, 10 dm_tp_serv, 'Consulta de Lote de RPS'                        descr, 'N√£o possui' url_wsdl, 0 dm_upload,  0 dm_ind_emit from dual
               );
 --   
 begin   
@@ -1407,7 +1407,7 @@ begin
                   commit; 
                   --
                exception when others then 
-                  raise_application_error(-20101, 'Erro no script Redmine #76828 AtualizaÁ„o URL ambiente de homologaÁ„o e ProduÁ„o Cascavel - PR' || sqlerrm);
+                  raise_application_error(-20101, 'Erro no script Redmine #76828 Atualiza√ß√£o URL ambiente de homologa√ß√£o e Produ√ß√£o Cascavel - PR' || sqlerrm);
                end; 
                --
          end;
@@ -1419,7 +1419,7 @@ begin
    --
 exception
    when others then
-      raise_application_error(-20102, 'Erro no script Redmine #76828 AtualizaÁ„o URL ambiente de homologaÁ„o e ProduÁ„o Cascavel - PR' || sqlerrm);
+      raise_application_error(-20102, 'Erro no script Redmine #76828 Atualiza√ß√£o URL ambiente de homologa√ß√£o e Produ√ß√£o Cascavel - PR' || sqlerrm);
 end;
 /
 
@@ -1434,7 +1434,7 @@ vv_ws_canc     csf_own.dominio.descr%type;
 
 --
 Begin
-	-- Popula vari·veis
+	-- Popula vari√°veis
 	vv_ibge_cidade := '4104808';
 	vv_padrao      := 'IPM Fiscal';     
 	vv_habil       := 'SIM';
@@ -1491,7 +1491,7 @@ Begin
 								       , dm_ws_canc = (select distinct vl from csf_own.dominio where upper(dominio) = upper('cidade_nfse.dm_ws_canc') and upper(descr) = upper(vv_ws_canc))
          where cidade_id = (select distinct id from csf_own.cidade where ibge_cidade in (vv_ibge_cidade));
 		exception when others then
-			raise_application_error(-20103, 'Erro no script Redmine #76828 AtualizaÁ„o do Padr„o Cascavel - PR' || sqlerrm);
+			raise_application_error(-20103, 'Erro no script Redmine #76828 Atualiza√ß√£o do Padr√£o Cascavel - PR' || sqlerrm);
     end;
 	--
 	commit;
@@ -1502,13 +1502,13 @@ end;
 /  
 
 -------------------------------------------------------------------------------------------------------------------------------------------
-Prompt FIM - Redmine #76828 CriaÁ„o de padr„o betha a adiÁ„o de Cascavel - PR ao padr„o
+Prompt FIM - Redmine #76828 Cria√ß√£o de padr√£o betha a adi√ß√£o de Cascavel - PR ao padr√£o
 -------------------------------------------------------------------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------------------------------------------------------
-Prompt INI Redmine #76351 - Desenvolver relatÛrio para apoio da geraÁ„o da DUB
+Prompt INI Redmine #76351 - Desenvolver relat√≥rio para apoio da gera√ß√£o da DUB
 -------------------------------------------------------------------------------------------------------------------------------
--- DUB-ICMS ñ Documento de UtilizaÁ„o de BenefÌcio Fiscal
+-- DUB-ICMS ¬ñ Documento de Utiliza√ß√£o de Benef√≠cio Fiscal
 
 begin
    -- 
@@ -1588,40 +1588,40 @@ end;
 /
 
 --------------------------------------------------------------------------------------------------------------------------------------
-Prompt FIM Redmine #76351 - Desenvolver relatÛrio para apoio da geraÁ„o da DUB
+Prompt FIM Redmine #76351 - Desenvolver relat√≥rio para apoio da gera√ß√£o da DUB
 --------------------------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------------------------------------
-Prompt INI - Redmine #75140 Inclus„o de valor de domÌnio para a tabela SUBGRUPO_PAT
+Prompt INI - Redmine #75140 Inclus√£o de valor de dom√≠nio para a tabela SUBGRUPO_PAT
 -------------------------------------------------------------------------------------------------------------------------------------------
 
 begin 
-	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IND_UTIL_BEM_IMOB'', ''1'', ''ProduÁ„o de Bens Destinados a Venda'', csf_own.dominio_seq.nextval)';
+	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IND_UTIL_BEM_IMOB'', ''1'', ''Produ√ß√£o de Bens Destinados a Venda'', csf_own.dominio_seq.nextval)';
    commit;
 exception
    when dup_val_on_index then
       null;      
    when others then
-      raise_application_error(-20001, 'Erro no script #75140. DomÌnio SUBGRUPO_PAT.DM_IND_UTIL_BEM_IMOB e Valor "1". Erro: ' || sqlerrm);      
+      raise_application_error(-20001, 'Erro no script #75140. Dom√≠nio SUBGRUPO_PAT.DM_IND_UTIL_BEM_IMOB e Valor "1". Erro: ' || sqlerrm);      
 end;
 /
 begin 
-	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IND_UTIL_BEM_IMOB'', ''2'', ''PrestaÁ„o de ServiÁos'', csf_own.dominio_seq.nextval)';
+	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IND_UTIL_BEM_IMOB'', ''2'', ''Presta√ß√£o de Servi√ßos'', csf_own.dominio_seq.nextval)';
    commit;
 exception
    when dup_val_on_index then
       null;      
    when others then
-      raise_application_error(-20001, 'Erro no script #75140. DomÌnio SUBGRUPO_PAT.DM_IND_UTIL_BEM_IMOB e Valor "2". Erro: ' || sqlerrm);      
+      raise_application_error(-20001, 'Erro no script #75140. Dom√≠nio SUBGRUPO_PAT.DM_IND_UTIL_BEM_IMOB e Valor "2". Erro: ' || sqlerrm);      
 end;
 /
 begin 
-	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IND_UTIL_BEM_IMOB'', ''3'', ''LocaÁ„o a Terceiros'', csf_own.dominio_seq.nextval)';
+	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IND_UTIL_BEM_IMOB'', ''3'', ''Loca√ß√£o a Terceiros'', csf_own.dominio_seq.nextval)';
    commit;
 exception
    when dup_val_on_index then
       null;      
    when others then
-      raise_application_error(-20001, 'Erro no script #75140. DomÌnio SUBGRUPO_PAT.DM_IND_UTIL_BEM_IMOB e Valor "3". Erro: ' || sqlerrm);      
+      raise_application_error(-20001, 'Erro no script #75140. Dom√≠nio SUBGRUPO_PAT.DM_IND_UTIL_BEM_IMOB e Valor "3". Erro: ' || sqlerrm);      
 end;
 /
 begin 
@@ -1631,47 +1631,47 @@ exception
    when dup_val_on_index then
       null;      
    when others then
-      raise_application_error(-20001, 'Erro no script #75140. DomÌnio SUBGRUPO_PAT.DM_IND_UTIL_BEM_IMOB e Valor "9". Erro: ' || sqlerrm);      
+      raise_application_error(-20001, 'Erro no script #75140. Dom√≠nio SUBGRUPO_PAT.DM_IND_UTIL_BEM_IMOB e Valor "9". Erro: ' || sqlerrm);      
 end;
 /
 begin 
-	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IDENT_BEM_IMOB'', ''01'', ''EdificaÁıes e Benfeitorias em ImÛveis PrÛprios'', csf_own.dominio_seq.nextval)';
+	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IDENT_BEM_IMOB'', ''01'', ''Edifica√ß√µes e Benfeitorias em Im√≥veis Pr√≥prios'', csf_own.dominio_seq.nextval)';
    commit;
 exception
    when dup_val_on_index then
       null;      
    when others then
-      raise_application_error(-20001, 'Erro no script #75140. DomÌnio SUBGRUPO_PAT.DM_IDENT_BEM_IMOB e Valor "01". Erro: ' || sqlerrm);      
+      raise_application_error(-20001, 'Erro no script #75140. Dom√≠nio SUBGRUPO_PAT.DM_IDENT_BEM_IMOB e Valor "01". Erro: ' || sqlerrm);      
 end;
 /
 begin 
-	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IDENT_BEM_IMOB'', ''02'', ''EdificaÁıes e Benfeitorias em ImÛveis de Terceiros'', csf_own.dominio_seq.nextval)';
+	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IDENT_BEM_IMOB'', ''02'', ''Edifica√ß√µes e Benfeitorias em Im√≥veis de Terceiros'', csf_own.dominio_seq.nextval)';
    commit;
 exception
    when dup_val_on_index then
       null;      
    when others then
-      raise_application_error(-20001, 'Erro no script #75140. DomÌnio SUBGRUPO_PAT.DM_IDENT_BEM_IMOB e Valor "02". Erro: ' || sqlerrm);      
+      raise_application_error(-20001, 'Erro no script #75140. Dom√≠nio SUBGRUPO_PAT.DM_IDENT_BEM_IMOB e Valor "02". Erro: ' || sqlerrm);      
 end;
 /
 begin 
-	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IDENT_BEM_IMOB'', ''03'', ''InstalaÁıes'', csf_own.dominio_seq.nextval)';
+	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IDENT_BEM_IMOB'', ''03'', ''Instala√ß√µes'', csf_own.dominio_seq.nextval)';
    commit;
 exception
    when dup_val_on_index then
       null;      
    when others then
-      raise_application_error(-20001, 'Erro no script #75140. DomÌnio SUBGRUPO_PAT.DM_IDENT_BEM_IMOB e Valor "03". Erro: ' || sqlerrm);      
+      raise_application_error(-20001, 'Erro no script #75140. Dom√≠nio SUBGRUPO_PAT.DM_IDENT_BEM_IMOB e Valor "03". Erro: ' || sqlerrm);      
 end;
 /
 begin 
-	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IDENT_BEM_IMOB'', ''04'', ''M·quinas'', csf_own.dominio_seq.nextval)';
+	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IDENT_BEM_IMOB'', ''04'', ''M√°quinas'', csf_own.dominio_seq.nextval)';
    commit;
 exception
    when dup_val_on_index then
       null;      
    when others then
-      raise_application_error(-20001, 'Erro no script #75140. DomÌnio SUBGRUPO_PAT.DM_IDENT_BEM_IMOB e Valor "04". Erro: ' || sqlerrm);      
+      raise_application_error(-20001, 'Erro no script #75140. Dom√≠nio SUBGRUPO_PAT.DM_IDENT_BEM_IMOB e Valor "04". Erro: ' || sqlerrm);      
 end;
 /
 begin 
@@ -1681,17 +1681,17 @@ exception
    when dup_val_on_index then
       null;      
    when others then
-      raise_application_error(-20001, 'Erro no script #75140. DomÌnio SUBGRUPO_PAT.DM_IDENT_BEM_IMOB e Valor "05". Erro: ' || sqlerrm);      
+      raise_application_error(-20001, 'Erro no script #75140. Dom√≠nio SUBGRUPO_PAT.DM_IDENT_BEM_IMOB e Valor "05". Erro: ' || sqlerrm);      
 end;
 /
 begin 
-	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IDENT_BEM_IMOB'', ''06'', ''VeÌculos'', csf_own.dominio_seq.nextval)';
+	execute immediate 'insert into csf_own.dominio (dominio, vl, descr, id) values(''SUBGRUPO_PAT.DM_IDENT_BEM_IMOB'', ''06'', ''Ve√≠culos'', csf_own.dominio_seq.nextval)';
    commit;
 exception
    when dup_val_on_index then
       null;      
    when others then
-      raise_application_error(-20001, 'Erro no script #75140. DomÌnio SUBGRUPO_PAT.DM_IDENT_BEM_IMOB e Valor "06". Erro: ' || sqlerrm);      
+      raise_application_error(-20001, 'Erro no script #75140. Dom√≠nio SUBGRUPO_PAT.DM_IDENT_BEM_IMOB e Valor "06". Erro: ' || sqlerrm);      
 end;
 /	
 begin 	
@@ -1701,15 +1701,16 @@ exception
    when dup_val_on_index then
       null;      
    when others then
-      raise_application_error(-20001, 'Erro no script #75140. DomÌnio SUBGRUPO_PAT.DM_IDENT_BEM_IMOB e Valor "99". Erro: ' || sqlerrm);      
+      raise_application_error(-20001, 'Erro no script #75140. Dom√≠nio SUBGRUPO_PAT.DM_IDENT_BEM_IMOB e Valor "99". Erro: ' || sqlerrm);      
 end;
 /	
 -------------------------------------------------------------------------------------------------------------------------------------------
-Prompt FIM - Redmine #75140 Inclus„o de valor de domÌnio para a tabela SUBGRUPO_PAT
+Prompt FIM - Redmine #75140 Inclus√£o de valor de dom√≠nio para a tabela SUBGRUPO_PAT
 -------------------------------------------------------------------------------------------------------------------------------------------
 
+
 --------------------------------------------------------------------------------------------------------------------------------------
-Prompt INI Redmine #76108 - Novo processo de integraÁ„o contabil
+Prompt INI Redmine #76108 - Novo processo de integra√ß√£o contabil
 --------------------------------------------------------------------------------------------------------------------------------------
 declare
 vn_count integer;
@@ -1783,8 +1784,89 @@ end;
 /
 
 -------------------------------------------------------------------------------------------------------------------------------
-Prompt FIM - Redmine #76108 - Novo processo de integraÁ„o contabil
+Prompt FIM - Redmine #76108 - Novo processo de integra√ß√£o contabil
 -------------------------------------------------------------------------------------------------------------------------------
+
+=======
+-------------------------------------------------------------------------------------------------------------------------------
+Prompt INI Redmine #70214 - Integra√ß√£o de modelo Danfe
+-------------------------------------------------------------------------------------------------------------------------------
+begin
+   --
+   begin
+      insert into csf_own.ff_obj_util_integr( id
+                                            , objutilintegr_id
+                                            , atributo
+                                            , descr
+                                            , dm_tipo_campo
+                                            , tamanho
+                                            , qtde_decimal )
+                                     values ( csf_own.ffobjutilintegr_seq.nextval
+                                            , (select o.id from csf_own.obj_util_integr o where o.obj_name = 'VW_CSF_NOTA_FISCAL_FF')
+                                            , 'MODELO_DANFE'
+                                            , 'Modelo do DANFE'
+                                            , 2
+                                            , 60
+                                            , 0 );    
+   exception
+      when others then
+         update csf_own.ff_obj_util_integr
+            set descr = 'Modelo do DANFE'
+              , dm_tipo_campo = 2
+              , tamanho       = 60
+              , qtde_decimal  = 0
+          where objutilintegr_id = (select o.id from csf_own.obj_util_integr o where o.obj_name = 'VW_CSF_NOTA_FISCAL_FF')
+            and upper(atributo)     = 'MODELO_DANFE';
+   end;	
+   --	
+   commit;
+   --   
+end;
+/
+
+--------------------------------------------------------------------------------------------------------------------------------------
+Prompt FIM Redmine #70214 - Integra√ß√£o de modelo Danfe
+--------------------------------------------------------------------------------------------------------------------------------------
+	
+-------------------------------------------------------------------------------------------------------------------------------
+Prompt INI Redmine #76937 - Imposs√≠vel gerar erro em NFe (Com carta de corre√ß√£o)
+-------------------------------------------------------------------------------------------------------------------------------
+
+declare
+  vn_qtde    number;
+begin
+  begin
+     select count(1)
+       into vn_qtde
+       from all_triggers a
+      where a.OWNER = 'CSF_OWN'
+        and a.TRIGGER_NAME = 'T_B_I_U_NOTA_FISCAL_99';  
+   exception
+      when others then
+         vn_qtde := 0;
+   end;	
+   --   
+   if vn_qtde > 0 then
+      --	  
+      -- Drop Trigger  
+      BEGIN
+         EXECUTE IMMEDIATE 'drop trigger CSF_OWN.T_B_I_U_NOTA_FISCAL_99';
+      EXCEPTION
+         WHEN OTHERS THEN
+            RAISE_APPLICATION_ERROR ( -20101, 'Erro ao dropar trigger T_B_I_U_NOTA_FISCAL_99 - '||SQLERRM );
+      END;	  
+      -- 
+   end if;
+   --
+   commit;
+   --   
+end;
+/
+
+--------------------------------------------------------------------------------------------------------------------------------------
+Prompt FIM Redmine #76937 - Imposs√≠vel gerar erro em NFe (Com carta de corre√ß√£o)
+--------------------------------------------------------------------------------------------------------------------------------------
+   	
 
 ------------------------------------------------------------------------------------------
 Prompt FIM Patch 2.9.6.3 - Alteracoes no CSF_OWN

@@ -5,6 +5,11 @@ create or replace package csf_own.pk_csf_api is
 -- Especificação do pacote de integração de notas fiscais para o CSF
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --
+-- Em 26/11/2020   - Luis Marques - 2.9.6-3 / 2.9.7
+-- Redmine #70214  - Integração de modelo Danfe
+-- Rotina Alterada - PKB_INTEGR_NOTA_FISCAL_FF - Incluido novo atributo "MODELO_DANFE" para a integração do modelo do
+--                   DANFE.
+--
 -- Em 01/03/2021   - Luis Marques - 2.9.5-6 / 2.9.6-3 / 2.9.7
 -- Redmine #76489  - Inserção de dados na nota_fiscal_referen (2)
 -- Rotina Alterada - PKB_INTEGR_NF_REFEREN - Incluido verificação de a chave_nfe existe para id de nota diferente do que está entrando no momento

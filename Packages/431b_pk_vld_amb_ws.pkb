@@ -1550,6 +1550,7 @@ is
    vn_fase             number;
    vn_erro             number;
    vn_aguardar         number;
+   vn_processado       number;   
    vv_objintegr_cd     obj_integr.cd%type;
    vv_tipoobjintegr_cd tipo_obj_integr.cd%type;
    vn_loggenerico_id   Log_Generico.id%TYPE;
@@ -1922,7 +1923,32 @@ begin
             --
             if nvl(vn_erro,0) = 1 then
                --
-               vn_dm_st_proc := 4; --Processado com Erro
+               vn_processado := null;
+               --			   
+               begin			   
+                 select count(1)
+                   into vn_processado
+                   from r_loteintws_nf r
+                      , nota_fiscal n
+                      , msg_webserv m
+                  where 1=1
+                    and n.msgwebserv_id = m.id
+                    and r.notafiscal_id = n.id
+                    and m.cd            = 302  -- Denegada
+                    and r.loteintws_id  = en_loteintws_id;			   
+               exception
+                  when others then
+                     vn_processado := null;
+               end;
+               if nvl( vn_processado,0 ) > 0 then
+                  --			   
+                  vn_dm_st_proc := 3; --Processado
+                  --				  
+               else	
+                  --			    
+                  vn_dm_st_proc := 4; --Processado com Erro
+                  --				  
+               end if;				  
                --
             else
                --

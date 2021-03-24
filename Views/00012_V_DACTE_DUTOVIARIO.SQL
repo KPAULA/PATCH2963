@@ -1,6 +1,7 @@
 CREATE OR REPLACE VIEW CSF_OWN.V_DACTE_DUTOVIARIO AS 
 select --DADOS DO CABEÇALHO
        ct.id conhectransp_id
+     , ct.id id
      , ct.nro_ct
      , ct.serie
      , mfi.cod_mod
@@ -105,7 +106,7 @@ select --DADOS DO CABEÇALHO
      , cttom.uf ufTom
      , cttom.descr_pais paisTom
      , cttom.fone foneTom
-     , cttom.cep cepTom 
+     , cttom.cep cepTom
        --PROD PREDOMINANTE
      , infcarga.prod_predom
      , infcarga.outra_caract
@@ -117,11 +118,11 @@ select --DADOS DO CABEÇALHO
        --PESAGEM
      , (select max(c1.qtde_carga) from csf_own.ctinfcarga_qtde c1, csf_own.conhec_transp_infcarga inf1
          where inf1.conhectransp_id       = ct.id
-           and c1.conhectranspinfcarga_id = inf1.id 
-           and c1.dm_cod_unid             = '01') peso_bruto      
+           and c1.conhectranspinfcarga_id = inf1.id
+           and c1.dm_cod_unid             = '01') peso_bruto
      , (select c11.tipo_medida from csf_own.ctinfcarga_qtde c11, csf_own.conhec_transp_infcarga inf11
          where inf11.conhectransp_id       = ct.id
-           and c11.conhectranspinfcarga_id = inf11.id 
+           and c11.conhectranspinfcarga_id = inf11.id
            and c11.dm_cod_unid             = '01'
            and ROWNUM                      = 1) tipo_medida_bruto
      , (select max(c2.qtde_carga) from csf_own.ctinfcarga_qtde c2, csf_own.conhec_transp_infcarga inf2
@@ -130,26 +131,26 @@ select --DADOS DO CABEÇALHO
            and c2.dm_cod_unid             = '02') peso_base_calc
      , (select c21.tipo_medida from csf_own.ctinfcarga_qtde c21, csf_own.conhec_transp_infcarga inf21
          where inf21.conhectransp_id       = ct.id
-           and c21.conhectranspinfcarga_id = inf21.id 
+           and c21.conhectranspinfcarga_id = inf21.id
            and c21.dm_cod_unid             = '02'
            and ROWNUM                      = 1) tipo_medida_base_calc
      , (select max(c3.qtde_carga) from csf_own.ctinfcarga_qtde c3, csf_own.conhec_transp_infcarga inf3
-         where inf3.conhectransp_id       = ct.id 
+         where inf3.conhectransp_id       = ct.id
            and c3.conhectranspinfcarga_id = inf3.ID
            and c3.dm_cod_unid             = '00') peso_cubagem
      , (select c31.tipo_medida from csf_own.ctinfcarga_qtde c31, csf_own.conhec_transp_infcarga inf31
          where inf31.conhectransp_id       = ct.id
-           and c31.conhectranspinfcarga_id = inf31.id 
+           and c31.conhectranspinfcarga_id = inf31.id
            and c31.dm_cod_unid             = '00'
            and ROWNUM                      = 1) tipo_medida_cubagem
      , (select max(c4.qtde_carga) from csf_own.ctinfcarga_qtde c4, csf_own.conhec_transp_infcarga inf4
-         where inf4.conhectransp_id       = ct.id 
+         where inf4.conhectransp_id       = ct.id
            and c4.conhectranspinfcarga_id = inf4.ID
-           and c4.dm_cod_unid             = '03') peso_volume 
+           and c4.dm_cod_unid             = '05') peso_volume
      , (select c41.tipo_medida from csf_own.ctinfcarga_qtde c41, csf_own.conhec_transp_infcarga inf41
          where inf41.conhectransp_id       = ct.id
-           and c41.conhectranspinfcarga_id = inf41.id 
-           and c41.dm_cod_unid             = '03'
+           and c41.conhectranspinfcarga_id = inf41.id
+           and c41.dm_cod_unid             = '05'
            and ROWNUM                      = 1) tipo_medida_volume
      , compl.obs_geral
        --VALORES PRESTADOS
@@ -174,7 +175,7 @@ select --DADOS DO CABEÇALHO
      , imp.vl_base_outro
      , imp.vl_imp_outro
      , imp.vl_base_isenta
-     , imp.aliq_aplic_outro 
+     , imp.aliq_aplic_outro
      , (select ct_obs1.texto from csf_own.ct_compl_obs ct_obs1
          where ct_obs1.conhectranspcompl_id = compl.id
            and ct_obs1.dm_tipo              = 0
@@ -182,7 +183,7 @@ select --DADOS DO CABEÇALHO
      , (select ct_obs2.texto from csf_own.ct_compl_obs ct_obs2
          where ct_obs2.conhectranspcompl_id = compl.id
            and ct_obs2.dm_tipo              = 1
-           and ROWNUM                       = 1) texto_fisco 
+           and ROWNUM                       = 1) texto_fisco
   from csf_own.conhec_transp ct
    inner join csf_own.conhec_transp_emit ctem        on ctem.conhectransp_id      = ct.id
    inner join csf_own.conhec_transp_dest ctde        on ctde.conhectransp_id      = ct.id
