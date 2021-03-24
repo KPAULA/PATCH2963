@@ -3,6 +3,7 @@ CREATE OR REPLACE VIEW CSF_OWN.V_DUB_RJ AS
 select empresa_id
      , cnpj_cpf
      , unid_org
+     , inscri_estad	 
      , mes
      , descr
      , cfop
@@ -12,6 +13,7 @@ select empresa_id
   from (select nf.empresa_id
              , pk_csf.fkg_cnpj_ou_cpf_empresa(nf.empresa_id) cnpj_cpf
              , (select descr from CSF_OWN.unid_org where id = nf.unidorg_id) unid_org
+             , pk_csf.fkg_inscr_est_empresa(nf.empresa_id) inscri_estad			 
              , to_char(nf.dt_emiss, 'MM/RRRR') mes
              , it.cfop
              , cd.descr
@@ -43,6 +45,6 @@ select empresa_id
            and nf.dm_st_proc      = 4
            and nf.dm_arm_nfe_terc = 0
            and cd.cod_inf_adic    like 'RJ%')
- group by empresa_id, cnpj_cpf, unid_org, mes, descr, cfop
+ group by empresa_id, cnpj_cpf, unid_org, inscri_estad, mes, descr, cfop
  order by 1, 2, 3, 4, 5, 6;
 /
