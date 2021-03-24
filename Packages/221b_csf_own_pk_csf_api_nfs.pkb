@@ -7038,7 +7038,9 @@ begin
    vn_fase := 2.5;
    --
    -- Valida se o código de "Base de Càlculo do Crédito" for nulo e for ND -- #75241
-   if vv_cod_mod = 'ND' and ev_cod_bc_cred_pc is null then
+   if vv_cod_mod = 'ND'                  and 
+      ev_cod_bc_cred_pc is null          and 
+      gt_row_nota_fiscal.dm_ind_oper = 0 then  -- Operações de Entrada 
       --
       vn_fase := 2.6;
       --
