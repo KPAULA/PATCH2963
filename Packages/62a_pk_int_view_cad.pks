@@ -3,6 +3,14 @@ create or replace package csf_own.pk_int_view_cad is
 -------------------------------------------------------------------------------------------------------
 --| Especificação do pacote de procedimentos de integração e validação de Cadastros
 --
+-- Em 23/02/2021 - Eduardo Linden
+-- Redmine #76439 - Integração Plano de Contas - Códigos de Aglutinação
+-- Mudança na ordem de execução da integração da aglut_contabil, centro de custo e pc_aglut_contabil.
+-- Rotinas alteradas: pkb_integracao, pkb_integr_cad_geral e pkb_integr_empresa_geral
+-- troca do array vt_tab_csf_subconta_correlata para vt_tab_csf_pc_aglut_contabil
+-- Rotina alterada: pkb_pc_aglut_contabil
+-- Liberado para release 2.9.7 e patches 2.9.5.5 e 2.9.6.2
+--
 -- Em 04/02/2021   - Wendel Albino - patch 2.9.5.5 / 2.9.6-2 e release 297
 -- Redmine #75771  - Verificar agendamento de integração SPANI 
 -- Rotina Alterada - pkb_integr_cad_geral / pkb_integr_empresa_geral ->inclusao nos sleects de multorg com rownum (nro_linhas) 
