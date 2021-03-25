@@ -37383,58 +37383,42 @@ BEGIN
               ;
        exception
          when others then
-            --
-            vn_fase := 36.3 ;
-            --
-            gv_mensagem_log := '"Erro ao localizar o Modelo de danfe para esta Nota Fiscal na tabela EMPRESA_PARAM_SERIE, e será utilizado o modelo padrão. '
-                            || 'Caso pretenda utilizar um modelo especifico, favor verificar o cadastro de modelo_danfe para a empresa '||est_row_Nota_Fiscal.empresa_id
-                            ||' nas tabelas MODELO_DANFE , EMPRESA_PARAM_SERIE.';
-            --
-            vn_loggenerico_id := null;
-            --
-            pkb_log_generico_nf ( sn_loggenericonf_id => vn_loggenerico_id
-                              , ev_mensagem         => gv_cabec_log
-                              , ev_resumo           => gv_mensagem_log
-                              , en_tipo_log         => informacao
-                              , en_referencia_id    => gn_referencia_id
-                              , ev_obj_referencia   => gv_obj_referencia );
-                              --
+             --
+             vn_fase := 36.2 ;
+			 --#77044
+             -- se nao encontrou, procura na tabela empresa
+             begin
+               select emp.modelodanfe_id
+                 into est_row_Nota_Fiscal.modelodanfe_id
+                 from empresa emp
+                where emp.id = est_row_Nota_Fiscal.empresa_id
+                    ;
+             exception
+               when others then
+                  --
+                  est_row_Nota_Fiscal.modelodanfe_id := null ;
+                  --
+                  vn_fase := 36.3 ;
+                  --
+                  gv_mensagem_log := '"Não foi localizado Modelo de danfe para a Nota Fiscal '||est_row_Nota_Fiscal.nro_nf||' nas tabela EMPRESA e/ou EMPRESA_PARAM_SERIE, e será utilizado o modelo padrão. '
+                                  || 'Caso pretenda utilizar um modelo especifico, favor efetuar o cadastro de modelo_danfe para a empresa '||est_row_Nota_Fiscal.empresa_id
+                                  ||' nas tabelas MODELO_DANFE , EMPRESA e/ou EMPRESA_PARAM_SERIE.';
+                  --
+                  vn_loggenerico_id := null;
+                  --
+                  pkb_log_generico_nf ( sn_loggenericonf_id => vn_loggenerico_id
+                                    , ev_mensagem         => gv_cabec_log
+                                    , ev_resumo           => gv_mensagem_log
+                                    , en_tipo_log         => informacao
+                                    , en_referencia_id    => gn_referencia_id
+                                    , ev_obj_referencia   => gv_obj_referencia );
+                 --
+             end;            
        end;
-       -- #73193
-       if est_row_Nota_Fiscal.modelodanfe_id is null then
-         --
-         --se ainda nao encontrar, recupera da tabela empresa
-         begin
-           select emp.modelodanfe_id
-             into est_row_Nota_Fiscal.modelodanfe_id
-             from empresa emp
-            where emp.id = est_row_Nota_Fiscal.empresa_id
-                ;
-         exception
-          when others then
-            --
-            vn_fase := 36.2 ;
-            --
-            gv_mensagem_log := '"Erro ao localizar o Modelo de danfe para esta Nota Fiscal na tabela EMPRESA, e será utilizado o modelo padrão. '
-                            || 'Caso pretenda utilizar um modelo especifico, favor verificar o cadastro de modelo_danfe para a empresa '||est_row_Nota_Fiscal.empresa_id
-                            ||' nas tabelas MODELO_DANFE , EMPRESA';
-            --
-            vn_loggenerico_id := null;
-            --
-            pkb_log_generico_nf ( sn_loggenericonf_id => vn_loggenerico_id
-                              , ev_mensagem         => gv_cabec_log
-                              , ev_resumo           => gv_mensagem_log
-                              , en_tipo_log         => informacao
-                              , en_referencia_id    => gn_referencia_id
-                              , ev_obj_referencia   => gv_obj_referencia );
-            --
-         end;
-         --
-       end if;
        --
-     elsif est_row_Nota_Fiscal.dm_ind_emit = 1 -- se for Terceiro 
+     elsif est_row_Nota_Fiscal.dm_ind_emit = 1 -- se for Terceiro
          and est_row_Nota_Fiscal.dm_arm_nfe_terc = 1 then
-        -- 
+        --
         vn_fase := 36.4 ;
         --
         --recupera modelodanfe_id da tabela empresa
@@ -37449,8 +37433,8 @@ BEGIN
               --
               vn_fase := 36.5 ;
               --
-              gv_mensagem_log := '"Erro ao localizar o Modelo de danfe para esta Nota Fiscal na tabela EMPRESA, e será utilizado o modelo padrão. '
-                              || 'Caso pretenda utilizar um modelo especifico, favor verificar o cadastro de modelo_danfe para a empresa '||est_row_Nota_Fiscal.empresa_id
+              gv_mensagem_log := '"Não foi localizado Modelo de danfe para a Nota Fiscal '||est_row_Nota_Fiscal.nro_nf||' na tabela EMPRESA, e será utilizado o modelo padrão. '
+                              || 'Caso pretenda utilizar um modelo especifico, favor efetuar o cadastro de modelo_danfe para a empresa '||est_row_Nota_Fiscal.empresa_id
                               ||' nas tabelas MODELO_DANFE , EMPRESA.';
               --
               vn_loggenerico_id := null;
@@ -37468,31 +37452,7 @@ BEGIN
    --
    end if;
    --
-   vn_fase := 36.6 ;
-   --
-   -- #71745
-   -- se valor nao foi encontrado, gera erro
-   if nvl(est_row_Nota_Fiscal.modelodanfe_id,0) <= 0 then
-      --
-      est_row_Nota_Fiscal.modelodanfe_id := null ;-- #73193
-      --
-      vn_fase := 36.7 ;
-      --
-      gv_mensagem_log := '"Não foi encontrado um MODELO de DANFE à ser impresso e será utilizado o modelo padrão. '
-                      || 'Caso pretenda utilizar um modelo especifico, favor verificar o cadastro de modelo_danfe para a empresa '||est_row_Nota_Fiscal.empresa_id
-                      ||' nas tabelas MODELO_DANFE , EMPRESA ou EMPRESA_PARAM_SERIE.';
-      --
-      vn_loggenerico_id := null;
-      --
-      pkb_log_generico_nf ( sn_loggenericonf_id => vn_loggenerico_id
-                          , ev_mensagem         => gv_cabec_log
-                          , ev_resumo           => gv_mensagem_log
-                          , en_tipo_log         => informacao
-                          , en_referencia_id    => gn_referencia_id
-                          , ev_obj_referencia   => gv_obj_referencia );
-                          --
-   end if;
-   --
+   -------------------------------------------------------------------------------------------------------
    est_row_Nota_Fiscal.versao := null;
    --
 -------------------------------------------------------------------------------------------------------
@@ -37938,6 +37898,8 @@ PROCEDURE PKB_INTEGR_NOTA_FISCAL_FF ( EST_LOG_GENERICO_NF     IN OUT NOCOPY  DBM
    vv_url_chave             nota_fiscal.url_chave%type;
    vn_cod_mensagem          nota_fiscal.cod_mensagem%type;
    vv_msg_sefaz             nota_fiscal.msg_sefaz%type;
+   vv_modelodanfe_cd        modelo_danfe.codigo%type;
+   vn_modelodanfe_id        modelo_danfe.id%type;   
    --
 BEGIN
    --
@@ -38937,9 +38899,74 @@ BEGIN
             --
          end if;
          --
-      else
+      elsif trim(ev_atributo) = 'MODELO_DANFE' then		 
          --
          vn_fase := 23;
+         --
+         if trim(ev_valor) is not null then
+            --
+            vn_fase := 23.1; 
+            --
+            if vn_dmtipocampo = 2 then -- tipo de campo = caractere = 0-data, 1-numérico, 2-caractere
+               --
+               vn_fase := 23.2;
+               --
+               vv_modelodanfe_cd := trim(pk_csf.fkg_ff_ret_vlr_caracter ( ev_obj_name => 'VW_CSF_NOTA_FISCAL_FF'
+                                                                        , ev_atributo => trim(ev_atributo)
+                                                                        , ev_valor    => trim(ev_valor) ) );
+               --
+               vn_fase := 23.21;
+               --
+               vn_modelodanfe_id := pk_csf.fkg_Modelo_Danfe_id ( ev_cd => vv_modelodanfe_cd );
+               --
+               if trim(vv_modelodanfe_cd) is not null
+                  and nvl(vn_modelodanfe_id,0) <= 0
+                  then
+                  --
+                  gv_mensagem_log := 'Codigo do Modelo do Danfe ('|| vv_modelodanfe_cd ||'), não cadastrado para o atributo MODELO_DANFE, '||
+                                     'verifique na tabela de Modelos de DANFE um modelo cadastrado ou cadastre um novo e envie-o neste atributo.';
+                  --
+                  vn_loggenerico_id := null;
+                  --
+                  pkb_log_generico_nf ( sn_loggenericonf_id => vn_loggenerico_id
+                                      , ev_mensagem         => gv_cabec_log || gv_cabec_log_item
+                                      , ev_resumo           => gv_mensagem_log
+                                      , en_tipo_log         => erro_de_validacao
+                                      , en_referencia_id    => gn_referencia_id
+                                      , ev_obj_referencia   => gv_obj_referencia
+                                      );
+                  --
+                  -- Armazena o "loggenerico_id" na memória
+                  pkb_gt_log_generico_nf ( en_loggenericonf_id => vn_loggenerico_id
+                                         , est_log_generico_nf => est_log_generico_nf );
+                  --
+               end if;
+               --
+            else
+               --
+               vn_fase := 23.3;
+               --
+               gv_mensagem_log := 'Para o atributo '||ev_atributo||', o VALOR informado não confere com o tipo de campo, deveria ser Caractere.';
+               --
+               vn_loggenerico_id := null;
+               --
+               pkb_log_generico_nf ( sn_loggenericonf_id => vn_loggenerico_id
+                                   , ev_mensagem         => gv_cabec_log || gv_cabec_log_item
+                                   , ev_resumo           => gv_mensagem_log
+                                   , en_tipo_log         => erro_de_validacao
+                                   , en_referencia_id    => gn_referencia_id
+                                   , ev_obj_referencia   => gv_obj_referencia );
+               -- Armazena o "loggenerico_id" na memória
+               pkb_gt_log_generico_nf ( en_loggenericonf_id => vn_loggenerico_id
+                                      , est_log_generico_nf => est_log_generico_nf );
+               --
+            end if;
+            --
+         end if;
+         --	  	 
+      else
+         --
+         vn_fase := 24;
          --
          gv_mensagem_log := '"Atributo" ('||ev_atributo||') e "VALOR" ('||ev_valor||') relacionados, não especificados no processo.';
          --
@@ -38959,11 +38986,11 @@ BEGIN
       --
    end if;
    --
-   vn_fase := 24;
+   vn_fase := 25;
    --
    if nvl(en_notafiscal_id,0) = 0 then
       --
-      vn_fase := 24.1;
+      vn_fase := 25.1;
       --
       gv_mensagem_log := 'Identificador da nota fiscal referenciada não informado.';
       --
@@ -39342,6 +39369,22 @@ BEGIN
       --
    end if;
    --
+   vn_fase := 99.36;
+   --
+   if nvl(en_notafiscal_id,0)     > 0
+      and trim(ev_atributo)       = 'MODELO_DANFE'
+      and trim(vn_modelodanfe_id) is not null
+      and vv_mensagem             is null
+      then
+      --
+      vn_fase := 99.37;
+      --
+      update nota_fiscal nf
+         set nf.modelodanfe_id = vn_modelodanfe_id
+       where nf.id = en_notafiscal_id;
+      --
+   end if;
+   --   
 EXCEPTION
    when others then
       --
@@ -42063,9 +42106,9 @@ BEGIN
             end if;
             --			
             vn_fase := 38.8;
-            --            
+            --
             begin
-               select round( nvl( sum( decode( nf.dm_ind_emit, 1, nvl(imp_st.vl_fcp, 0)
+               /*select round( nvl( sum( decode( nf.dm_ind_emit, 1, nvl(imp_st.vl_fcp, 0)
                                                              , decode(cst_icms.cod_st, '60', 0, nvl(imp_st.vl_fcp, 0)) ) ), 0), 2)
                  into vn_vl_fcp_st
                  from nota_fiscal       nf
@@ -42086,11 +42129,46 @@ BEGIN
                   and cst_icms.id        = imp_icms.codst_id
                   and ti_icms.id         = imp_icms.tipoimp_id
                   and ti_icms.cd        in ( '1' );
+                  */
+                  --
+              --#76598 
+              select round( nvl( 
+                                sum( 
+                                    case 
+                                        when (nf.dm_ind_emit = 0 -- emissao propria
+                                          and (cst_icms.cod_st = '60'  and ti_icms.cd  = '1'  --icms
+                                            or cst_icms.cod_st = '500' and ti_icms.cd  = '10' --simples nacional
+                                              )) then  0
+                                     else nvl(imp_st.vl_fcp, 0)
+                                     end 
+                                     )
+                                , 0)
+                          , 2)
+                 into vn_vl_fcp_st
+                 from nota_fiscal       nf
+                    , item_nota_fiscal  it
+                    , imp_itemnf        imp_st
+                    , tipo_imposto      ti
+                    , imp_itemnf        imp_icms
+                    , cod_st            cst_icms
+                    , tipo_imposto      ti_icms
+                where nf.id              = en_notafiscal_id
+                  and it.notafiscal_id   = nf.id
+                  and imp_st.itemnf_id   = it.id
+                  and imp_st.dm_tipo     = 0 -- 0-imposto, 1-retenção
+                  and ti.id              = imp_st.tipoimp_id
+                  and ti.cd              = '2' --ICMS_ST
+                  and imp_icms.itemnf_id = it.id
+                  and imp_icms.dm_tipo   = 0 -- 0-imposto, 1-retenção 
+                  and cst_icms.id        = imp_icms.codst_id
+                  and ti_icms.id         = imp_icms.tipoimp_id
+                  and ti_icms.cd        in ( '1','10' ) --icms /simples nacional
+                  ;
             exception
                when others then
                   vn_vl_fcp_st := 0;
             end;
-            -- 			
+            --
             vn_fase := 38.9;
             --
             vn_dif_valor := nvl(rec.vl_fcp_st,0) - nvl(vn_vl_fcp_st,0);     
@@ -54965,6 +55043,9 @@ PROCEDURE PKB_AJUSTA_TOTAL_NF_EMPRESA ( EST_LOG_GENERICO_NF IN OUT NOCOPY DBMS_S
    vn_loggenerico_id      log_generico_nf.id%type;
    vn_empresa_id          empresa.id%type;
    vn_dm_ajusta_total_nf  empresa.dm_ajusta_total_nf%type := 0;
+   --#73567
+   vn_dm_valid_total_nfe  empresa.dm_valid_total_nfe%type := 0;
+   vn_dm_ind_emit         nota_fiscal.dm_ind_emit%type;
    --
 begin
    --
@@ -54980,13 +55061,42 @@ begin
       --
       vn_fase := 5;
       --
-      if nvl(vn_dm_ajusta_total_nf,0) = 1
-         then -- Ajusta os valores totais da Nota Fiscal
+      if nvl(vn_dm_ajusta_total_nf,0) = 1 then -- Ajusta os valores totais da Nota Fiscal
          --
-	 vn_fase := 6;
-	 -- chama processo de ajuste dos dados
-	 pkb_ajusta_total_nf ( en_notafiscal_id => en_notafiscal_id );
-	 --
+         vn_fase := 6;
+         -- chama processo de ajuste dos dados
+         pkb_ajusta_total_nf ( en_notafiscal_id => en_notafiscal_id );
+         --
+      else
+        --#73567 se parametro vn_dm_ajusta_total_nf estiver desligado e o vn_dm_valid_total_nfe ligado, 
+        -- so valida os valores que compoem o total da nf
+        --
+        vn_dm_valid_total_nfe := pk_csf.fkg_valid_total_nfe_empresa ( en_empresa_id => vn_empresa_id );
+        --
+        begin
+           select nvl(nf.dm_ind_emit,0)
+             into vn_dm_ind_emit
+             from nota_fiscal nf
+                , mod_fiscal  mf
+            where nf.id = en_notafiscal_id
+              and mf.id = nf.modfiscal_id
+              and mf.cod_mod = '55'
+              ;
+        exception
+          when others then
+            vn_dm_ind_emit := 0 ;   
+        end;
+        --
+        if nvl(vn_dm_valid_total_nfe,0) = 1  -- so valida total nf
+          and vn_dm_ind_emit = 1 
+          --  and pk_csf_api.gt_row_Nota_Fiscal.dm_ind_emit = 1 -- Emissão Propria
+          then -- terceiro
+          --
+          pkb_valida_composic_total_nf ( est_log_generico_nf => est_log_generico_nf
+                                       , en_notafiscal_id    => en_notafiscal_id );
+          --
+        end if;
+        --     
       end if;
       --
    end if;
@@ -57188,22 +57298,19 @@ begin
          gt_row_nota_fiscal.dm_ind_final := vn_dm_ind_final;
          --
       end if;
---
+      --
       --#75964
-      /*regra DM_IND_INTERMED */
-      --se DM_IND_PRES in (2,3,4,9) e DM_IND_INTERMED estiver vazio e (DM_TP_AMB = 2 ou (DT_EMISS >= '05/04/2021' e DM_TP_AMB = 1))
-      -- então deve ser lido parametro geral VLR_PADRAO_IND_INTERMED .
-      if (gt_row_nota_fiscal.dm_ind_pres in (2,3,4,9) 
-        and gt_row_nota_fiscal.dm_ind_intermed is null 
-        and (gt_row_nota_fiscal.dm_tp_amb = 2 
-              or (gt_row_nota_fiscal.dm_tp_amb = 1 and trunc(gt_row_nota_fiscal.dt_emiss) >= '05/04/2021')
+      if (gt_row_nota_fiscal.dm_ind_pres in (1,2,3,4,9)-- #77116 incluido 1
+        and gt_row_nota_fiscal.dm_ind_intermed is null
+        and (gt_row_nota_fiscal.dm_tp_amb = 2
+              or (gt_row_nota_fiscal.dm_tp_amb = 1 and trunc(gt_row_nota_fiscal.dt_emiss) >= '01/09/2021')--#77116 alterada data '05/04/2021'
                )) then
               --
               begin
                 --
                 vv_vlr_param := null ;
                 --
-                vv_vlr_param := pk_csf.fkg_parametro_geral_sistema ( en_multorg_id   => pk_csf.fkg_multorg_id_empresa(en_empresa_id => gt_row_nota_fiscal.empresa_id) 
+                vv_vlr_param := pk_csf.fkg_parametro_geral_sistema ( en_multorg_id   => pk_csf.fkg_multorg_id_empresa(en_empresa_id => gt_row_nota_fiscal.empresa_id)
                                                                    , en_empresa_id   => gt_row_nota_fiscal.empresa_id
                                                                    , ev_cod_modulo   => upper('EMISSAO_DOC')
                                                                    , ev_cod_grupo    => upper('COMPLEMENTA_DADOS')
@@ -57211,8 +57318,8 @@ begin
                                                                    );
               exception
                 when others then
-                 -- 
-                 gv_mensagem_log := 'Não foi encontrado valor do parametro VLR_PADRAO_IND_INTERMED para a empresa ('|| gt_row_nota_fiscal.empresa_id 
+                 --
+                 gv_mensagem_log := 'Não foi encontrado valor do parametro VLR_PADRAO_IND_INTERMED para a empresa ('|| gt_row_nota_fiscal.empresa_id
                                      || '). Verifique se esta empresa tem o parametro criado, caso nao tenha crie o parametro com o valor necessario.';
                  --
                  vn_loggenerico_id := null;
@@ -57229,24 +57336,23 @@ begin
                                         , est_log_generico_nf => est_log_generico_nf );
               end;
               --
-              vn_dm_ind_intermed := vv_vlr_param ; --to_number(vv_vlr_param);
+              vn_dm_ind_intermed := vv_vlr_param ; 
               --
-      --regra: se dm_ind_pres not in (2,3,4,9) ou (dt_emiss < '05/04/2021' e dm_tp_amb = 1) 
-      -- e (dm_ind_intermed ou pessoa_id_intermed não estiverem nulos), então devem receber nulo. 
-      elsif ( gt_row_nota_fiscal.dm_ind_pres not in (2,3,4,9) 
-          and (gt_row_nota_fiscal.dm_ind_intermed is not null 
+      elsif ( gt_row_nota_fiscal.dm_ind_pres not in (1,2,3,4,9)-- #77116 incluido 1 
+          and (gt_row_nota_fiscal.dm_ind_intermed is not null
                or gt_row_nota_fiscal.pessoa_id_intermed is not null
                )
-          and (--dm_tp_amb = 2 or
-                (gt_row_nota_fiscal.dm_tp_amb = 1 and trunc(gt_row_nota_fiscal.dt_emiss) < '05/04/2021')
-               )) then
-               --
-               vn_dm_ind_intermed     := null;
-               vn_pessoa_id_intermed  := null;
-               --
+          and (gt_row_nota_fiscal.dm_tp_amb = 2
+               or (gt_row_nota_fiscal.dm_tp_amb = 1 and trunc(gt_row_nota_fiscal.dt_emiss) >= '01/09/2021')--#77116 alterada data '05/04/2021'
+               )
+             ) then
+             --
+             vn_dm_ind_intermed     := null;
+             vn_pessoa_id_intermed  := null;
+             --
       end if;
       --
-      update nota_fiscal 
+      update nota_fiscal
          set dm_ind_intermed    = vn_dm_ind_intermed
            , pessoa_id_intermed = vn_pessoa_id_intermed
        where id = en_notafiscal_id;
@@ -69379,6 +69485,890 @@ exception
      sn_erro := nvl(sn_erro,0) + 1;
      --
 end pkb_busca_vlr_aprox_ibpt;
+--
+--#73567
+----------------------------------------------------------------------
+-- Procedimento de valida composicao dos valores do total da NFe --
+----------------------------------------------------------------------
+procedure pkb_valida_composic_total_nf ( est_log_generico_nf  in out nocopy dbms_sql.number_table
+                                        , en_notafiscal_id    in nota_fiscal.id%type ) is
+   --
+   vn_fase                      number := 0;
+   vn_loggenerico_id            log_generico_nf.id%type;
+   vt_log_generico_nf           dbms_sql.number_table;
+   vn_vl_total_somado           nota_fiscal_total.vl_total_nf%type := 0;  
+   vv_atribui                   varchar2(32000) := null ;
+   vn_vl_tot_nf_notafiscaltotal nota_fiscal_total.vl_total_nf%type := 0;  
+   --   
+   vn_vl_base_calc_icms      nota_fiscal_total.vl_base_calc_icms%type := 0;
+   vn_vl_imp_trib_icms       nota_fiscal_total.vl_imp_trib_icms%type := 0;
+   vn_vl_base_calc_st        nota_fiscal_total.vl_base_calc_st%type := 0;
+   vn_vl_imp_trib_st         nota_fiscal_total.vl_imp_trib_st%type := 0;
+   vn_vl_total_item          nota_fiscal_total.vl_total_item%type := 0;
+   vn_vl_frete               nota_fiscal_total.vl_frete%type := 0;
+   vn_vl_seguro              nota_fiscal_total.vl_seguro%type := 0;
+   vn_vl_desconto            nota_fiscal_total.vl_desconto%type := 0;
+   vn_vl_imp_trib_ii         nota_fiscal_total.vl_imp_trib_ii%type := 0;
+   vn_qtde_imp_trib_ii       number := 0;
+   vn_vl_imp_trib_ipi        nota_fiscal_total.vl_imp_trib_ipi%type := 0;
+   vn_vl_imp_trib_pis        nota_fiscal_total.vl_imp_trib_pis%type := 0;
+   vn_vl_imp_trib_cofins     nota_fiscal_total.vl_imp_trib_cofins%type := 0;
+   vn_vl_outra_despesas      nota_fiscal_total.vl_outra_despesas%type := 0;
+   vn_vl_total_nf            nota_fiscal_total.vl_total_nf%type := 0;
+   vn_vl_serv_nao_trib       nota_fiscal_total.vl_serv_nao_trib%type := 0;
+   vn_vl_base_calc_iss       nota_fiscal_total.vl_base_calc_iss%type := 0;
+   vn_vl_imp_trib_iss        nota_fiscal_total.vl_imp_trib_iss%type := 0;
+   vn_vl_pis_iss             nota_fiscal_total.vl_pis_iss%type := 0;
+   vn_vl_cofins_iss          nota_fiscal_total.vl_cofins_iss%type := 0;
+   vn_vl_total_serv          nota_fiscal_total.vl_total_serv%type := 0;
+   vn_vl_tot_trib            nota_fiscal_total.vl_tot_trib%type := 0;
+   vn_vl_icms_deson          nota_fiscal_total.vl_icms_deson%type := 0;
+   vn_vl_icms_deson_tot_nf   nota_fiscal_total.vl_icms_deson%type := 0;   
+   vn_vl_deducao             nota_fiscal_total.vl_deducao%type := 0;
+   vn_vl_desc_incond         nota_fiscal_total.vl_desc_incond%type := 0;
+   vn_vl_desc_cond           nota_fiscal_total.vl_desc_cond%type := 0;
+   vn_vl_outras_ret          nota_fiscal_total.vl_outras_ret%type := 0;
+   vn_vl_ret_iss             nota_fiscal_total.vl_ret_iss%type := 0;
+   vn_vl_ret_pis             nota_fiscal_total.vl_ret_pis%type := 0;
+   vn_vl_ret_cofins          nota_fiscal_total.vl_ret_cofins%type := 0;
+   vn_vl_ret_csll            nota_fiscal_total.vl_ret_csll%type := 0;
+   vn_vl_ret_irrf            nota_fiscal_total.vl_ret_irrf%type := 0;
+   vn_vl_base_calc_ret_prev  nota_fiscal_total.vl_base_calc_ret_prev%type := 0;
+   vn_vl_ret_prev            nota_fiscal_total.vl_ret_prev%type := 0;
+   vn_vl_icms_uf_dest        nota_fiscal_total.vl_icms_uf_dest%type;
+   vn_vl_icms_uf_remet       nota_fiscal_total.vl_icms_uf_remet%type;
+   vn_vl_comb_pobr_uf_dest   nota_fiscal_total.vl_comb_pobr_uf_dest%type;
+   vn_vl_pis_st              nota_fiscal_total.vl_pis_st%type := 0;
+   vn_vl_cofins_st           nota_fiscal_total.vl_cofins_st%type := 0;
+   --
+   vn_vl_fcp                 nota_fiscal_total.vl_fcp%type;
+   vn_vl_fcp_st              nota_fiscal_total.vl_fcp_st%type;
+   vn_vl_fcp_st_ret          nota_fiscal_total.vl_fcp_st_ret%type;
+   vn_vl_ipi_devol           nota_fiscal_total.vl_ipi_devol%type;
+   vn_vl_pis_imp             nota_fiscal_total.vl_pis_imp%type;
+   vn_vl_cofins_imp          nota_fiscal_total.vl_cofins_imp%type;
+   vn_vl_cofins_majorada     nota_fiscal_total.vl_cofins_majorada%type;
+   vn_vl_abat_nt             nota_fiscal_total.vl_abat_nt%type;
+   --
+   vn_empresa_id             empresa.id%type;
+   --
+   vn_dm_sm_vicms_import_vloper   param_efd_icms_ipi.dm_sm_vicms_import_vloper%type;
+   vn_dm_sm_vpiscof_import_vloper param_efd_icms_ipi.dm_sm_vpiscof_import_vloper%type;
+   vn_dm_sm_vicms_export_vloper   param_efd_icms_ipi.dm_sm_vicms_export_vloper%type;  
+   vn_dm_sm_vpiscof_export_vloper param_efd_icms_ipi.dm_sm_vpiscof_export_vloper%type;   
+   vn_dm_sm_vii_import_vloper     param_efd_icms_ipi.dm_sm_vii_import_vloper%type;
+   vn_dm_subtr_vl_icms_deson      param_efd_icms_ipi.dm_subtr_vl_icms_deson%type;   
+   --
+   vn_qtde_cfop_3            number;
+   vn_qtde_cfop_7            number;
+   vn_ajuste_vl_total_item   number := 0;
+   vn_vl_base_calc_icms_serv nota_fiscal_total.vl_base_calc_icms%type := 0;
+   vv_vlr_parametro           csf_own.param_geral_sistema.vlr_param%type; --Variavel que recebe o valor do parametro #73027
+   --
+   cursor c_param (en_empresa_id in param_efd_icms_ipi.empresa_id%type) is
+      select pe.dm_sm_vicms_import_vloper
+           , pe.dm_sm_vpiscof_import_vloper
+           , pe.dm_sm_vicms_export_vloper
+           , pe.dm_sm_vpiscof_export_vloper
+           , pe.dm_sm_vii_import_vloper
+           , pe.dm_subtr_vl_icms_deson
+        from param_efd_icms_ipi pe
+       where pe.empresa_id = en_empresa_id;
+   --
+BEGIN
+   --
+   vn_fase := 1;
+   --
+   if nvl(en_notafiscal_id,0) > 0 then
+    --
+    vn_fase := 2;
+    --
+    vn_empresa_id := pk_csf.fkg_busca_empresa_nf ( en_notafiscal_id => en_notafiscal_id );
+    --
+    vn_fase := 3;
+    --
+    open c_param (en_empresa_id => vn_empresa_id);
+      fetch c_param into vn_dm_sm_vicms_import_vloper
+                       , vn_dm_sm_vpiscof_import_vloper
+                       , vn_dm_sm_vicms_export_vloper
+                       , vn_dm_sm_vpiscof_export_vloper
+                       , vn_dm_sm_vii_import_vloper
+                       , vn_dm_subtr_vl_icms_deson;
+    close c_param;
+    --
+    vn_fase := 3.1;
+    --
+    begin
+       select count(1)
+         into vn_qtde_cfop_3
+         from item_nota_fiscal it
+        where it.notafiscal_id     = en_notafiscal_id
+          and substr(it.cfop,1,1) in (3);
+    exception
+       when others then
+          vn_qtde_cfop_3 := 0;
+    end;
+    --
+    vn_fase := 3.2;
+    --
+    begin
+       select count(1)
+         into vn_qtde_cfop_7
+         from item_nota_fiscal it
+        where it.notafiscal_id     = en_notafiscal_id
+          and substr(it.cfop,1,1) in (7);
+    exception
+       when others then
+          vn_qtde_cfop_7 := 0;
+    end;
+    --    
+    vn_fase := 4;
+    --
+    -- soma valores do item da nota fiscal
+    begin
+      select round(nvl(sum(decode(inf.dm_ind_tot, 1, nvl(inf.vl_item_bruto, 0),0)),0), 2),
+             nvl(sum(nvl(inf.vl_frete, 0)), 0),
+             nvl(sum(nvl(inf.vl_seguro, 0)), 0),
+             nvl(sum(nvl(inf.vl_desc, 0)), 0),
+             nvl(sum(nvl(inf.vl_outro, 0)), 0),
+             nvl(sum(nvl(inf.vl_tot_trib_item, 0)), 0),
+             nvl(sum(nvl(inf.vl_ipi_devol, 0)), 0),
+             nvl(sum(nvl(inf.vl_abat_nt, 0)), 0)
+        into vn_vl_total_item,
+             vn_vl_frete,
+             vn_vl_seguro,
+             vn_vl_desconto,
+             vn_vl_outra_despesas,
+             vn_vl_tot_trib,
+             vn_vl_ipi_devol,
+             vn_vl_abat_nt
+        from item_nota_fiscal inf
+       where inf.notafiscal_id = en_notafiscal_id;
+    exception
+      when others then
+        vn_vl_total_item     := 0;
+        vn_vl_frete          := 0;
+        vn_vl_seguro         := 0;
+        vn_vl_desconto       := 0;
+        vn_vl_outra_despesas := 0;
+        vn_vl_tot_trib       := 0;
+        vn_vl_ipi_devol      := 0;
+        vn_vl_abat_nt        := 0;
+    end;
+    --
+    --
+    -- Verifica se a nota é modelo '55' de serviço para ajustar o valor total dos itens     
+    begin
+       select distinct 1 
+         into vn_ajuste_vl_total_item
+         from nota_fiscal      nf
+            , mod_fiscal       mf
+            , item_nota_fiscal it
+        where nf.id            = en_notafiscal_id
+          and mf.id            = nf.modfiscal_id
+          and mf.cod_mod       = '55'
+          and it.notafiscal_id = nf.id
+          and it.dm_ind_tot    = 1  -- itens fazem parte da composição do total da nota fiscal        
+          and it.cd_lista_serv is not null;     
+    exception
+       when others then
+          vn_ajuste_vl_total_item := 0;      
+    end;    
+    --    
+    vn_fase := 8;
+    --
+    if nvl(gt_row_nota_fiscal_emit.dm_reg_trib, 0) <> 1 then
+
+      -- Soma valores do ICMS
+      begin
+        select nvl(sum(nvl(imp.vl_base_calc, 0)), 0),
+               nvl(sum(nvl(imp.vl_imp_trib, 0)), 0),
+               nvl(sum(nvl(imp.vl_fcp, 0)), 0)
+          into vn_vl_base_calc_icms, vn_vl_imp_trib_icms, vn_vl_fcp
+          from item_nota_fiscal inf,
+               imp_itemnf       imp,
+               tipo_imposto     ti,
+               cod_st           cst
+         where inf.notafiscal_id = en_notafiscal_id
+           and imp.itemnf_id = inf.id
+           and imp.dm_tipo = 0 -- 0-imposto, 1-retenção
+           and ti.id = imp.tipoimp_id
+           and ti.cd = 1 -- ICMS
+           and cst.id = imp.codst_id
+           and cst.cod_st not in ('30', '40', '41', '50', '60');
+      exception
+        when others then
+          vn_vl_base_calc_icms := 0;
+          vn_vl_imp_trib_icms  := 0;
+          vn_vl_fcp            := 0;
+      end;
+      --
+    else
+       -- Soma valores do ICMS para Simples Nacional
+       begin
+         select nvl(sum(nvl(imp.vl_base_calc, 0)), 0),
+                nvl(sum(nvl(imp.vl_imp_trib, 0)), 0),
+                nvl(sum(nvl(imp.vl_fcp, 0)), 0)
+           into vn_vl_base_calc_icms, vn_vl_imp_trib_icms, vn_vl_fcp
+           from item_nota_fiscal inf, imp_itemnf imp, tipo_imposto ti
+          where inf.notafiscal_id = en_notafiscal_id
+            and imp.itemnf_id = inf.id
+            and imp.dm_tipo = 0 -- 0-imposto, 1-retenção
+            and ti.id = imp.tipoimp_id
+            and ti.cd = 1; -- ICMS
+       exception
+         when others then
+           vn_vl_base_calc_icms := 0;
+           vn_vl_imp_trib_icms  := 0;
+           vn_vl_fcp            := 0;
+       end;
+       --
+    end if;
+    --
+    vn_fase := 9;
+    -- soma valores do ICMS-ST
+    begin
+       select round( nvl( sum( decode( nf.dm_ind_emit, 1, nvl(imp_st.vl_base_calc, 0)
+                                                     , decode(cst_icms.cod_st, '60', 0, nvl(imp_st.vl_base_calc, 0)) ) ), 0), 2)
+            , round( nvl( sum( decode( nf.dm_ind_emit, 1, nvl(imp_st.vl_imp_trib, 0)
+                                                     , decode(cst_icms.cod_st, '60', 0, nvl(imp_st.vl_imp_trib, 0)) ) ), 0), 2)
+            , round( nvl( sum( decode( nf.dm_ind_emit, 1, nvl(imp_st.vl_fcp, 0)
+                                                     , decode(cst_icms.cod_st, '60', 0, nvl(imp_st.vl_fcp, 0)) ) ), 0), 2)
+         into vn_vl_base_calc_st
+            , vn_vl_imp_trib_st
+            , vn_vl_fcp_st
+         from nota_fiscal       nf
+            , item_nota_fiscal  it
+            , imp_itemnf        imp_st
+            , tipo_imposto      ti
+            , imp_itemnf        imp_icms
+            , cod_st            cst_icms
+            , tipo_imposto      ti_icms
+        where nf.id              = en_notafiscal_id
+          and it.notafiscal_id   = nf.id
+          and imp_st.itemnf_id   = it.id
+          and imp_st.dm_tipo     = 0 -- 0-imposto, 1-retenção
+          and ti.id              = imp_st.tipoimp_id
+          and ti.cd              = '2' --ICMS_ST
+          and imp_icms.itemnf_id = it.id
+          and imp_icms.dm_tipo   = 0 -- 0-imposto, 1-retenção
+          and cst_icms.id        = imp_icms.codst_id
+          and ti_icms.id         = imp_icms.tipoimp_id
+          and ti_icms.cd        in ( '1' );
+    exception
+       when others then
+          vn_vl_base_calc_st := 0;
+          vn_vl_imp_trib_st := 0;
+          vn_vl_fcp_st := 0;
+    end;
+    --
+    vn_fase := 9.1;       
+    --
+    if nvl(vn_vl_base_calc_st,0) <= 0
+       and nvl(vn_vl_imp_trib_st,0) <= 0 then
+       --
+       begin
+          --
+          select round(nvl(sum(nvl(imp_st.vl_base_calc,0)), 0), 2)
+               , round(nvl(sum(nvl(imp_st.vl_imp_trib,0)), 0), 2)
+               , round(nvl(sum(nvl(imp_st.vl_fcp,0)), 0), 2)
+            into vn_vl_base_calc_st
+               , vn_vl_imp_trib_st
+               , vn_vl_fcp_st
+            from item_nota_fiscal  it
+               , imp_itemnf        imp_st
+               , tipo_imposto      ti
+               , imp_itemnf        imp_icms
+               , tipo_imposto      ti_icms
+           where it.notafiscal_id  = en_notafiscal_id
+             and imp_st.itemnf_id  = it.id
+             and imp_st.dm_tipo    = 0 -- 0-imposto, 1-retenção
+             and ti.id             = imp_st.tipoimp_id
+             and ti.cd             = '2' --ICMS_ST
+             and it.id             = imp_icms.itemnf_id
+             and imp_icms.dm_tipo  = 0 -- 0-imposto, 1-retenção
+             and nvl(imp_icms.codst_id,0) > 0
+             and ti_icms.id        = imp_icms.tipoimp_id
+             and ti_icms.cd        = '10'; -- Somente Simples Nacional
+             --
+       exception
+          when others then
+             vn_vl_base_calc_st    := 0;
+             vn_vl_imp_trib_st     := 0;
+             vn_vl_fcp_st := 0;
+       end;
+       --
+    end if;
+    --
+    vn_fase := 10;
+    -- soma valores do II
+    begin
+      select sum(imp.vl_imp_trib)
+        into vn_vl_imp_trib_ii
+        from item_nota_fiscal inf, imp_itemnf imp, tipo_imposto ti
+       where inf.notafiscal_id = en_notafiscal_id
+         and imp.itemnf_id = inf.id
+         and imp.dm_tipo = 0 -- 0-imposto, 1-retenção
+         and ti.id = imp.tipoimp_id
+         and ti.cd = 7; -- II
+    exception
+      when others then
+        vn_vl_imp_trib_ii := 0;
+    end;
+    --
+    vn_fase := 12;
+    -- soma valores de IPI
+    begin
+      select sum(imp.vl_imp_trib)
+        into vn_vl_imp_trib_ipi
+        from item_nota_fiscal inf,
+             imp_itemnf       imp,
+             tipo_imposto     ti,
+             cod_st           cst
+       where inf.notafiscal_id = en_notafiscal_id
+         and imp.itemnf_id = inf.id
+         and imp.dm_tipo = 0 -- 0-imposto, 1-retenção
+         and ti.id = imp.tipoimp_id
+         and ti.cd = 3 -- IPI
+         and cst.id = imp.codst_id
+         and cst.cod_st not in ('02', '03', '04', '05', '51', '52', '53', '54', '55');
+    exception
+      when others then
+        vn_vl_imp_trib_ipi := 0;
+    end;
+    --
+    vn_fase := 13;
+    -- soma valores de PIS
+    begin
+       select sum(decode(nvl(inf.cd_lista_serv,0), 0, nvl(imp.vl_imp_trib,0), 0)) -- valor de item produto/mercadoria
+            , sum(decode(nvl(inf.cd_lista_serv,0), 0, 0, nvl(imp.vl_imp_trib,0))) -- valor de item serviço
+         into vn_vl_imp_trib_pis
+            , vn_vl_pis_iss
+         from item_nota_fiscal  inf
+            , imp_itemnf        imp
+            , tipo_imposto      ti
+            , cod_st            cst
+        where inf.notafiscal_id  = en_notafiscal_id
+          and imp.itemnf_id      = inf.id
+          and imp.dm_tipo        = 0 -- 0-imposto, 1-retenção
+          and ti.id              = imp.tipoimp_id
+          and ti.cd              = 4 -- PIS
+          and cst.id             = imp.codst_id
+          and cst.cod_st not in ('04', '05', '06', '07', '08', '09', '70', '71', '72', '73', '74', '75');
+    exception
+       when others then
+          vn_vl_imp_trib_pis := 0;
+          vn_vl_pis_iss      := 0;
+    end;       
+    --
+    vn_fase := 14;
+    -- soma valores de COFINS
+    begin
+       select sum(decode(nvl(inf.cd_lista_serv,0), 0, nvl(imp.vl_imp_trib,0), 0)) -- valor de item produto/mercadoria
+            , sum(decode(nvl(inf.cd_lista_serv,0), 0, 0, nvl(imp.vl_imp_trib,0))) -- valor de item serviço
+         into vn_vl_imp_trib_cofins
+            , vn_vl_cofins_iss
+         from item_nota_fiscal  inf
+            , imp_itemnf        imp
+            , tipo_imposto      ti
+            , cod_st            cst
+        where inf.notafiscal_id  = en_notafiscal_id
+          and imp.itemnf_id      = inf.id
+          and imp.dm_tipo        = 0 -- 0-imposto, 1-retenção
+          and ti.id              = imp.tipoimp_id
+          and ti.cd              = 5 -- COFINS
+          and cst.id             = imp.codst_id
+          and cst.cod_st not in ('04', '05', '06', '07', '08', '09', '70', '71', '72', '73', '74', '75');
+    exception
+       when others then
+          vn_vl_imp_trib_cofins := 0;
+          vn_vl_cofins_iss      := 0;
+    end;        
+    --
+    vn_fase := 15;
+    -- Valor Total dos itens de serviços
+    begin
+       select round(sum(it.vl_item_bruto), 2)
+         into vn_vl_serv_nao_trib        
+         from item_nota_fiscal  it
+        where it.notafiscal_id  = en_notafiscal_id
+          and it.cd_lista_serv is not null;
+    exception
+       when others then
+          vn_vl_serv_nao_trib := 0;         
+    end;
+    --
+    -- Ajustando os valores para nota fiscal de serviço modelo '55'     
+    if nvl(vn_ajuste_vl_total_item,0) = 1 then 
+       --  
+       if nvl(gt_row_nota_fiscal_emit.dm_reg_trib, 0) <> 1 then
+          -- Soma valores do ICMS
+          begin
+             select nvl(sum(nvl(imp.vl_base_calc, 0)), 0)
+               into vn_vl_base_calc_icms_serv
+               from item_nota_fiscal  inf
+                  , imp_itemnf        imp
+                  , tipo_imposto      ti
+                  , cod_st            cst
+              where inf.notafiscal_id  = en_notafiscal_id
+                and inf.cd_lista_serv is not null
+                and imp.itemnf_id      = inf.id
+                and imp.dm_tipo        = 0 -- 0-imposto, 1-retenção
+                and ti.id              = imp.tipoimp_id
+                and ti.cd              = 1 -- ICMS
+                and cst.id             = imp.codst_id
+                and cst.cod_st not in ('30', '40', '41', '50', '60');
+          exception
+             when others then
+                vn_vl_base_calc_icms_serv := 0;
+          end;
+          --
+       else
+          -- Soma valores do ICMS para Simples Nacional
+          begin
+             select nvl(sum(nvl(imp.vl_base_calc, 0)), 0)                  
+               into vn_vl_base_calc_icms_serv
+               from item_nota_fiscal  inf
+                  , imp_itemnf        imp
+                  , tipo_imposto      ti
+              where inf.notafiscal_id  = en_notafiscal_id
+                and inf.cd_lista_serv is not null           
+                and imp.itemnf_id      = inf.id
+                and imp.dm_tipo        = 0 -- 0-imposto, 1-retenção
+                and ti.id              = imp.tipoimp_id
+                and ti.cd              = 1; -- ICMS
+          exception
+             when others then
+                vn_vl_base_calc_icms_serv := 0;
+          end;
+          --
+       end if;     
+       --      
+       -- Valor total dos Serviços sob não-incidência ou não tributados pelo ICMS    
+       if nvl(vn_vl_serv_nao_trib,0) > 0 then     
+          -- 
+          vn_vl_total_serv    := nvl(vn_vl_serv_nao_trib,0);    
+          vn_vl_serv_nao_trib := nvl(vn_vl_serv_nao_trib,0) - nvl(vn_vl_base_calc_icms_serv,0);
+          --
+          if vn_vl_serv_nao_trib < 0 then
+             --
+             vn_vl_serv_nao_trib := 0;
+             --
+          end if;
+          --
+          if nvl(vn_vl_total_serv,0) <> nvl(vn_vl_serv_nao_trib,0) then
+             --         
+             vn_vl_total_serv := nvl(vn_vl_total_serv,0) - nvl(vn_vl_serv_nao_trib,0); 
+             --
+          end if;          
+          --        
+       end if;     
+       --  
+       vn_fase := 18; 
+       --     
+       if nvl(vn_vl_total_item,0) > 0 then
+          --
+          vn_vl_total_item := nvl(vn_vl_total_item,0) - nvl(vn_vl_serv_nao_trib,0);
+          --
+          if nvl(vn_vl_total_item,0) < 0 then
+             --
+             vn_vl_total_item := 0;
+             --
+          end if;
+          --
+       end if;
+       --     
+    end if;     
+    --           
+    vn_vl_icms_deson         := null;
+    vn_vl_icms_deson_tot_nf  := null; 
+    --    
+    vn_fase := 20;
+    -- Soma da desoneração do ICMS    
+    begin
+       --
+       select sum(nvl(vl_icms_deson,0))
+         into vn_vl_icms_deson
+         from imp_itemnf imp
+            , item_nota_fiscal inf
+            , tipo_imposto ti
+            , cod_st cs
+        where inf.notafiscal_id = en_notafiscal_id
+          and inf.id = imp.itemnf_id
+          and imp.dm_tipo = 0 -- 0-imposto
+          and imp.tipoimp_id = ti.id
+          and ti.cd = 1
+          and imp.codst_id = cs.id
+          and cs.cod_st in ('20', '30', '40', '41', '50', '70', '90'); -- ICMS
+       --
+    exception
+       when others then
+          --
+          vn_vl_icms_deson := 0;
+          --
+    end;
+    --
+    vn_fase := 20.1;
+    --    
+    if vn_dm_subtr_vl_icms_deson = 1 then  
+       --     
+       vn_vl_icms_deson_tot_nf := vn_vl_icms_deson;
+       --      
+    else
+       --     
+       vn_vl_icms_deson_tot_nf := 0;               
+       --      
+    end if;
+    --    
+    vn_fase := 21;
+    -- Soma o total da nota fiscal
+    vn_vl_total_nf := ( nvl(vn_vl_total_item,0) - nvl(vn_vl_desconto,0) - nvl(vn_vl_icms_deson_tot_nf,0) - nvl(vn_vl_abat_nt,0) )
+                      + nvl(vn_vl_imp_trib_st,0)
+                      + nvl(vn_vl_fcp_st,0)
+                      + nvl(vn_vl_frete,0)
+                      + nvl(vn_vl_seguro,0)
+                      + nvl(vn_vl_outra_despesas,0)
+                      + nvl(vn_vl_imp_trib_ipi,0)
+                      + nvl(vn_vl_ipi_devol,0)
+                      + nvl(vn_vl_serv_nao_trib,0);
+    --
+    vn_fase := 21.1;
+    --
+    if nvl(vn_qtde_cfop_3,0) > 0 then
+       --
+       if nvl(vn_dm_sm_vicms_import_vloper,0) = 1 then
+          vn_vl_total_nf := nvl(vn_vl_total_nf,0) + nvl(vn_vl_imp_trib_icms,0);
+       end if;
+       --
+       if nvl(vn_dm_sm_vpiscof_import_vloper,0) = 1 then
+          vn_vl_total_nf := nvl(vn_vl_total_nf,0) + nvl(vn_vl_imp_trib_pis,0) + nvl(vn_vl_imp_trib_cofins,0);
+       end if;
+       --
+       if nvl(vn_dm_sm_vii_import_vloper,0) = 1 then
+          vn_vl_total_nf := nvl(vn_vl_total_nf,0) + nvl(vn_vl_imp_trib_ii,0);
+       end if;
+       --
+    end if;
+    --
+    vn_fase := 21.2;
+    --
+    if nvl(vn_qtde_cfop_7,0) > 0 then
+       --
+       if nvl(vn_dm_sm_vicms_export_vloper,0) = 1 then
+          vn_vl_total_nf := nvl(vn_vl_total_nf,0) + nvl(vn_vl_imp_trib_icms,0);
+       end if;
+       --
+       if nvl(vn_dm_sm_vpiscof_export_vloper,0) = 1 then
+          vn_vl_total_nf := nvl(vn_vl_total_nf,0) + nvl(vn_vl_imp_trib_pis,0) + nvl(vn_vl_imp_trib_cofins,0);
+       end if;
+       --
+    end if; 
+    --   
+    -- Recupera valor do parametro GERA_COFINS_MAJORADO para a empresa. #73027
+    begin    
+       select prm.vlr_param   
+         into vv_vlr_parametro
+         from csf_own.param_geral_sistema prm
+        where prm.empresa_id =  vn_empresa_id
+          and prm.modulo_id = (select id 
+                                 from csf_own.modulo_sistema 
+                                where UPPER(cod_modulo) = UPPER('EMISSAO_DOC'))
+          and prm.grupo_id  = (select id 
+                                 from csf_own.grupo_sistema 
+                                where UPPER(cod_grupo) = UPPER('NF_IMPORTACAO') 
+                                  and modulo_id = (select id 
+                                                     from csf_own.modulo_sistema 
+                                                    where UPPER(cod_modulo) = UPPER('EMISSAO_DOC')))
+          and UPPER(prm.param_name) = UPPER('GERA_COFINS_MAJORADO');
+    exception
+      when others then
+        vv_vlr_parametro:= null; 
+    end;   
+    -- 
+    -- Verifica se o parametro esta habilitado para a empresa, para validac?o o parametro precisa ser '1'. #72372
+    if (vv_vlr_parametro is not null and vv_vlr_parametro = '1') then  
+        --
+        vn_fase := 30;
+        --
+        ---- soma valores 16-Cofins Importação #73027
+        begin
+           select sum(imp.vl_imp_trib)
+             into vn_vl_cofins_imp
+             from item_nota_fiscal inf
+                , imp_itemnf       imp
+                , tipo_imposto     ti
+            where inf.notafiscal_id = en_notafiscal_id
+              and imp.itemnf_id     = inf.id
+              and imp.dm_tipo       = 0 -- 0-imposto, 1-retenção
+              and ti.id             = imp.tipoimp_id
+              and ti.cd             = 16; -- COFINS Importação
+        exception
+           when others then
+              vn_vl_cofins_imp := 0;
+        end;
+        --
+        -- Valor cofins Majorada, dirença entre cofins importação e valor cofins destacado #73027
+        vn_vl_cofins_majorada := nvl(vn_vl_cofins_imp, 0) - nvl(vn_vl_imp_trib_cofins, 0);
+        --            
+    end if;    
+    --
+    vn_fase := 30;
+    --
+    vv_vlr_parametro:= null;
+    --
+    -- Recupera valor do parametro para a empresa. #73027
+    begin    
+       select prm.vlr_param   
+         into vv_vlr_parametro
+         from csf_own.param_geral_sistema prm
+        where prm.empresa_id =  vn_empresa_id
+          and prm.modulo_id = (select id 
+                                 from csf_own.modulo_sistema 
+                                where UPPER(cod_modulo) = UPPER('EMISSAO_DOC'))
+          and prm.grupo_id  = (select id 
+                                 from csf_own.grupo_sistema 
+                                where UPPER(cod_grupo) = UPPER('NF_IMPORTACAO') 
+                                  and modulo_id = (select id 
+                                                     from csf_own.modulo_sistema 
+                                                    where UPPER(cod_modulo) = UPPER('EMISSAO_DOC')))
+          and UPPER(prm.param_name) = UPPER('SOMA_COFINS_MAJOR_TOT_NF');
+    exception
+      when others then
+        vv_vlr_parametro:= null; 
+    end;   
+    --
+    vn_fase := 31;
+    --
+    -- Verifica se o parametro esta habilitado para a empresa, para validação o parametro precisa ser '1'. #72372
+    if (vv_vlr_parametro is not null and vv_vlr_parametro = '1') then  
+        --
+        vn_vl_total_nf := nvl(vn_vl_total_nf,0) + nvl(vn_vl_cofins_majorada, 0);
+        --
+    end if;   
+   --
+   ----------------------------------------------
+   -- INICIA VALIDACAO VALORES TOTAIS DA NOTA
+   ----------------------------------------------
+   --
+   -- verifica se existe a informação do total
+   begin
+      select nvl(vl_total_nf,0)
+        into vn_vl_tot_nf_notafiscaltotal 
+        from nota_fiscal_total
+       where notafiscal_id = en_notafiscal_id;
+   exception
+      when no_data_found then
+        vn_vl_tot_nf_notafiscaltotal := 0;
+      when others then
+        vn_vl_tot_nf_notafiscaltotal := 0;
+   end;
+   --
+   --atribui os valores ao log caso de erro.
+   if nvl(vn_qtde_cfop_3,0) > 0 then
+     --
+     if nvl(vn_dm_sm_vicms_import_vloper,0) = 1 then
+       vv_atribui := vv_atribui ||' / Parametro Soma Valor ICMS para Importação(CFOP de início 3) no Valor da Operação/Contábil ligado : ';
+       vv_atribui := vv_atribui ||'vn_vl_imp_trib_icms = '  || nvl(vn_vl_imp_trib_icms  ,0) ;
+     end if;
+     --
+     if nvl(vn_dm_sm_vpiscof_import_vloper,0) = 1 then
+       vv_atribui := vv_atribui ||' / Parametro Soma Valor Pis/Cofins para Importação(CFOP de início 3) no Valor da Operação/Contábil ligado : ';
+       vv_atribui := vv_atribui ||' vn_vl_imp_trib_pis = '  || nvl(vn_vl_imp_trib_pis  ,0) ;
+       vv_atribui := vv_atribui ||' / vn_vl_imp_trib_cofins = '  || nvl(vn_vl_imp_trib_cofins  ,0) ;
+     end if;
+     --
+     if nvl(vn_dm_sm_vii_import_vloper,0) = 1 then
+       vv_atribui := vv_atribui ||' / Parametro Soma Valor Imposto Importação para Importação(CFOP de início 3) no Valor da Operação/Contábil ligado : '; 
+       vv_atribui := vv_atribui ||'vn_vl_imp_trib_ii = '  || nvl(vn_vl_imp_trib_ii  ,0) ;
+     end if;
+     --
+   end if;
+   --
+   if nvl(vn_qtde_cfop_7,0) > 0 then
+     --
+     if nvl(vn_dm_sm_vicms_export_vloper,0) = 1 then
+       vv_atribui := vv_atribui ||' / Parametro Soma Valor ICMS para Exportação(CFOP de início 7) no Valor da Operação/Contábil ligado : ';
+       vv_atribui := vv_atribui ||'vn_vl_imp_trib_icms = '  || nvl(vn_vl_imp_trib_icms  ,0) ;
+     end if;
+     --
+     if nvl(vn_dm_sm_vpiscof_export_vloper,0) = 1 then     
+       vv_atribui := vv_atribui ||' / Parametro Soma Valor Pis/Cofins para Exportação(CFOP de início 7) no Valor da Operação/Contábil ligado : ';
+       vv_atribui := vv_atribui ||' vn_vl_imp_trib_pis = '  || nvl(vn_vl_imp_trib_pis  ,0) ;
+       vv_atribui := vv_atribui ||' / vn_vl_imp_trib_cofins = '  || nvl(vn_vl_imp_trib_cofins  ,0) ;
+     end if;
+     --
+   end if;
+   --
+   if vn_vl_tot_nf_notafiscaltotal > 0 then
+     --
+     if vn_vl_tot_nf_notafiscaltotal <> vn_vl_total_nf then
+       --
+       --
+       begin
+          --
+          gv_mensagem_log :=  'Valor Total da Nota fiscal difere da somatoria dos valores que o compõem. '||
+                              'Confira se os valores foram informados corretamente:' 
+                            ||' Valor Total Nf = '      || nvl(vn_vl_tot_nf_notafiscaltotal,0)
+                            ||' Valores que compoem : '  
+                            ||' vl_total_item = '       || nvl(vn_vl_total_item     ,0) 
+                            ||' / vl_desconto = '       || nvl(vn_vl_desconto       ,0) 
+                            ||' / vl_icms_deson = '     || nvl(vn_vl_icms_deson     ,0) 
+                            ||' / vl_abat_nt = '        || nvl(vn_vl_abat_nt        ,0) 
+                            ||' / vl_imp_trib_st = '    || nvl(vn_vl_imp_trib_st    ,0)
+                            ||' / vl_fcp_st = '         || nvl(vn_vl_fcp_st         ,0)
+                            ||' / vl_frete = '          || nvl(vn_vl_frete          ,0)
+                            ||' / vl_seguro = '         || nvl(vn_vl_seguro         ,0)
+                            ||' / vl_outra_despesas = ' || nvl(vn_vl_outra_despesas ,0)
+                            ||' / vl_imp_trib_ipi = '   || nvl(vn_vl_imp_trib_ipi   ,0)
+                            ||' / vl_ipi_devol = '      || nvl(vn_vl_ipi_devol      ,0)
+                            ||' / vl_serv_nao_trib = '  || nvl(vn_vl_serv_nao_trib  ,0)
+                            || vv_atribui ;
+          --
+          vn_loggenerico_id := null;
+          --
+          declare
+             vn_loggenerico_id  log_generico_nf.id%type;
+          begin
+             pkb_log_generico_nf ( sn_loggenericonf_id => vn_loggenerico_id
+                                 , ev_mensagem         => gv_cabec_log
+                                 , ev_resumo           => gv_mensagem_log
+                                 , en_tipo_log         => erro_de_validacao
+                                 , en_referencia_id    => EN_NOTAFISCAL_ID
+                                 , ev_obj_referencia   => 'NOTA_FISCAL' );
+             --                    
+             -- Armazena o "loggenerico_id" na memória
+             pkb_gt_log_generico_nf ( en_loggenericonf_id => vn_loggenerico_id
+                                    , est_log_generico_nf => est_log_generico_nf );
+          exception
+             when others then
+                null;
+          end;
+         --
+       end;
+        --
+     end if;
+     --
+   else
+     --
+     --somar os valores que compoem e ver se tem diferenca pro valro total.
+     vn_vl_total_somado := (
+                             (nvl(vn_vl_total_item,0) 
+                            - nvl(vn_vl_desconto,0) 
+                            - nvl(vn_vl_icms_deson,0) 
+                            - nvl(vn_vl_abat_nt,0) 
+                             )
+                            + nvl(vn_vl_imp_trib_st,0)
+                            + nvl(vn_vl_fcp_st,0)
+                            + nvl(vn_vl_frete,0)
+                            + nvl(vn_vl_seguro,0)
+                            + nvl(vn_vl_outra_despesas,0)
+                            + nvl(vn_vl_imp_trib_ipi,0)
+                            + nvl(vn_vl_ipi_devol,0)
+                            + nvl(vn_vl_serv_nao_trib,0)
+                            );
+         
+       if nvl(vn_qtde_cfop_3,0) > 0 then
+          --
+          if nvl(vn_dm_sm_vicms_import_vloper,0) = 1 then
+             vn_vl_total_somado := nvl(vn_vl_total_somado,0) + nvl(vn_vl_imp_trib_icms,0);
+          end if;
+          --
+          if nvl(vn_dm_sm_vpiscof_import_vloper,0) = 1 then
+             vn_vl_total_somado := nvl(vn_vl_total_somado,0) + nvl(vn_vl_imp_trib_pis,0) + nvl(vn_vl_imp_trib_cofins,0);
+          end if;
+          --
+          if nvl(vn_dm_sm_vii_import_vloper,0) = 1 then
+             vn_vl_total_somado := nvl(vn_vl_total_somado,0) + nvl(vn_vl_imp_trib_ii,0);
+          end if;
+          --
+       end if;
+       --
+       if nvl(vn_qtde_cfop_7,0) > 0 then
+          --
+          if nvl(vn_dm_sm_vicms_export_vloper,0) = 1 then
+             vn_vl_total_somado := nvl(vn_vl_total_somado,0) + nvl(vn_vl_imp_trib_icms,0);
+          end if;
+          --
+          if nvl(vn_dm_sm_vpiscof_export_vloper,0) = 1 then
+             vn_vl_total_somado := nvl(vn_vl_total_somado,0) + nvl(vn_vl_imp_trib_pis,0) + nvl(vn_vl_imp_trib_cofins,0);
+          end if;
+          --
+       end if; 
+       --
+       if nvl(vn_vl_total_somado,0) <> nvl(vn_vl_total_nf,0) then
+         --
+         --
+         begin
+            --
+            gv_mensagem_log :=  'Valor Total da Nota fiscal difere da somatoria dos valores que o compõem. '||
+                                'Confira se os valores foram informados corretamente:' 
+                              ||' Valor Total Nf = '      || nvl(vn_vl_tot_nf_notafiscaltotal,0)
+                              ||' Valores que compoem : '  
+                              ||' vl_total_item = '       || nvl(vn_vl_total_item     ,0) 
+                              ||' / vl_desconto = '       || nvl(vn_vl_desconto       ,0) 
+                              ||' / vl_icms_deson = '     || nvl(vn_vl_icms_deson     ,0) 
+                              ||' / vl_abat_nt = '        || nvl(vn_vl_abat_nt        ,0) 
+                              ||' / vl_imp_trib_st = '    || nvl(vn_vl_imp_trib_st    ,0)
+                              ||' / vl_fcp_st = '         || nvl(vn_vl_fcp_st         ,0)
+                              ||' / vl_frete = '          || nvl(vn_vl_frete          ,0)
+                              ||' / vl_seguro = '         || nvl(vn_vl_seguro         ,0)
+                              ||' / vl_outra_despesas = ' || nvl(vn_vl_outra_despesas ,0)
+                              ||' / vl_imp_trib_ipi = '   || nvl(vn_vl_imp_trib_ipi   ,0)
+                              ||' / vl_ipi_devol = '      || nvl(vn_vl_ipi_devol      ,0)
+                              ||' / vl_serv_nao_trib = '  || nvl(vn_vl_serv_nao_trib  ,0)
+                              || vv_atribui ;
+            --
+            vn_loggenerico_id := null;
+            --
+            declare
+               vn_loggenerico_id  log_generico_nf.id%type;
+            begin
+               pkb_log_generico_nf ( sn_loggenericonf_id => vn_loggenerico_id
+                                   , ev_mensagem         => gv_cabec_log
+                                   , ev_resumo           => gv_mensagem_log
+                                   , en_tipo_log         => erro_de_validacao
+                                   , en_referencia_id    => EN_NOTAFISCAL_ID
+                                   , ev_obj_referencia   => 'NOTA_FISCAL' );
+               --                    
+               -- Armazena o "loggenerico_id" na memória
+               pkb_gt_log_generico_nf ( en_loggenericonf_id => vn_loggenerico_id
+                                      , est_log_generico_nf => est_log_generico_nf );
+            exception
+               when others then
+                  null;
+            end;
+           --
+         end;
+         --
+       end if;
+     --
+   end if;   
+   --
+   --   
+   end if;
+   --
+EXCEPTION
+   when others then
+      --
+      rollback;
+      --
+      gv_mensagem_log := 'Erro na pkb_valida_composic_total_nf fase('||vn_fase||'): '||sqlerrm;
+      --
+      declare
+         vn_loggenerico_id  log_generico_nf.id%type;
+      begin
+         pkb_log_generico_nf ( sn_loggenericonf_id => vn_loggenerico_id
+                             , ev_mensagem         => gv_cabec_log
+                             , ev_resumo           => gv_mensagem_log
+                             , en_tipo_log         => erro_de_validacao
+                             , en_referencia_id    => EN_NOTAFISCAL_ID
+                             , ev_obj_referencia   => 'NOTA_FISCAL' );
+      exception
+         when others then
+            null;
+      end;
+      --
+end pkb_valida_composic_total_nf;
 --
 -----------------------------------------------------------------------------------------------------
 END pk_csf_api;

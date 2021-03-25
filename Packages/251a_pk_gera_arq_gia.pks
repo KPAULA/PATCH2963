@@ -4,6 +4,12 @@ create or replace package csf_own.pk_gera_arq_gia is
 -- Especificação do pacote de Geração do Arquivo da GIA
 -------------------------------------------------------------------------------------------------------
 --
+-- Em 11/03/2021    - Wendel Albino  - 2.9.6-3 / 2.9.5-6 / 2.9.7
+-- Redmine #76564   - Inclusão de CTe Próprio - DMA-BA
+-- Rotina Alterada  - pkb_gera_arq_gia_ba -> inclusao do else no (if rec.dm_ind_oper = 0 then -- Entrada) 
+--                  -  para gera os registros de SAIDA (rec.dm_ind_oper = 1 ) para CTEs que nao existiam no compliance.
+--                  - (Tipo 09 - Saídas por UF / Tipo 11 - Saídas por operação / Tipo 04 e 07 - Outras) 
+--
 -- Em 10/03/2021    - Wendel Albino - 2.9.6-3 / 2.9.5-6 / 2.9.7
 -- Redmine #76847   - DIME - Erro na geração do Arquivo
 -- Rotina Alterada  - pkb_gera_arq_gia_SC -> DIME- ajuste no parametro (vt_bi_tab_tp22(1)(vn_cfop).dif_aliq) do tp22 

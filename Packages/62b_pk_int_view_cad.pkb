@@ -3450,7 +3450,7 @@ begin
    --
    gv_sql := null;
    --
-   vt_tab_csf_subconta_correlata.delete;
+   vt_tab_csf_pc_aglut_contabil.delete;
    --
    --  inicia montagem da query
    gv_sql := 'select ';
@@ -3544,7 +3544,7 @@ exception
                                              , ev_mensagem        => gv_mensagem_log
                                              , ev_resumo          => gv_mensagem_log
                                              , en_tipo_log        => ERRO_DE_SISTEMA
-                                             , en_referencia_id   => null       
+                                             , en_referencia_id   => null
                                              , ev_obj_referencia  => gv_obj_referencia
                                              , en_empresa_id         => gn_empresa_id
                                              );
@@ -13574,7 +13574,7 @@ end pkb_stafe;
 procedure pkb_integracao ( en_empresa_id  in  empresa.id%type
                          , ed_dt_ini      in  date
                          , ed_dt_fin      in  date
-                         , en_nro_linha   in  number default 1 --#68800 
+                         , en_nro_linha   in  number default 1 --#68800
                          )
 is
    --
@@ -13659,7 +13659,7 @@ begin
       --
       vn_fase := 5;
       --
-      --#68800 so executa uma vez por multiorg    
+      --#68800 so executa uma vez por multiorg
       if en_nro_linha = 1 then
         --
         vn_fase := 6;
@@ -13706,33 +13706,43 @@ begin
       --
       vn_fase := 16;
       --
-      pkb_plano_conta ( ev_cpf_cnpj => vv_cpf_cnpj );
+      pkb_aglut_contabil ( ev_cpf_cnpj => vv_cpf_cnpj );
       --
       vn_fase := 17;
+/*      --
+      pkb_plano_conta ( ev_cpf_cnpj => vv_cpf_cnpj );
+      --*/
       --
       pkb_centro_custo ( ev_cpf_cnpj => vv_cpf_cnpj );
       --
       vn_fase := 18;
+/*    --
+      pkb_centro_custo ( ev_cpf_cnpj => vv_cpf_cnpj );
+      --*/
       --
-      pkb_hist_padrao ( ev_cpf_cnpj => vv_cpf_cnpj );
+      pkb_plano_conta ( ev_cpf_cnpj => vv_cpf_cnpj );
       --
       vn_fase := 19;
       --
-      pkb_item_param_icmsst ( ev_cpf_cnpj => vv_cpf_cnpj );
+      pkb_hist_padrao ( ev_cpf_cnpj => vv_cpf_cnpj );
       --
       vn_fase := 20;
       --
-      pkb_ctrl_ver_contab ( ev_cpf_cnpj => vv_cpf_cnpj );
+      pkb_item_param_icmsst ( ev_cpf_cnpj => vv_cpf_cnpj );
       --
       vn_fase := 21;
       --
-      pkb_legado_fci ( ev_cpf_cnpj => vv_cpf_cnpj);
+      pkb_ctrl_ver_contab ( ev_cpf_cnpj => vv_cpf_cnpj );
       --
       vn_fase := 22;
       --
-      pkb_aglut_contabil ( ev_cpf_cnpj => vv_cpf_cnpj );
+      pkb_legado_fci ( ev_cpf_cnpj => vv_cpf_cnpj);
       --
       vn_fase := 23;
+      --
+      /*pkb_aglut_contabil ( ev_cpf_cnpj => vv_cpf_cnpj );
+      --
+      vn_fase := 23;*/
       --
       pkb_ler_item_fornc_eu (ev_cpf_cnpj => vv_cpf_cnpj);
       --
@@ -13780,6 +13790,7 @@ exception
       raise_application_error (-20101, gv_mensagem_log);
       --
 end pkb_integracao;
+
 
 -------------------------------------------------------------------------------------------------------------------------------
 
@@ -13891,7 +13902,7 @@ is
         , eib.dm_ret_infor_integr
         , eib.formato_dt_erp
         , eib.dm_form_dt_erp
-		, rownum   nro_linha --#75771
+        , rownum   nro_linha --#75771
      from empresa e
         , empresa_integr_banco eib
        where e.dm_situacao     = 1 -- Ativo
@@ -13973,11 +13984,12 @@ begin
                 , ed_dt_ini   => ed_dt_ini
                 , ed_dt_fin   => ed_dt_fin
                 );
-      --    
+      --
+      --
       vn_fase := 2;
 	  --
-      --#75771 
-      if rec_multorg.nro_linha = 1 then 
+      --#75771
+      if rec_multorg.nro_linha = 1 then
           --
           vn_fase := 2;
           --
@@ -14070,31 +14082,41 @@ begin
       --
       vn_fase := 12;
       --
-      pkb_plano_conta ( ev_cpf_cnpj => vv_cpf_cnpj );
+      pkb_aglut_contabil ( ev_cpf_cnpj => vv_cpf_cnpj );
       --
       vn_fase := 13;
+/*    --
+      pkb_plano_conta ( ev_cpf_cnpj => vv_cpf_cnpj );
+      --*/
       --
       pkb_centro_custo ( ev_cpf_cnpj => vv_cpf_cnpj );
       --
       vn_fase := 14;
+/*    --
+      pkb_centro_custo ( ev_cpf_cnpj => vv_cpf_cnpj );
+      --*/
       --
-      pkb_hist_padrao ( ev_cpf_cnpj => vv_cpf_cnpj );
+      pkb_plano_conta ( ev_cpf_cnpj => vv_cpf_cnpj );
       --
       vn_fase := 15;
       --
-      pkb_item_param_icmsst ( ev_cpf_cnpj => vv_cpf_cnpj );
+      pkb_hist_padrao ( ev_cpf_cnpj => vv_cpf_cnpj );
       --
       vn_fase := 16;
       --
-      pkb_ctrl_ver_contab ( ev_cpf_cnpj => vv_cpf_cnpj );
+      pkb_item_param_icmsst ( ev_cpf_cnpj => vv_cpf_cnpj );
       --
       vn_fase := 17;
       --
-      pkb_legado_fci ( ev_cpf_cnpj => vv_cpf_cnpj );
+      pkb_ctrl_ver_contab ( ev_cpf_cnpj => vv_cpf_cnpj );
       --
       vn_fase := 18;
       --
-      pkb_aglut_contabil ( ev_cpf_cnpj => vv_cpf_cnpj );
+      pkb_legado_fci ( ev_cpf_cnpj => vv_cpf_cnpj );
+      --
+/*    vn_fase := 18;
+      --
+      pkb_aglut_contabil ( ev_cpf_cnpj => vv_cpf_cnpj );*/
       --
       vn_fase := 19;
       --
@@ -14128,7 +14150,7 @@ end pkb_integr_cad_geral;
 -------------------------------------------------------------------------------------------------------
 
 -- Processo de integração informando todas as empresas matrizes
-procedure pkb_integr_empresa_geral ( en_paramintegrdados_id  in  param_integr_dados.id%type 
+procedure pkb_integr_empresa_geral ( en_paramintegrdados_id  in  param_integr_dados.id%type
                                    , en_empresa_id          in empresa.id%type
                                    )
 is
@@ -14179,8 +14201,8 @@ begin
       --
       gv_multorg_cd := pk_csf.fkg_multorg_cd ( en_multorg_id => gn_multorg_id );
       --
-      --#75771 
-      if rec_multorg.nro_linha = 1 then 
+      --#75771
+      if rec_multorg.nro_linha = 1 then
         --
         pkb_pessoa;
         --
@@ -14241,32 +14263,42 @@ begin
       --
       vn_fase := 12;
       --
-      pkb_plano_conta ( ev_cpf_cnpj => vv_cpf_cnpj );
+      pkb_aglut_contabil ( ev_cpf_cnpj => vv_cpf_cnpj );
       --
       vn_fase := 13;
+/*    --
+      pkb_plano_conta ( ev_cpf_cnpj => vv_cpf_cnpj );
+      --*/
       --
       pkb_centro_custo ( ev_cpf_cnpj => vv_cpf_cnpj );
       --
       vn_fase := 14;
+/*    --
+      pkb_centro_custo ( ev_cpf_cnpj => vv_cpf_cnpj );
+      --*/
       --
-      pkb_hist_padrao ( ev_cpf_cnpj => vv_cpf_cnpj );
+      pkb_plano_conta ( ev_cpf_cnpj => vv_cpf_cnpj );
       --
       vn_fase := 15;
       --
-      pkb_item_param_icmsst ( ev_cpf_cnpj => vv_cpf_cnpj );
+      pkb_hist_padrao ( ev_cpf_cnpj => vv_cpf_cnpj );
       --
       vn_fase := 16;
       --
-      pkb_ctrl_ver_contab ( ev_cpf_cnpj => vv_cpf_cnpj );
+      pkb_item_param_icmsst ( ev_cpf_cnpj => vv_cpf_cnpj );
       --
       vn_fase := 17;
       --
-      pkb_legado_fci ( ev_cpf_cnpj => vv_cpf_cnpj );
+      pkb_ctrl_ver_contab ( ev_cpf_cnpj => vv_cpf_cnpj );
       --
       vn_fase := 18;
       --
-      pkb_aglut_contabil ( ev_cpf_cnpj => vv_cpf_cnpj );
+      pkb_legado_fci ( ev_cpf_cnpj => vv_cpf_cnpj );
       --
+/*    vn_fase := 18;
+      --
+      pkb_aglut_contabil ( ev_cpf_cnpj => vv_cpf_cnpj );
+      --*/
       vn_fase := 19;
       --
       pkb_ler_item_fornc_eu ( ev_cpf_cnpj => vv_cpf_cnpj);

@@ -23746,6 +23746,8 @@ PROCEDURE PKB_INTEGR_NOTA_FISCAL_FF ( EST_LOG_GENERICO_NF     IN OUT NOCOPY  DBM
    vv_url_chave             nota_fiscal.url_chave%type;
    vn_cod_mensagem          nota_fiscal.cod_mensagem%type;
    vv_msg_sefaz             nota_fiscal.msg_sefaz%type;
+   vv_modelodanfe_cd        modelo_danfe.codigo%type;
+   vn_modelodanfe_id        modelo_danfe.id%type;   
    --
 BEGIN
    --
@@ -24745,9 +24747,74 @@ BEGIN
             --
          end if;
          --
-      else
+      elsif trim(ev_atributo) = 'MODELO_DANFE' then		 
          --
          vn_fase := 23;
+         --
+         if trim(ev_valor) is not null then
+            --
+            vn_fase := 23.1; 
+            --
+            if vn_dmtipocampo = 2 then -- tipo de campo = caractere = 0-data, 1-numérico, 2-caractere
+               --
+               vn_fase := 23.2;
+               --
+               vv_modelodanfe_cd := trim(pk_csf.fkg_ff_ret_vlr_caracter ( ev_obj_name => 'VW_CSF_NOTA_FISCAL_FF'
+                                                                        , ev_atributo => trim(ev_atributo)
+                                                                        , ev_valor    => trim(ev_valor) ) );
+               --
+               vn_fase := 23.21;
+               --
+               vn_modelodanfe_id := pk_csf.fkg_Modelo_Danfe_id ( ev_cd => vv_modelodanfe_cd );
+               --
+               if trim(vv_modelodanfe_cd) is not null
+                  and nvl(vn_modelodanfe_id,0) <= 0
+                  then
+                  --
+                  gv_mensagem_log := 'Codigo do Modelo do Danfe ('|| vv_modelodanfe_cd ||'), não cadastrado para o atributo MODELO_DANFE, '||
+                                     'verifique na tabela de Modelos de DANFE um modelo cadastrado ou cadastre um novo e envie-o neste atributo.';
+                  --
+                  vn_loggenerico_id := null;
+                  --
+                  pkb_log_generico_nf ( sn_loggenericonf_id => vn_loggenerico_id
+                                      , ev_mensagem         => gv_cabec_log || gv_cabec_log_item
+                                      , ev_resumo           => gv_mensagem_log
+                                      , en_tipo_log         => erro_de_validacao
+                                      , en_referencia_id    => gn_referencia_id
+                                      , ev_obj_referencia   => gv_obj_referencia
+                                      );
+                  --
+                  -- Armazena o "loggenerico_id" na memória
+                  pkb_gt_log_generico_nf ( en_loggenericonf_id => vn_loggenerico_id
+                                         , est_log_generico_nf => est_log_generico_nf );
+                  --
+               end if;
+               --
+            else
+               --
+               vn_fase := 23.3;
+               --
+               gv_mensagem_log := 'Para o atributo '||ev_atributo||', o VALOR informado não confere com o tipo de campo, deveria ser Caractere.';
+               --
+               vn_loggenerico_id := null;
+               --
+               pkb_log_generico_nf ( sn_loggenericonf_id => vn_loggenerico_id
+                                   , ev_mensagem         => gv_cabec_log || gv_cabec_log_item
+                                   , ev_resumo           => gv_mensagem_log
+                                   , en_tipo_log         => erro_de_validacao
+                                   , en_referencia_id    => gn_referencia_id
+                                   , ev_obj_referencia   => gv_obj_referencia );
+               -- Armazena o "loggenerico_id" na memória
+               pkb_gt_log_generico_nf ( en_loggenericonf_id => vn_loggenerico_id
+                                      , est_log_generico_nf => est_log_generico_nf );
+               --
+            end if;
+            --
+         end if;
+         --	  		 
+      else
+         --
+         vn_fase := 24;
          --
          gv_mensagem_log := '"Atributo" ('||ev_atributo||') e "VALOR" ('||ev_valor||') relacionados, não especificados no processo.';
          --
@@ -24767,11 +24834,11 @@ BEGIN
       --
    end if;
    --
-   vn_fase := 24;
+   vn_fase := 25;
    --
    if nvl(en_notafiscal_id,0) = 0 then
       --
-      vn_fase := 24.1;
+      vn_fase := 25.1;
       --
       gv_mensagem_log := 'Identificador da nota fiscal referenciada não informado.';
       --
@@ -25026,6 +25093,22 @@ BEGIN
       --
    end if;
    --
+   vn_fase := 99.36;
+   --
+   if nvl(en_notafiscal_id,0)     > 0
+      and trim(ev_atributo)       = 'MODELO_DANFE'
+      and trim(vn_modelodanfe_id) is not null
+      and vv_mensagem             is null
+      then
+      --
+      vn_fase := 99.37;
+      --
+      update nota_fiscal nf
+         set nf.modelodanfe_id = vn_modelodanfe_id
+       where nf.id = en_notafiscal_id;
+      --
+   end if;
+   --   
    <<sair_integr>>
    null;
    --
@@ -26590,8 +26673,9 @@ BEGIN
             --			
             vn_fase := 38.8;
             --            
+            --
             begin
-               select round( nvl( sum( decode( nf.dm_ind_emit, 1, nvl(imp_st.vl_fcp, 0)
+               /*select round( nvl( sum( decode( nf.dm_ind_emit, 1, nvl(imp_st.vl_fcp, 0)
                                                              , decode(cst_icms.cod_st, '60', 0, nvl(imp_st.vl_fcp, 0)) ) ), 0), 2)
                  into vn_vl_fcp_st
                  from nota_fiscal       nf
@@ -26612,6 +26696,41 @@ BEGIN
                   and cst_icms.id        = imp_icms.codst_id
                   and ti_icms.id         = imp_icms.tipoimp_id
                   and ti_icms.cd        in ( '1' );
+                  */
+                  --
+              --#76598 
+              select round( nvl( 
+                                sum( 
+                                    case 
+                                        when (nf.dm_ind_emit = 0 -- emissao propria
+                                          and (cst_icms.cod_st = '60'  and ti_icms.cd  = '1'  --icms
+                                            or cst_icms.cod_st = '500' and ti_icms.cd  = '10' --simples nacional
+                                              )) then  0
+                                     else nvl(imp_st.vl_fcp, 0)
+                                     end 
+                                     )
+                                , 0)
+                          , 2)
+                 into vn_vl_fcp_st
+                 from nota_fiscal       nf
+                    , item_nota_fiscal  it
+                    , imp_itemnf        imp_st
+                    , tipo_imposto      ti
+                    , imp_itemnf        imp_icms
+                    , cod_st            cst_icms
+                    , tipo_imposto      ti_icms
+                where nf.id              = en_notafiscal_id
+                  and it.notafiscal_id   = nf.id
+                  and imp_st.itemnf_id   = it.id
+                  and imp_st.dm_tipo     = 0 -- 0-imposto, 1-retenção
+                  and ti.id              = imp_st.tipoimp_id
+                  and ti.cd              = '2' --ICMS_ST
+                  and imp_icms.itemnf_id = it.id
+                  and imp_icms.dm_tipo   = 0 -- 0-imposto, 1-retenção 
+                  and cst_icms.id        = imp_icms.codst_id
+                  and ti_icms.id         = imp_icms.tipoimp_id
+                  and ti_icms.cd        in ( '1','10' ) --icms /simples nacional
+                  ;
             exception
                when others then
                   vn_vl_fcp_st := 0;

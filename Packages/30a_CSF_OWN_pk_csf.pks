@@ -3,6 +3,10 @@ create or replace package csf_own.pk_csf is
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Especificação do pacote de funções para o CSF
 --
+-- Em 25/11/2020  - Luis Marques - 2.9.6-3 / 2.9.7
+-- Redmine #70214 - Integração de modelo Danfe
+-- Nova Função    - fkg_Modelo_Danfe_id - Função retorna o ID da tabela modelo_danfe.
+--
 -- Em 05/03/2021 - Marcos Ferreira
 -- Distribuições: 2.9.7 / 2.9.6-3 / 2.9.5-6
 -- Redmine #76254: Criar estrutura para R2055
@@ -3892,6 +3896,14 @@ procedure pkb_cria_dominio (ev_dominio    varchar2,
 --
 function fkg_tabela_existe (ev_tabela_nome varchar2)
                              return boolean;
+--
+-------------------------------------------------------------------------------------------------------
+
+--| Função retorna o ID da tabela Modelo_Danfe
+
+function fkg_Modelo_Danfe_id ( ev_cd          in modelo_danfe.codigo%TYPE )
+         return modelo_danfe.id%TYPE;
+
 --
 end pk_csf;
 /

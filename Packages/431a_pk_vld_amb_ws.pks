@@ -4,6 +4,11 @@ create or replace package csf_own.pk_vld_amb_ws is
 --| Especificação do pacote de procedimentos de Validação de Ambiente de Web-Service
 -------------------------------------------------------------------------------------------------------
 --
+-- Em 12/03/2021   - Luis Marques - 2.9.5-6 / 2.9.6-3 / 2.9.7
+-- Redmine 76984   - Falha ao recuperar status correto do lote de NF-e (2) 
+-- Rotina Alterada - pkb_validar_lote_int_ws - Incluida verificação se estiver com erro mas o retorno for 302 (Denegado) o lote é colocado
+--                   com status 3-Processado.
+--
 -- Em 27/02/2021   - Armando
 -- Redmine   - ADICIONANDO O OBJETO DE INTEGRAÇÃO 16
 -- 			 - cursor c_dados is DA PK_VALIDAR_LOTE_EMISS_ST_REC
