@@ -26673,8 +26673,9 @@ BEGIN
             --			
             vn_fase := 38.8;
             --            
+            --
             begin
-               select round( nvl( sum( decode( nf.dm_ind_emit, 1, nvl(imp_st.vl_fcp, 0)
+               /*select round( nvl( sum( decode( nf.dm_ind_emit, 1, nvl(imp_st.vl_fcp, 0)
                                                              , decode(cst_icms.cod_st, '60', 0, nvl(imp_st.vl_fcp, 0)) ) ), 0), 2)
                  into vn_vl_fcp_st
                  from nota_fiscal       nf
@@ -26695,6 +26696,41 @@ BEGIN
                   and cst_icms.id        = imp_icms.codst_id
                   and ti_icms.id         = imp_icms.tipoimp_id
                   and ti_icms.cd        in ( '1' );
+                  */
+                  --
+              --#76598 
+              select round( nvl( 
+                                sum( 
+                                    case 
+                                        when (nf.dm_ind_emit = 0 -- emissao propria
+                                          and (cst_icms.cod_st = '60'  and ti_icms.cd  = '1'  --icms
+                                            or cst_icms.cod_st = '500' and ti_icms.cd  = '10' --simples nacional
+                                              )) then  0
+                                     else nvl(imp_st.vl_fcp, 0)
+                                     end 
+                                     )
+                                , 0)
+                          , 2)
+                 into vn_vl_fcp_st
+                 from nota_fiscal       nf
+                    , item_nota_fiscal  it
+                    , imp_itemnf        imp_st
+                    , tipo_imposto      ti
+                    , imp_itemnf        imp_icms
+                    , cod_st            cst_icms
+                    , tipo_imposto      ti_icms
+                where nf.id              = en_notafiscal_id
+                  and it.notafiscal_id   = nf.id
+                  and imp_st.itemnf_id   = it.id
+                  and imp_st.dm_tipo     = 0 -- 0-imposto, 1-retenção
+                  and ti.id              = imp_st.tipoimp_id
+                  and ti.cd              = '2' --ICMS_ST
+                  and imp_icms.itemnf_id = it.id
+                  and imp_icms.dm_tipo   = 0 -- 0-imposto, 1-retenção 
+                  and cst_icms.id        = imp_icms.codst_id
+                  and ti_icms.id         = imp_icms.tipoimp_id
+                  and ti_icms.cd        in ( '1','10' ) --icms /simples nacional
+                  ;
             exception
                when others then
                   vn_vl_fcp_st := 0;
