@@ -4578,10 +4578,9 @@ exception
       end;
       --
 end pkb_exec_rot_prog_pv_nf;
-
+--
 -------------------------------------------------------------------------------------------------------
 -- Procedimento faz a leitura de uma NF para validação
-
 procedure pkb_ler_Nota_Fiscal ( en_notafiscal_id in nota_fiscal.id%type
                               , en_loteintws_id  in lote_int_ws.id%type default 0
                               )
@@ -4609,20 +4608,27 @@ is
       and nf.dm_arm_nfe_terc = 0
       and mf.id              = nf.modfiscal_id
       and mf.cod_mod        in ('01', '1B', '04', '55', '65')
-      and not exists (select 1 from nota_fiscal_canc nfc where nfc.notafiscal_id = nf.id and nfc.DM_CANC_SERVICO = 1)
+      and not exists (select 1 from nota_fiscal_canc nfc where nfc.notafiscal_id = nf.id )
     order by nf.id;
    --
 begin
    --
    vn_fase := 1;
+   --
    pk_csf_api.pkb_seta_obj_ref ( ev_objeto => 'NOTA_FISCAL' );
    pk_csf_api.pkb_seta_tipo_integr ( en_tipo_integr => 0 );
    --
+   vn_fase := 1.1;
+   --
    vb_entrou := false; -- 1979
-
+   --
+   vn_fase := 1.2;
+   --
    vn_empresa_id := pk_csf.fkg_empresa_notafiscal(en_notafiscal_id);
    vn_multorg_id := pk_csf.fkg_multorg_id_empresa(vn_empresa_id);
          --
+   vn_fase := 1.3;
+   --
    -- Busca o Parametro para checar se
    if not pk_csf.fkg_ret_vl_param_geral_sistema (en_multorg_id => vn_multorg_id,
                                                  en_empresa_id => vn_empresa_id,
@@ -4636,6 +4642,9 @@ begin
       --
    end if;
     -- FIM 1979
+   --
+   vn_fase := 1.4;
+   --
    -- Lê as notas fiscais e faz o processo de validação encadeado
    for rec in c_Nota_Fiscal loop
       exit when c_Nota_Fiscal%notfound or (c_Nota_Fiscal%notfound) is null;
@@ -4653,24 +4662,9 @@ begin
       end if;
       --
       vn_fase := 2;
+         --
       -- limpa o array quando inicia uma nova Nota Fiscal
       vt_log_generico_nf.delete;
-      --
-      begin
-         --
-         select 1
-           into vn_existe_canc
-           from Nota_Fiscal_Canc nfc
-          where nfc.notafiscal_id = rec.id;
-         --
-      exception
-         when others then
-            vn_existe_canc := 0;
-      end;
-      --
-      if nvl(vn_existe_canc,0) > 0 then
-         goto sair;
-      end if;
       --
       vn_fase := 2.1;
       --
@@ -4692,6 +4686,8 @@ begin
       --
       vv_cd_sitdocto := pk_csf.fkg_Sit_Docto_cd ( en_sitdoc_id => rec.sitdocto_id );
       --
+         -- Inicio do processo que popula os dados da nota
+         --
       pk_csf_api.gt_row_Nota_Fiscal := null;
       --
       vn_fase := 3;
@@ -4783,6 +4779,7 @@ begin
 	  pk_csf_api.gt_row_nota_fiscal.modelodanfe_id       := rec.modelodanfe_id; --#77044
 	  --
       vn_fase := 4;
+      --
       -- Chama o Processo de validação dos dados da Nota Fiscal
       pk_csf_api.pkb_integr_Nota_Fiscal ( est_log_generico_nf  => vt_log_generico_nf
                                         , est_row_Nota_Fiscal  => pk_csf_api.gt_row_Nota_Fiscal
@@ -4797,6 +4794,8 @@ begin
                                         , en_multorg_id        => gn_multorg_id
                                         , en_loteintws_id      => en_loteintws_id
                                         );
+      --
+      vn_fase := 4.1;
       --
       if nvl(pk_csf_api.gt_row_Nota_Fiscal.id,0) = 0
          and nvl(en_loteintws_id,0) <= 0
@@ -4895,7 +4894,7 @@ begin
                                 , en_empresa_id    => rec.empresa_id
                                 );
       --
-      vn_fase := 5.01;
+      vn_fase := 5.1;
       -- Lê os dados do emitente da nota fiscal
       pkb_ler_Nota_Fiscal_Emit ( est_log_generico_nf          => vt_log_generico_nf
                                , en_notafiscal_id          => rec.id
@@ -5006,14 +5005,10 @@ begin
       --
       vn_fase := 98.1;
       --
-      if nvl(pk_csf_api.gt_row_Nota_Fiscal.id,0) = 0 and
-         nvl(en_loteintws_id,0) <= 0 and
-         nvl(vn_existe_canc,0) = 0 then
-         -- Nota não existe no Compliance, não possui lote de integração web-service, e não possui cancelamento, portanto não passou pelo processo de validação
-         null;
+      if nvl(pk_csf_api.gt_row_Nota_Fiscal.id,0) > 0 and
+         nvl(en_loteintws_id,0) > 0 then
          --
-      else
-         -- A nota pode estar cancelada ou passou pelo processo de validação, portanto deve atualizar os valores de DM_ST_INTEGRA e DM_ST_PROC
+         -- A nota pode ter passado pelo processo de validação, portanto deve atualizar os valores de DM_ST_INTEGRA e DM_ST_PROC
          vn_fase := 99;
          --
          if rec.dm_st_integra in (7, 8, 9) then -- OPen Interface
@@ -5078,10 +5073,12 @@ begin
             else
                -- Se não houve nenhum nenhum registro de ocorrência
                -- então atualiza o dm_st_proc para 1-Aguardando Envio
+               --
                vn_fase := 99.4;
+               --
                -- Se a NFe de emissão propria não esta com situação de "4-Autorizado; 6-Denegado; 7-Cancelado; 8-Inutilizada"
-               if rec.dm_st_proc not in (4, 6, 7, 8)
-                  and rec.dm_legado = 0 -- 0-Não é Legado
+               if rec.dm_st_proc not in (4, 6, 7, 8) and
+                  rec.dm_legado = 0 -- 0-Não é Legado
                   then
                   --
                   vn_dm_aguard_liber_nfe := pk_csf.fkg_empr_aguard_liber_nfe ( en_empresa_id => rec.empresa_id );
@@ -5093,6 +5090,7 @@ begin
                   else
                      --
                      vn_dm_st_proc := 1; -- Aguardando Envio
+                     --
                      --INICIO 1979
                      IF vn_util_rabbitmq = 1 THEN
                       pb_gera_lote(rec.empresa_id, rec.id); -- 1979
@@ -5236,18 +5234,14 @@ begin
       --
       commit;
       --
-      vn_fase := 100.1;
-      --
    end loop;
    --
-   vn_fase := 100.2;
+   vn_fase := 100.1;
       --
    vn_dm_st_proc := pk_csf.fkg_st_proc_nf ( en_notafiscal_id => en_notafiscal_id ); -- 1979
       --
-   vn_fase := 100.3;
+   vn_fase := 100.2;
          --
-   vn_fase := 100.4;
-   --
    if vb_entrou = false and vn_dm_st_proc <= 0  /*and vn_util_rabbitmq = 1*/ then
    --
       pk_csf_rabbitmq.pb_valida_nfe(en_notafiscal_id);

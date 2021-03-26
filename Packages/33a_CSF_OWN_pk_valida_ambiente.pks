@@ -4,6 +4,15 @@ create or replace package csf_own.pk_valida_ambiente is
 -- Especificação do pacote da API para ler as notas fiscais com DM_ST_PROC = 0 (Não validada)
 -- e chamar os procedimentos para validar os dados
 --
+-- Em 18/03/2021      - Karina de Paula
+-- Redmine #77107     - Pedido de cancelamento rejeitado - situação do documento (FRANKLIN)
+-- Rotina Alterada    - pkb_ler_Nota_Fiscal => Retirada do cursor c_Nota_Fiscal a verificacao DM_CANC_SERVICO para nao entrar 
+--                      na rotina de validacao notas canceladas no geral, da mesma forma que funciona a integracao openinterface
+--                      Retirada a verificacao de nao existencia de id, loteintws_id e cancelamento  
+--                      Retirado o select q retornava se a nf existe na nota_fiscal_canc pq ja esta sendo contemplado na alteracao 
+--                      do cursor c_Nota_Fiscal
+-- Liberado na versão - Release_2.9.7, Patch_2.9.6.3 e Patch_2.9.5.6
+--
 -- Em 16/03/2021   - Wendel Albino - patchs 2.9.6-3/ 2.9.5-6/ 297
 -- Redmine #77044  - Erro ao gerar DANFE Simplificado automaticamente
 -- Rotina Alterada - pkb_ler_Nota_Fiscal -> incluida "pk_csf_api.gt_row_nota_fiscal.modelodanfe_id := rec.modelodanfe_id;"
