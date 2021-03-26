@@ -1420,6 +1420,7 @@ is
          par.dm_mod_bc_icms,  
          par.dm_soma_ipi,  
          par.dm_soma_st,  
+         par.codajsaldoapuricms_id, 
          imp.codst_id codst_id2   
     from nota_fiscal                  nf,
          item_nota_fiscal             inf,
@@ -1524,11 +1525,19 @@ begin
        vn_vl_imp_trib_ct := vn_vl_imp_trib_icms;
        --
         begin
-          select count(*)
+/*          select count(*)
             into vn_existe_inf
             from inf_ajust_subapur_icms_nf
            where 1 = 1
-             and REFERENCIA_ID = rec_nf.referencia_id;
+             and REFERENCIA_ID = rec_nf.referencia_id;*/
+         select count(*)
+            into vn_existe_inf
+            from ajust_subapur_icms a
+                 ,inf_ajust_subapur_icms_nf b
+           where 1 = 1
+             and a.id = b.ajustsubapuricms_id
+             and REFERENCIA_ID = rec_nf.referencia_id
+             and a.codajsaldoapuricms_id = rec_nf.CODAJSALDOAPURICMS_ID;
         exception
           when others then
             vn_existe_inf := null;
@@ -1596,12 +1605,21 @@ begin
        vn_existe_inf :=null;
        --
        begin
-         select count(*)
+/*         select count(*)
            into vn_existe_inf
            from inf_ajust_subapur_icms_nf
           where 1 = 1
             and REFERENCIA_ID = rec_nf.referencia_id
-            and itemnf_id = rec_difal.itemnf_id;
+            and itemnf_id = rec_difal.itemnf_id;*/
+            select count(*)
+           into vn_existe_inf
+           from ajust_subapur_icms a
+                 ,inf_ajust_subapur_icms_nf b
+           where 1 = 1
+            and a.id = b.ajustsubapuricms_id
+            and REFERENCIA_ID = rec_nf.referencia_id
+            and itemnf_id = rec_difal.itemnf_id
+            and a.codajsaldoapuricms_id = rec_difal.CODAJSALDOAPURICMS_ID;
        exception
          when others then
            vn_existe_inf := null;

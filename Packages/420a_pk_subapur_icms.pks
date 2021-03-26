@@ -2,6 +2,13 @@ create or replace package csf_own.pk_subapur_icms is
 
 -------------------------------------------------------------------------------------------------------
 --
+--
+-- Em 05/03/2020 - Allan Magrini  
+-- Redmine #76811: Alterar verificação de existencia
+-- Rotinas Alteradas: pkb_criar_1921_1923 - Alterado os select verificam se já existe informação na tabela nas fases 5 e 6 
+--                   incluindo CODAJSALDOAPURICMS_ID
+-- Distribuições: 2.9.7 - 2.9.6.2 - 2.9.5.5
+--
 -- Em 09/02/2020 - Allan Magrini  
 -- Redmine #75742: Customização ACG.
 -- Rotinas Alteradas: pkb_criar_c195_c197, pkb_criar_d195_d197, pkb_criar_1921_1923 e pkb_limpa_c190_d190_1920 adicionado o campo orig 
