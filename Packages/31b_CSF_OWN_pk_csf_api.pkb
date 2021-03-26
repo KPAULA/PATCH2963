@@ -1813,11 +1813,19 @@ END PKB_SETA_REFERENCIA_ID;
 --------------------------------------------------
 -- Procedimento exclui dados de uma nota fiscal --         
 --------------------------------------------------
-PROCEDURE PKB_EXCLUIR_DADOS_NF ( EN_NOTAFISCAL_ID  IN NOTA_FISCAL.ID%TYPE ) IS
+PROCEDURE PKB_EXCLUIR_DADOS_NF ( EN_NOTAFISCAL_ID  IN NOTA_FISCAL.ID%TYPE
+                               , EV_ROTINA_ORIG    IN VARCHAR2 DEFAULT NULL ) IS
+   --
+   -- EV_ROTINA_ORIG => Incluir nesse parâmetro de entrada o nome do objeto ou tela que está chamando a rotina PKB_EXCLUIR_DADOS_NF
    --
    vn_fase            number := 0;
    vn_dm_arm_nfe_terc nota_fiscal.dm_arm_nfe_terc%type;
    vn_dm_ind_emit     nota_fiscal.dm_ind_emit%type;
+   vn_nro_chave_nfe   nota_fiscal.nro_chave_nfe%type;
+   vn_nro_nf          nota_fiscal.nro_nf%type;
+   vv_serie           nota_fiscal.serie%type;
+   vn_empresa_id      nota_fiscal.empresa_id%type;
+   vn_loggenerico_id  log_generico_nf.id%type;
    --
    cursor c_item is
    select id
@@ -1882,12 +1890,24 @@ BEGIN
       --
       begin
         select nf.dm_arm_nfe_terc
+             , nf.nro_chave_nfe
+             , nf.nro_nf
+             , nf.serie
+             , nf.empresa_id
           into vn_dm_arm_nfe_terc
+             , vn_nro_chave_nfe
+             , vn_nro_nf
+             , vv_serie
+             , vn_empresa_id
           from nota_fiscal nf
          where nf.id = en_notafiscal_id;
       exception
         when others then
           vn_dm_arm_nfe_terc := 0; -- 0-não armazena xml, 1-sim armazena xml
+          vn_nro_chave_nfe   := null;
+          vn_nro_nf          := null;
+          vv_serie           := null;
+          vn_empresa_id      := null;
       end;
       --    
       if FKG_NOTA_MDE_ARMAZ(en_notafiscal_id   => en_notafiscal_id,
@@ -2464,6 +2484,29 @@ BEGIN
          vn_fase := 63;
          --
          commit;
+         --
+         -- ============================================================================================================================
+         -- Gera log da chamada da pkb_excluir_dados_nf para auditoria de exclusao de dados
+         --
+         vn_fase := 90;
+         --
+         gv_mensagem_log := 'Executada a rotina PK_CSF_API.PKB_EXCLUIR_DADOS_NF para exclusao do documento fiscal ID: '||en_notafiscal_id||'. '||
+                            'Dados do documento fiscal excluido: nro_chave_nfe('|| vn_nro_chave_nfe||') / '||
+                                                                'nro_nf('||        vn_nro_nf       ||') / '||
+                                                                'serie('||         vv_serie        ||') / '||
+                                                                'empresa_id ('||   vn_empresa_id   ||') / '||
+                            'A rotina de exclusao foi chamada pelo objeto ou tela '||nvl(ev_rotina_orig,'"Rotina nao identificada"')||'.';
+         --
+         vn_loggenerico_id := null;
+         --
+         pkb_log_generico_nf ( sn_loggenericonf_id => vn_loggenerico_id
+                             , ev_mensagem         => nvl(gv_cabec_log, 'Rotina de exclusao do documento fiscal ID: '||en_notafiscal_id||'.')
+                             , ev_resumo           => gv_mensagem_log
+                             , en_tipo_log         => informacao
+                             , en_referencia_id    => en_notafiscal_id
+                             , ev_obj_referencia   => 'NOTA_FISCAL' );
+         --
+         -- ============================================================================================================================
          --
      end if;
    end if;
@@ -36025,7 +36068,8 @@ BEGIN
       -- Se o Tipo de Integração é 1 (valida e insere)
       if nvl(gn_tipo_integr,0) = 1 then
          --
-         pkb_excluir_dados_nf ( en_notafiscal_id => est_row_Nota_Fiscal.id );
+         pkb_excluir_dados_nf ( en_notafiscal_id => est_row_Nota_Fiscal.id
+                              , ev_rotina_orig   => 'PK_CSF_API.PKB_INTEGR_NOTA_FISCAL' );
          --
       end if;
       --
@@ -57299,8 +57343,8 @@ begin
          --
       end if;
       --
-      --#75964
-      if (gt_row_nota_fiscal.dm_ind_pres in (1,2,3,4,9)-- #77116 incluido 1
+            --#75964
+      if (gt_row_nota_fiscal.dm_ind_pres in (2,3,4,9)-- #77116 /77370
         and gt_row_nota_fiscal.dm_ind_intermed is null
         and (gt_row_nota_fiscal.dm_tp_amb = 2
               or (gt_row_nota_fiscal.dm_tp_amb = 1 and trunc(gt_row_nota_fiscal.dt_emiss) >= '01/09/2021')--#77116 alterada data '05/04/2021'
@@ -57338,7 +57382,7 @@ begin
               --
               vn_dm_ind_intermed := vv_vlr_param ; 
               --
-      elsif ( gt_row_nota_fiscal.dm_ind_pres not in (1,2,3,4,9)-- #77116 incluido 1 
+      elsif ( gt_row_nota_fiscal.dm_ind_pres not in (2,3,4,9)-- #77116 /77370
           and (gt_row_nota_fiscal.dm_ind_intermed is not null
                or gt_row_nota_fiscal.pessoa_id_intermed is not null
                )
