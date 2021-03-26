@@ -2,113 +2,122 @@ create or replace package csf_own.pk_csf_api_nfce is
 --
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --   
--- Especificaï¿½ï¿½o do pacote integraï¿½ï¿½o de notas fiscais NFCE modelo 65 para o CSF
+-- Especificação do pacote integração de notas fiscais NFCE modelo 65 para o CSF
 --
--- Em 26/11/2020   - Luis Marques - 2.9.6-3 / 2.9.7
--- Redmine #70214  - Integraï¿½ï¿½o de modelo Danfe
--- Rotina Alterada - PKB_INTEGR_NOTA_FISCAL_FF - Incluido novo atributo "MODELO_DANFE" para a integraï¿½ï¿½o do modelo do
---                   DANFE.
+-- Em 04/03/2021      - Karina de Paula
+-- Redmine #75869     -	Falha no retorno de cancelamento
+-- Rotina Alterada    - PKB_EXCLUIR_DADOS_NF => Incluido o parametro de entrada EV_ROTINA_ORIG para identificar a rotina que chamou a exclusao.
+--                      Criada a variavel vn_nro_chave_nfe para retornar a chave do doc fiscal para incluir no log.
+--                      Incluida criacao de log para exclusao do documento fiscal.
+--                    - PKB_INTEGR_NOTA_FISCAL => Incluido o parametro EV_ROTINA_ORIG na chamada da PKB_EXCLUIR_DADOS_NF
+-- Liberado na versão - Release_2.9.7 e Patch_2.9.6.3
+--
 --
 -- Em 15/03/2021   - Wendel Albino - patchs 2.9.6-3/ 2.9.5-6/ 2.9.7
--- Redmine #76598  - Validaï¿½ï¿½o do FCp - Total X Itens invï¿½lida para ICMS-ST
+-- Redmine #76598  - Validação do FCp - Total X Itens inválida para ICMS-ST
 -- Rotina Alterada - PKB_VALIDA_TOTAL_NF -> alterada select que soma valores dos imposstos dos itens da nota 
---                 -   para validacao de FCP retido por ST .("Valor Total do FCP retido por Subst.Trib." estï¿½ divergente da soma do "Soma do FCP" do Item da Nota fiscal)
+--                 -   para validacao de FCP retido por ST .("Valor Total do FCP retido por Subst.Trib." está divergente da soma do "Soma do FCP" do Item da Nota fiscal)
 -- 
 -- Em 10/02/2021      - Karina de Paula
 -- Redmine #75685     - Falha na consulta de status da NF-e (Terceiros)
--- Rotina Alterada    - PKB_CONS_NFE_TERC => Retirado o nf.* e incluï¿½do os campos que estï¿½o sendo utilizados, alterada a forma de busca do
+-- Rotina Alterada    - PKB_CONS_NFE_TERC => Retirado o nf.* e incluído os campos que estão sendo utilizados, alterada a forma de busca do
 --                      intervalo para cancelamento, agora a rotina pega o tempo em horas cadastrado no estado e criado um index para melhorar performance
--- Liberado na versï¿½o - Release_2.9.7, Patch_2.9.6.2 e Patch_2.9.5.5
+-- Liberado na versão - Release_2.9.7, Patch_2.9.6.2 e Patch_2.9.5.5
 --
 -- Em 02/02/2021      - Karina de Paula
--- Redmine #75655     - Looping na tabela CSF_OWN.CSF_CONS_SIT apï¿½s atualizaï¿½ï¿½o da 2.9.5.0 (NOVA AMERICA)
--- Rotina Alterada    - PKB_CONS_NFE_TERC => Antes da chamada da pkb_ins_atu_csf_cons_sit foi excluï¿½da a busca a sequence da csf_cons_sit porque dentro da rotina
---                      pk_csf_api_cons_sit.pkb_ins_atu_csf_cons_sit ï¿½ criado um novo id, sendo esse nï¿½o utilizado
+-- Redmine #75655     - Looping na tabela CSF_OWN.CSF_CONS_SIT após atualização da 2.9.5.0 (NOVA AMERICA)
+-- Rotina Alterada    - PKB_CONS_NFE_TERC => Antes da chamada da pkb_ins_atu_csf_cons_sit foi excluída a busca a sequence da csf_cons_sit porque dentro da rotina
+--                      pk_csf_api_cons_sit.pkb_ins_atu_csf_cons_sit é criado um novo id, sendo esse não utilizado
 --                      Tambem estava chamando a sequence duas vezes
---                    - PKB_CONS_NFE_TERC => Incluï¿½da a chamada da funï¿½ï¿½o FKG_CHECA_CHAVE_ENVIO_PENDENTE e retirado select
--- Liberado na versï¿½o - Release_2.9.7, Patch_2.9.6.2 e Patch_2.9.5.5
+--                    - PKB_CONS_NFE_TERC => Incluída a chamada da função FKG_CHECA_CHAVE_ENVIO_PENDENTE e retirado select
+-- Liberado na versão - Release_2.9.7, Patch_2.9.6.2 e Patch_2.9.5.5
+--
+-- Em 26/11/2020   - Luis Marques - 2.9.6-3 / 2.9.7
+-- Redmine #70214  - Integração de modelo Danfe
+-- Rotina Alterada - PKB_INTEGR_NOTA_FISCAL_FF - Incluido novo atributo "MODELO_DANFE" para a integração do modelo do
+--                   DANFE.
 --
 -- Em 16/11/2020   - Luis Marques - 2.9.4-5 / 2.9.5-2 / 2.9.6
--- Redmine #73138  - Registro analitico nï¿½o considerando outros valores do item
+-- Redmine #73138  - Registro analitico não considerando outros valores do item
 -- Rotina Alterada - PKB_GERA_REGIST_ANALIT_IMP - Incluido no calculo de base reduzida de icms os campos "vl_frete", 
 --                   "vl_seguro" e "vl_desc" do item da nota fiscal.
 --
 -- Em 28/10/2020   - Luis Marques - 2.9.4-5 / 2.9.5-2 / 2.9.6
--- Redmine #72338  - Validaï¿½ï¿½o do FCp DIFAL - Total X Itens nï¿½o estï¿½ ocorrendo
--- Rotina Alterada - PKB_VALIDA_TOTAL_NF - Incluida verificaï¿½ï¿½o de FCP DIFAL se o valor na NOTA_FISCAL_TOTAL bate 
+-- Redmine #72338  - Validação do FCp DIFAL - Total X Itens não está ocorrendo
+-- Rotina Alterada - PKB_VALIDA_TOTAL_NF - Incluida verificação de FCP DIFAL se o valor na NOTA_FISCAL_TOTAL bate 
 --                   com os valores do item na linha do imposto.
 --
 -- Em 16/10/2020   - Luis Marques - 2.9.4-4 / 2.9.5-1 / 2.9.6
--- Redmine #72338  - Validaï¿½ï¿½o do FCp - Total X Itens nï¿½o estï¿½ ocorrendo
--- Rotina Alterada - PKB_VALIDA_TOTAL_NF - Incluida verificaï¿½ï¿½o de FCP, FCP retido p/ subst. tributï¿½ria e FCP retido 
---                   p/ subst. tributï¿½ria retido anteriormente se o valor na NOTA_FISCAL_TOTAL bate com os valores 
+-- Redmine #72338  - Validação do FCp - Total X Itens não está ocorrendo
+-- Rotina Alterada - PKB_VALIDA_TOTAL_NF - Incluida verificação de FCP, FCP retido p/ subst. tributária e FCP retido 
+--                   p/ subst. tributária retido anteriormente se o valor na NOTA_FISCAL_TOTAL bate com os valores 
 --                   do item na linha do imposto.
 --
 -- Em 17/08/2020   - Luis Marques - 2.9.5
 -- Redmine #58588  - Alterar tamanho de campo NRO_NF
--- Rotina Alterada - PKB_INTEGR_NOTA_FISCAL - Colocado verificaï¿½ï¿½o que a quantidade de dï¿½gitos do numero da nota fiscal
---                   para NFC-e nï¿½o pode ser maior que 9 dï¿½gitos.
+-- Rotina Alterada - PKB_INTEGR_NOTA_FISCAL - Colocado verificação que a quantidade de dígitos do numero da nota fiscal
+--                   para NFC-e não pode ser maior que 9 dígitos.
 --
 -- Em 03/09/2020   - Luis Marques - 2.9.4-3 / 2.9.5
--- Redmine #71004  - Cancelamento da NFCE pelo portal nï¿½o esta sendo executado - Aviva
--- Rotina Alterada - PKB_INTEGR_NOTA_FISCAL_CANC - Foi inserido verificaï¿½ï¿½o se o cancelamento for via portal para 
---                   tratar as datas como forma de emissï¿½o normal para a efetivaï¿½ï¿½o do cancelamento, tambï¿½m a 
---                   verificaï¿½ï¿½o de tempo passa para 30 minutos.
+-- Redmine #71004  - Cancelamento da NFCE pelo portal não esta sendo executado - Aviva
+-- Rotina Alterada - PKB_INTEGR_NOTA_FISCAL_CANC - Foi inserido verificação se o cancelamento for via portal para 
+--                   tratar as datas como forma de emissão normal para a efetivação do cancelamento, também a 
+--                   verificação de tempo passa para 30 minutos.
 -- 
 -- Em 25/08/2020  - Karina de Paula
--- Redmine #47204 - Separar integraï¿½ï¿½o OI de NFCE
--- Alteraï¿½ï¿½es     - PKB_SETA_COD_MOD_NFCE/gv_cod_mod_65 => Excluï¿½da essa procedure e todas as chamadas dela
---                  A rotina pk_csf_api_nfce ï¿½ especï¿½fica do modelo "65" nï¿½o tendo necessidade de setar esse valor nos processos
---                  O fato de buscar o valor na tab nota_fiscal estava impedindo a integraï¿½ï¿½o por OPENINTERFACE pq a nota ainda nï¿½o 
+-- Redmine #47204 - Separar integração OI de NFCE
+-- Alterações     - PKB_SETA_COD_MOD_NFCE/gv_cod_mod_65 => Excluída essa procedure e todas as chamadas dela
+--                  A rotina pk_csf_api_nfce é específica do modelo "65" não tendo necessidade de setar esse valor nos processos
+--                  O fato de buscar o valor na tab nota_fiscal estava impedindo a integração por OPENINTERFACE pq a nota ainda não 
 --                  existe nas tabelas oficiais
 -- Liberado       - Release_2.9.5, Patch_2.9.4.2 e Patch_2.9.3.5
 --
 -- Em 31/07/2020   - Luis Marques - 2.9.4-2 / 2.9.5
--- Redmine #70011  - Status "cancelamento" nï¿½o esta sendo alterado para NFCE - Aviva
--- Rotina Alterada - PKB_INTEGR_NOTA_FISCAL_CANC - colocado verificaï¿½ï¿½o da forma de emissï¿½o para atualizar a data
---                   de cancelamento com sysdate, sï¿½ serï¿½ alterado se a nota nï¿½o for forma de emissï¿½o 
---                   "9-Contingï¿½ncia off-line da NFC-e".
+-- Redmine #70011  - Status "cancelamento" não esta sendo alterado para NFCE - Aviva
+-- Rotina Alterada - PKB_INTEGR_NOTA_FISCAL_CANC - colocado verificação da forma de emissão para atualizar a data
+--                   de cancelamento com sysdate, só será alterado se a nota não for forma de emissão 
+--                   "9-Contingência off-line da NFC-e".
 --
 -- Em 21/07/2020   - Luis Marques - 2.9.4-1 / 2.9.5
--- Redmine #68300  - Falha na integraï¿½ï¿½o & "E" comercial - WEBSERVICE NFE EMISSAO PROPRIA (OCQ) 
+-- Redmine #68300  - Falha na integração & "E" comercial - WEBSERVICE NFE EMISSAO PROPRIA (OCQ) 
 -- Rotina Alterada - PKB_INTEGR_NOTA_FISCAL_EMIT - Colocado nos campos nome,fantasia e lograd pra utiliza no parametro
 --                   "en_ret_carac_espec" valor 4 que retira todos os caracteres especiais menos o caracter & (E comercial).
 --
 -- Em 13/07/2020   - Wendel Albino
--- Redmine #69487  - Falha na integraï¿½ï¿½o NFCe - Todas empresas (VENANCIO)
--- Alteraï¿½ï¿½es      - pkb_ler_nota_fiscal-> alterada posicao de validacao de cod_mod da nota para receber o cabecalho e gerar erro se houver.
+-- Redmine #69487  - Falha na integração NFCe - Todas empresas (VENANCIO)
+-- Alterações      - pkb_ler_nota_fiscal-> alterada posicao de validacao de cod_mod da nota para receber o cabecalho e gerar erro se houver.
 --                 - PKB_SETA_COD_MOD_NFCE -> retirado a atribuicao ao gv_cod_mod_65 := '99' e alterado pra 'XX'
 --
 -- Em 02/07/2020  - Karina de Paula
--- Redmine #57986 - [PLSQL] PIS e COFINS (ST e Retido) na NFe de Serviï¿½os (Brasï¿½lia)
--- Alteraï¿½ï¿½es     - pkb_integr_notafiscal_total_ff/pkb_solic_calc_imp/pkb_atual_nfe_inut/pkb_relac_nfe_cons_sit/pkb_integr_nota_fiscal_total => Inclusï¿½o 
+-- Redmine #57986 - [PLSQL] PIS e COFINS (ST e Retido) na NFe de Serviços (Brasília)
+-- Alterações     - pkb_integr_notafiscal_total_ff/pkb_solic_calc_imp/pkb_atual_nfe_inut/pkb_relac_nfe_cons_sit/pkb_integr_nota_fiscal_total => Inclusão 
 --                  dos campos vl_pis_st e vl_cofins_st
 -- Liberado       - Release_2.9.5, Patch_2.9.4.1 e Patch_2.9.3.4
 --
 -- Em 08/06/2020 - Luis Marques - 2.9.3-3 / 2.9.4
--- Redmine #68409 - Ajustar para nï¿½o verificar forma de pagamento da empresa x nota quando nota for NFCE - mod 65
--- Rotinas alteradas - PKB_GERA_LOTE - Incluir geraï¿½ï¿½o de lote para DM_FORMA_EMISS = 9 - ontingï¿½ncia off-line da NFC-e.
---                     PKB_VALIDA_CHAVE_CESSO - Retirar validaï¿½ï¿½o de forma de emissï¿½o para documentos NFCE modelo 65.
---                     PKB_VALIDA_NF_EMIT - Retirada validaï¿½ï¿½o de emitente pois nï¿½o ï¿½ obrigatorio para NFCE modelo 65.
+-- Redmine #68409 - Ajustar para não verificar forma de pagamento da empresa x nota quando nota for NFCE - mod 65
+-- Rotinas alteradas - PKB_GERA_LOTE - Incluir geração de lote para DM_FORMA_EMISS = 9 - ontingência off-line da NFC-e.
+--                     PKB_VALIDA_CHAVE_CESSO - Retirar validação de forma de emissão para documentos NFCE modelo 65.
+--                     PKB_VALIDA_NF_EMIT - Retirada validação de emitente pois não é obrigatorio para NFCE modelo 65.
 --
 -- Em 04/06/2020 - Luis Marques - 2.9.3-3 / 2.9.4
--- Redmine #68126 - CST do XML nï¿½o estï¿½ subindo para CSF - RELATO DE BUG [200527-1500]
--- Rotina Incluida: PKB_INTEGR_NOTA_FISCAL_CCE - Estï¿½ sendo chamada na "pk_valida_ambiente_nfce" e nï¿½o existia
+-- Redmine #68126 - CST do XML não está subindo para CSF - RELATO DE BUG [200527-1500]
+-- Rotina Incluida: PKB_INTEGR_NOTA_FISCAL_CCE - Está sendo chamada na "pk_valida_ambiente_nfce" e não existia
 --                  trazida da "pk_csf_api".
 --
 -- Em 03/06/2020  - Karina de Paula
--- Redmine #62471 - Criar processo de validaï¿½ï¿½o da CSF_CONS_SIT
--- Alteraï¿½ï¿½es     - PKB_INTEGR_CONS_CHAVE_NFE => Exclusï¿½o dessa rotina pq foi substituï¿½da pela pk_csf_api_cons_sit.pkb_integr_cons_chave_nfe
---                - PKB_RELAC_NFE_CONS_SIT    => Retirado o update na csf_cons_sit e incluï¿½da a chamada da pk_csf_api_cons_sit.pkb_ins_atu_csf_cons_sit
---                - PKB_CONS_NFE_TERC         => Retirado o insert na csf_cons_sit e incluï¿½da a chamada da pk_csf_api_cons_sit.pkb_ins_atu_csf_cons_sit
+-- Redmine #62471 - Criar processo de validação da CSF_CONS_SIT
+-- Alterações     - PKB_INTEGR_CONS_CHAVE_NFE => Exclusão dessa rotina pq foi substituída pela pk_csf_api_cons_sit.pkb_integr_cons_chave_nfe
+--                - PKB_RELAC_NFE_CONS_SIT    => Retirado o update na csf_cons_sit e incluída a chamada da pk_csf_api_cons_sit.pkb_ins_atu_csf_cons_sit
+--                - PKB_CONS_NFE_TERC         => Retirado o insert na csf_cons_sit e incluída a chamada da pk_csf_api_cons_sit.pkb_ins_atu_csf_cons_sit
 -- Liberado       - Release_2.9.4, Patch_2.9.3.3 e Patch_2.9.2.6
 --
 -- Em 13/03/2020 - Luis Marques - 2.9.3
--- Redmine #63776 - Integraï¿½ï¿½o de NFSe - Aumentar Campo Razao Social do Destinatï¿½rio e Logradouro
+-- Redmine #63776 - Integração de NFSe - Aumentar Campo Razao Social do Destinatário e Logradouro
 -- Rotinas Alteradas - PKB_REG_PESSOA_DEST_NF, PKB_INTEGR_NOTA_FISCAL_DEST, PKB_CRIA_PESSOA_NFE_LEGADO - Alterado para 
---                     recuperar 60 caracteres dos campos nome e lograd da nota_fiscal_dest para todas as validaï¿½ï¿½es, 
---                     colocado verificaï¿½ï¿½o que se nome ou logradouro campos "nome" e "lograd" vierem com mais de 60 
---                     caracteres serï¿½ gravado log de erro.
+--                     recuperar 60 caracteres dos campos nome e lograd da nota_fiscal_dest para todas as validações, 
+--                     colocado verificação que se nome ou logradouro campos "nome" e "lograd" vierem com mais de 60 
+--                     caracteres será gravado log de erro.
 --
 -- Em 29/01/2020   - Luis Marques
 -- Redmine #63056  - ICMS Desonerado RJ
@@ -117,27 +126,27 @@ create or replace package csf_own.pk_csf_api_nfce is
 --                   subtrair do valor total da nota fiscal.
 --
 -- Em 18/12/2019 - Allan Magrini
--- Redmine #61174 - Inclusï¿½o de modelo de documento 66
--- Adicionado '66' na validaï¿½ï¿½o do cod_mod, notas de seviï¿½os continuos, fase 1.8 e 99.1
+-- Redmine #61174 - Inclusão de modelo de documento 66
+-- Adicionado '66' na validação do cod_mod, notas de seviços continuos, fase 1.8 e 99.1
 -- Rotina: PKB_INTEGR_NOTA_FISCAL
 --
 -- Em 10/12/2019   - Karina de Paula
--- Redmine #60469  - Criar novo objeto e tipo de objeto Emissï¿½o Prï¿½pria NFCE (modelo 65)
--- Rotina Alterada - Vï¿½rias rotinas alteradas pq estava chamando pk_csf_api e nï¿½o pk_csf_api_nfce
+-- Redmine #60469  - Criar novo objeto e tipo de objeto Emissão Própria NFCE (modelo 65)
+-- Rotina Alterada - Várias rotinas alteradas pq estava chamando pk_csf_api e não pk_csf_api_nfce
 --
 -- Em 08/11/2019   - Karina de Paula
--- Redmine #57901  - Criar validaï¿½ï¿½o para Verificar o cï¿½digo de benefï¿½cio fiscal com o estado da empresa emitente
--- Rotina Alterada - PKB_INTEGR_ITEM_NOTA_FISCAL_FF e pkb_integr_inf_prov_docto_fisc => Incluï¿½da a verificaï¿½ï¿½o da UF do COD_OCOR_AJ_ICMS
---                   pkb_integr_inf_prov_docto_fisc => nï¿½o estava atualizando os campos itemnf_id e codocorajicms_id na tabela inf_prov_docto_fiscal
+-- Redmine #57901  - Criar validação para Verificar o código de benefício fiscal com o estado da empresa emitente
+-- Rotina Alterada - PKB_INTEGR_ITEM_NOTA_FISCAL_FF e pkb_integr_inf_prov_docto_fisc => Incluída a verificação da UF do COD_OCOR_AJ_ICMS
+--                   pkb_integr_inf_prov_docto_fisc => não estava atualizando os campos itemnf_id e codocorajicms_id na tabela inf_prov_docto_fiscal
 --
 -- Em 09/10/2019        - Karina de Paula
 -- Redmine #52654/59814 - Alterar todas as buscar na tabela PESSOA para retornar o MAX ID
--- Rotinas Alteradas    - Trocada a funï¿½ï¿½o pk_csf.fkg_Pessoa_id_cpf_cnpj_interno pela pk_csf.fkg_Pessoa_id_cpf_cnpj
--- Nï¿½O ALTERE A REGRA DESSAS ROTINAS SEM CONVERSAR COM EQUIPE
+-- Rotinas Alteradas    - Trocada a função pk_csf.fkg_Pessoa_id_cpf_cnpj_interno pela pk_csf.fkg_Pessoa_id_cpf_cnpj
+-- NÃO ALTERE A REGRA DESSAS ROTINAS SEM CONVERSAR COM EQUIPE
 --
 -- Em 16/09/2019 - Luis Marques
--- Redmine #58220 - Package de validaï¿½ï¿½o 
--- Criaï¿½ï¿½o do processo de integraï¿½ï¿½o de Notas Fiscais de Consumidor Eletronica - NFCE modelo 65
+-- Redmine #58220 - Package de validação 
+-- Criação do processo de integração de Notas Fiscais de Consumidor Eletronica - NFCE modelo 65
 --
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
    --
@@ -219,7 +228,7 @@ create or replace package csf_own.pk_csf_api_nfce is
    --
 -------------------------------------------------------------------------------------------------------
 
--- Declaraï¿½ï¿½o de constantes
+-- Declaração de constantes
 
    erro_de_validacao       constant number := 1;
    erro_de_sistema         constant number := 2;
@@ -252,26 +261,27 @@ procedure pkb_val_atrib_multorg ( est_log_generico   in out nocopy  dbms_sql.num
                                 );
 
 -------------------------------------------------------------------------------------------------------
--- Procedimento seta o tipo de integraï¿½ï¿½o que serï¿½ feito
-   -- 0 - Somente vï¿½lida os dados e registra o Log de ocorrï¿½ncia
-   -- 1 - Vï¿½lida os dados e registra o Log de ocorrï¿½ncia e insere a informaï¿½ï¿½o
-   -- Todos os procedimentos de integraï¿½ï¿½o fazem referï¿½ncia a ele
+-- Procedimento seta o tipo de integração que será feito
+   -- 0 - Somente válida os dados e registra o Log de ocorrência
+   -- 1 - Válida os dados e registra o Log de ocorrência e insere a informação
+   -- Todos os procedimentos de integração fazem referência a ele
 procedure pkb_seta_tipo_integr ( en_tipo_integr in number );
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento seta o objeto de referencia utilizado na Validaï¿½ï¿½o da Informaï¿½ï¿½o
+-- Procedimento seta o objeto de referencia utilizado na Validação da Informação
 procedure pkb_seta_obj_ref ( ev_objeto in varchar2 );
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento seta o "ID de Referencia" utilizado na Validaï¿½ï¿½o da Informaï¿½ï¿½o
+-- Procedimento seta o "ID de Referencia" utilizado na Validação da Informação
 procedure pkb_seta_referencia_id ( en_id in number );
 
 -------------------------------------------------------------------------------------------------------
 
 -- Procedimento exclui dados de uma nota fiscal
-procedure pkb_excluir_dados_nf ( en_notafiscal_id  in nota_fiscal.id%type );
+procedure pkb_excluir_dados_nf ( en_notafiscal_id  in nota_fiscal.id%type 
+                               , ev_rotina_orig    in varchar2 default null );
 
 -------------------------------------------------------------------------------------------------------
 
@@ -281,12 +291,12 @@ procedure pkb_gt_log_generico_nf ( en_loggenericonf_id  in             log_gener
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento finaliza o Log Genï¿½rico
+-- Procedimento finaliza o Log Genérico
 procedure pkb_finaliza_log_generico_nf;
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento de registro de log de erros na validaï¿½ï¿½o da nota fiscal
+-- Procedimento de registro de log de erros na validação da nota fiscal
 procedure pkb_log_generico_nf ( sn_loggenericonf_id   out nocopy log_generico_nf.id%type
                               , ev_mensagem        in            log_generico_nf.mensagem%type
                               , ev_resumo          in            log_generico_nf.resumo%type
@@ -299,7 +309,7 @@ procedure pkb_log_generico_nf ( sn_loggenericonf_id   out nocopy log_generico_nf
                                     
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento de Integraï¿½ï¿½o de dados Complementares da Nota Fiscal
+-- Procedimento de Integração de dados Complementares da Nota Fiscal
 procedure pkb_integr_nota_fiscal_compl ( est_log_generico_nf        in out nocopy  dbms_sql.number_table
                                        , est_row_nota_fiscal_compl  in out nocopy  nota_fiscal_compl%rowtype
                                        , en_notafiscal_id           in             nota_fiscal.id%type
@@ -319,7 +329,7 @@ procedure pkb_integr_nota_fiscal_compl ( est_log_generico_nf        in out nocop
 
 -------------------------------------------------------------------------------------------------------
 
--- Integra as informaï¿½ï¿½es de impostos do Item da Nota Fiscal
+-- Integra as informações de impostos do Item da Nota Fiscal
 procedure pkb_integr_imp_itemnf ( est_log_generico_nf  in out nocopy  dbms_sql.number_table
                                 , est_row_imp_itemnf   in out nocopy  imp_itemnf%rowtype
                                 , en_cd_imp            in             tipo_imposto.cd%type
@@ -329,7 +339,7 @@ procedure pkb_integr_imp_itemnf ( est_log_generico_nf  in out nocopy  dbms_sql.n
 
 -------------------------------------------------------------------------------------------------------
 
--- Integra as informaï¿½ï¿½es de impostos do Item da Nota Fiscal - Campos Flex Field
+-- Integra as informações de impostos do Item da Nota Fiscal - Campos Flex Field
 procedure pkb_integr_imp_itemnf_ff ( est_log_generico_nf in out nocopy dbms_sql.number_table
                                    , en_notafiscal_id    in            nota_fiscal.id%type
                                    , en_impitemnf_id     in            imp_itemnf.id%type
@@ -338,7 +348,7 @@ procedure pkb_integr_imp_itemnf_ff ( est_log_generico_nf in out nocopy dbms_sql.
                                    , en_multorg_id       in            mult_org.id%type );
 
 -------------------------------------------------------------------------------------------------------
--- Integra as informaï¿½ï¿½es de Rastreabilidade de produto
+-- Integra as informações de Rastreabilidade de produto
 PROCEDURE pkb_integr_itemnf_rastreab ( est_log_generico_nf     in out nocopy dbms_sql.number_table
                                      , est_row_itemnf_rastreab  in out        itemnf_rastreab%rowtype
                                      , en_notafiscal_id        in            nota_fiscal.id%type
@@ -346,7 +356,7 @@ PROCEDURE pkb_integr_itemnf_rastreab ( est_log_generico_nf     in out nocopy dbm
 
 -------------------------------------------------------------------------------------------------------
 
--- Integra as informaï¿½ï¿½es de combustï¿½veis
+-- Integra as informações de combustíveis
 procedure pkb_integr_itemnf_comb ( est_log_generico_nf   in out nocopy  dbms_sql.number_table
                                  , est_row_itemnf_comb   in out nocopy  itemnf_comb%rowtype
                                  , ev_uf_emit            in             estado.sigla_estado%type
@@ -354,7 +364,7 @@ procedure pkb_integr_itemnf_comb ( est_log_generico_nf   in out nocopy  dbms_sql
 
 -------------------------------------------------------------------------------------------------------
 
--- Integra as informaï¿½ï¿½es de combustï¿½veis - Flex Field
+-- Integra as informações de combustíveis - Flex Field
 procedure pkb_integr_itemnf_comb_ff ( est_log_generico_nf   in out nocopy  dbms_sql.number_table
                                     , en_notafiscal_id      in             nota_fiscal.id%type
                                     , en_itemnfcomb_id      in             itemnf_comb.id%type
@@ -363,7 +373,7 @@ procedure pkb_integr_itemnf_comb_ff ( est_log_generico_nf   in out nocopy  dbms_
 
 -------------------------------------------------------------------------------------------------------
 
--- Integra as informaï¿½ï¿½es de medicamentos - Flex Field
+-- Integra as informações de medicamentos - Flex Field
 PROCEDURE PKB_INTEGR_ITEMNF_MED_FF ( EST_LOG_GENERICO_NF IN OUT NOCOPY  DBMS_SQL.NUMBER_TABLE
                                    , EN_NOTAFISCAL_ID    IN             NOTA_FISCAL.ID%TYPE
                                    , EN_ITEMNFMED_ID     IN             ITEMNF_MED.ID%TYPE
@@ -373,14 +383,14 @@ PROCEDURE PKB_INTEGR_ITEMNF_MED_FF ( EST_LOG_GENERICO_NF IN OUT NOCOPY  DBMS_SQL
 
 -------------------------------------------------------------------------------------------------------
 
--- Integra as informaï¿½ï¿½es de medicamentos
+-- Integra as informações de medicamentos
 procedure pkb_integr_itemnf_med ( est_log_generico_nf  in out nocopy  dbms_sql.number_table
                                 , est_row_itemnf_med   in out nocopy  itemnf_med%rowtype
                                 , en_notafiscal_id     in             nota_fiscal.id%type );
 
 -------------------------------------------------------------------------------------------------------
 
--- Integra as informaï¿½ï¿½es adicionais da Nota Fiscal
+-- Integra as informações adicionais da Nota Fiscal
 procedure pkb_integr_nfinfor_fiscal ( est_log_generico_nf      in out nocopy  dbms_sql.number_table
                                     , est_row_nfinfor_fiscal   in out nocopy  nfinfor_fiscal%rowtype
                                     , ev_cd_obs                in obs_lancto_fiscal.cod_obs%type default null
@@ -389,14 +399,14 @@ procedure pkb_integr_nfinfor_fiscal ( est_log_generico_nf      in out nocopy  db
                                   
 -------------------------------------------------------------------------------------------------------
 
--- Integra as informaï¿½ï¿½es dos itens da nota fiscal
+-- Integra as informações dos itens da nota fiscal
 procedure pkb_integr_item_nota_fiscal ( est_log_generico_nf       in out nocopy  dbms_sql.number_table
                                       , est_row_item_nota_fiscal  in out nocopy  item_nota_fiscal%rowtype
                                       , en_multorg_id             in             mult_org.id%type );
 
 -------------------------------------------------------------------------------------------------------
 
--- Integra as informaï¿½ï¿½es dos itens da nota fiscal - campos flex field
+-- Integra as informações dos itens da nota fiscal - campos flex field
 procedure pkb_integr_Item_Nota_Fiscal_ff ( est_log_generico_nf  in out nocopy  dbms_sql.number_table
                                          , en_notafiscal_id     in             nota_fiscal.id%type
                                          , en_itemnotafiscal_id in             item_nota_fiscal.id%type
@@ -405,7 +415,7 @@ procedure pkb_integr_Item_Nota_Fiscal_ff ( est_log_generico_nf  in out nocopy  d
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento para complemento da operaï¿½ï¿½o de COFINS
+-- Procedimento para complemento da operação de COFINS
 procedure pkb_integr_nfcompl_opercofins ( est_log_generico_nf        in out nocopy  dbms_sql.number_table
                                         , est_row_nfcompl_opercofins in out nocopy  nf_compl_oper_cofins%rowtype
                                         , ev_cpf_cnpj_emit           in             varchar2
@@ -416,7 +426,7 @@ procedure pkb_integr_nfcompl_opercofins ( est_log_generico_nf        in out noco
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento para complemento da operaï¿½ï¿½o de COFINS - Campos Flex Field
+-- Procedimento para complemento da operação de COFINS - Campos Flex Field
 procedure pkb_integr_nfcomplopercof_ff ( est_log_generico_nf     in out nocopy  dbms_sql.number_table
                                        , en_nfcomplopercofins_id in             nf_compl_oper_cofins.id%type
                                        , ev_atributo             in             varchar2
@@ -425,7 +435,7 @@ procedure pkb_integr_nfcomplopercof_ff ( est_log_generico_nf     in out nocopy  
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento para complemento da operaï¿½ï¿½o de PIS/PASEP
+-- Procedimento para complemento da operação de PIS/PASEP
 procedure pkb_integr_nfcompl_operpis ( est_log_generico_nf      in out nocopy  dbms_sql.number_table
                                      , est_row_nfcompl_operpis  in out nocopy  nf_compl_oper_pis%rowtype
                                      , ev_cpf_cnpj_emit         in             varchar2
@@ -436,7 +446,7 @@ procedure pkb_integr_nfcompl_operpis ( est_log_generico_nf      in out nocopy  d
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento para complemento da operaï¿½ï¿½o de PIS/PASEP - Campos Flex Field
+-- Procedimento para complemento da operação de PIS/PASEP - Campos Flex Field
 procedure pkb_integr_nfcomploperpis_ff ( est_log_generico_nf  in out nocopy  dbms_sql.number_table
                                        , en_nfcomploperpis_id in             nf_compl_oper_pis.id%type
                                        , ev_atributo          in             varchar2
@@ -445,13 +455,13 @@ procedure pkb_integr_nfcomploperpis_ff ( est_log_generico_nf  in out nocopy  dbm
 
 -------------------------------------------------------------------------------------------------------
 
--- Integra as informaï¿½ï¿½es de Totais de Nota Fiscal
+-- Integra as informações de Totais de Nota Fiscal
 procedure pkb_integr_nota_fiscal_total ( est_log_generico_nf        in out nocopy  dbms_sql.number_table
                                        , est_row_nota_fiscal_total  in out nocopy  nota_fiscal_total%rowtype );
 
 -------------------------------------------------------------------------------------------------------
 
--- Integra as informaï¿½ï¿½es de Totais de Nota Fiscal - Flex Field
+-- Integra as informações de Totais de Nota Fiscal - Flex Field
 procedure pkb_integr_notafiscal_total_ff ( est_log_generico_nf     in out nocopy dbms_sql.number_table
                                          , en_notafiscal_id        in            nota_fiscal.id%type 
                                          , en_notafiscaltotal_id   in            nota_fiscal_total.id%type
@@ -460,7 +470,7 @@ procedure pkb_integr_notafiscal_total_ff ( est_log_generico_nf     in out nocopy
 
 -------------------------------------------------------------------------------------------------------
 
--- Integra as informaï¿½ï¿½es adicionais da Nota Fiscal
+-- Integra as informações adicionais da Nota Fiscal
 procedure pkb_integr_nfinfor_adic ( est_log_generico_nf    in out nocopy  dbms_sql.number_table
                                   , est_row_nfinfor_adic   in out nocopy  nfinfor_adic%rowtype
                                   , en_cd_orig_proc        in             orig_proc.cd%type default null );
@@ -468,14 +478,14 @@ procedure pkb_integr_nfinfor_adic ( est_log_generico_nf    in out nocopy  dbms_s
 
 -------------------------------------------------------------------------------------------------------
 
--- Integra informaï¿½ï¿½es referï¿½nte ao transporte da Nota Fiscal
+-- Integra informações referênte ao transporte da Nota Fiscal
 procedure pkb_integr_nota_fiscal_transp ( est_log_generico_nf         in out nocopy  dbms_sql.number_table
                                         , est_row_nota_fiscal_transp  in out nocopy  nota_fiscal_transp%rowtype
                                         , en_multorg_id               in             mult_org.id%type );
 
 -------------------------------------------------------------------------------------------------------
 
--- Integra informaï¿½ï¿½es do Local de Retirada/Entrega de mercadorias - campos flex field --
+-- Integra informações do Local de Retirada/Entrega de mercadorias - campos flex field --
 --
 procedure pkb_integr_nota_fiscal_localff ( est_log_generico_nf      in out nocopy  dbms_sql.number_table
                                          , en_notafiscal_id         in             nota_fiscal.id%type
@@ -486,20 +496,20 @@ procedure pkb_integr_nota_fiscal_localff ( est_log_generico_nf      in out nocop
 
 -------------------------------------------------------------------------------------------------------
 
--- Integra informaï¿½ï¿½es do Local de Retirada/Entrega de mercadorias
+-- Integra informações do Local de Retirada/Entrega de mercadorias
 procedure pkb_integr_nota_fiscal_local ( est_log_generico_nf        in out nocopy  dbms_sql.number_table
                                        , est_row_nota_fiscal_local  in out nocopy  nota_fiscal_local%rowtype );
 
 
 -------------------------------------------------------------------------------------------------------
 
--- Integra informaï¿½ï¿½es de email por tipo de anexo
+-- Integra informações de email por tipo de anexo
 procedure pkb_integr_nfdest_email ( est_log_generico_nf   in out nocopy  dbms_sql.number_table
                                   , est_row_nfdest_email  in out nocopy  nfdest_email%rowtype
                                   , en_notafiscal_id      in             nota_fiscal.id%type );
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento de registro da pessoa destinatï¿½rio da Nota Fiscal
+-- Procedimento de registro da pessoa destinatário da Nota Fiscal
 procedure pkb_verif_pessoas_restricao ( est_log_generico_nf in  out nocopy  dbms_sql.number_table
                                       , ev_cpf_cnpj         in  ctrl_restr_pessoa.cpf_cnpj%type
                                       , en_multorg_id       in  ctrl_restr_pessoa.multorg_id%type default 0
@@ -507,7 +517,7 @@ procedure pkb_verif_pessoas_restricao ( est_log_generico_nf in  out nocopy  dbms
 
 -------------------------------------------------------------------------------------------------------
 
--- Integra as informaï¿½ï¿½es do Destinatï¿½rio da Nota Fiscal
+-- Integra as informações do Destinatário da Nota Fiscal
 procedure pkb_integr_nota_fiscal_dest ( est_log_generico_nf       in out nocopy  dbms_sql.number_table
                                       , est_row_nota_fiscal_dest  in out nocopy  nota_fiscal_dest%rowtype
                                       , ev_cod_part               in             pessoa.cod_part%type
@@ -515,7 +525,7 @@ procedure pkb_integr_nota_fiscal_dest ( est_log_generico_nf       in out nocopy 
 
 -------------------------------------------------------------------------------------------------------
 
--- Integra as informaï¿½ï¿½es do Destinatï¿½rio da Nota Fiscal - Flex Field
+-- Integra as informações do Destinatário da Nota Fiscal - Flex Field
 procedure pkb_integr_nota_fiscal_dest_ff ( est_log_generico_nf   in out nocopy  dbms_sql.number_table
                                          , en_notafiscal_id      in             nota_fiscal.id%type
                                          , en_notafiscaldest_id  in             nota_fiscal_dest.id%type
@@ -523,7 +533,7 @@ procedure pkb_integr_nota_fiscal_dest_ff ( est_log_generico_nf   in out nocopy  
                                          , ev_valor              in             varchar2 );
 
 ---------------------------------------------------------------------------------------------------------------------------------------
--- Integra as informaï¿½ï¿½es do Emitente da Nota Fiscal - Flex Field                                                    --
+-- Integra as informações do Emitente da Nota Fiscal - Flex Field                                                    --
 ---------------------------------------------------------------------------------------------------------------------------------------
 PROCEDURE PKB_INTEGR_NOTA_FISCAL_EMIT_FF ( EST_LOG_GENERICO_NF       IN OUT NOCOPY  DBMS_SQL.NUMBER_TABLE
                                          , EN_NOTAFISCAL_ID          IN             NOTA_FISCAL.ID%TYPE
@@ -534,7 +544,7 @@ PROCEDURE PKB_INTEGR_NOTA_FISCAL_EMIT_FF ( EST_LOG_GENERICO_NF       IN OUT NOCO
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento integra as informaï¿½ï¿½o do emitente da Nota Fiscal
+-- Procedimento integra as informação do emitente da Nota Fiscal
 procedure pkb_integr_nota_fiscal_emit ( est_log_generico_nf       in out nocopy  dbms_sql.number_table
                                       , est_row_nota_fiscal_emit  in out nocopy  nota_fiscal_emit%rowtype
                                       , en_empresa_id             in             empresa.id%type
@@ -543,21 +553,21 @@ procedure pkb_integr_nota_fiscal_emit ( est_log_generico_nf       in out nocopy 
                                       
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento integra as informaï¿½ï¿½es da Autorizaï¿½ï¿½o de acesso ao XML da Nota Fiscal
+-- Procedimento integra as informações da Autorização de acesso ao XML da Nota Fiscal
 procedure pkb_integr_nf_aut_xml ( est_log_generico_nf  in out nocopy  dbms_sql.number_table
                                 , est_row_nf_aut_xml   in out nocopy  nf_aut_xml%rowtype
                                 );
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento integra as informaï¿½ï¿½es da Formas de Pagamento
+-- Procedimento integra as informações da Formas de Pagamento
 procedure pkb_integr_nf_forma_pgto ( est_log_generico_nf   in out nocopy  dbms_sql.number_table
                                    , est_row_nf_forma_pgto in out nocopy  nf_forma_pgto%rowtype
                                    );
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento integra as informaï¿½ï¿½es da Formas de Pagamento - Campos Flex Field
+-- Procedimento integra as informações da Formas de Pagamento - Campos Flex Field
 procedure pkb_integr_nf_forma_pgto_ff ( est_log_generico_nf in out nocopy  dbms_sql.number_table
                                       , en_notafiscal_id    in             nota_fiscal.id%type
                                       , en_nfformapgto_id   in             nf_forma_pgto.id%type
@@ -566,7 +576,7 @@ procedure pkb_integr_nf_forma_pgto_ff ( est_log_generico_nf in out nocopy  dbms_
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento que faz a integraï¿½ï¿½o as Notas Fiscais Cancelas
+-- Procedimento que faz a integração as Notas Fiscais Cancelas
 procedure pkb_integr_nota_fiscal_canc ( est_log_generico_nf       in out nocopy  dbms_sql.number_table
                                       , est_row_nota_fiscal_canc  in out nocopy  nota_fiscal_canc%rowtype 
                                       , en_loteintws_id           in     lote_int_ws.id%type default 0
@@ -589,7 +599,7 @@ procedure pkb_integr_nfchave_refer ( est_log_generico_nf  in out nocopy  dbms_sq
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento vï¿½lida a chave de acesso da Nota Fiscal
+-- Procedimento válida a chave de acesso da Nota Fiscal
 procedure pkb_valida_chave_acesso ( est_log_generico_nf  in out nocopy  dbms_sql.number_table
                                   , ev_nro_chave_nfe     in             nota_fiscal.nro_chave_nfe%type
                                   , EN_UF_IBGE           IN             NOTA_FISCAL.UF_IBGE_EMIT%TYPE
@@ -605,7 +615,7 @@ procedure pkb_valida_chave_acesso ( est_log_generico_nf  in out nocopy  dbms_sql
 
 -------------------------------------------------------------------------------------------------------
 
---| Procedimento que faz validaï¿½ï¿½es na Nota Fiscal e grava na CSF
+--| Procedimento que faz validações na Nota Fiscal e grava na CSF
 procedure pkb_integr_nota_fiscal ( est_log_generico_nf        in out nocopy  dbms_sql.number_table
                                  , est_row_nota_fiscal        in out nocopy  nota_fiscal%rowtype
                                  , ev_cod_mod                 in             mod_fiscal.cod_mod%type
@@ -625,7 +635,7 @@ procedure pkb_integr_nota_fiscal ( est_log_generico_nf        in out nocopy  dbm
 
 -------------------------------------------------------------------------------------------------------
 
---| Procedimento que faz validaï¿½ï¿½es na Nota Fiscal e grava na CSF - Campos Flex Field
+--| Procedimento que faz validações na Nota Fiscal e grava na CSF - Campos Flex Field
 procedure pkb_integr_nota_fiscal_ff ( est_log_generico_nf in out nocopy  dbms_sql.number_table
                                     , en_notafiscal_id    in             nota_fiscal.id%type
                                     , ev_atributo         in             varchar2
@@ -634,84 +644,84 @@ procedure pkb_integr_nota_fiscal_ff ( est_log_generico_nf in out nocopy  dbms_sq
 
 -------------------------------------------------------------------------------------------------------
 
--- procedimento complementa a informaï¿½ï¿½o da nota fiscal
+-- procedimento complementa a informação da nota fiscal
 procedure pkb_monta_compl_infor_adic ( est_log_generico_nf in out nocopy  dbms_sql.number_table
                                      , en_notafiscal_id    in             nota_fiscal.id%type
 				     , ev_texto_compl      in             nfinfor_adic.conteudo%type );
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento valida informaï¿½ï¿½es adicionais da Nota Fiscal
+-- Procedimento valida informações adicionais da Nota Fiscal
 procedure pkb_valida_infor_adic ( est_log_generico_nf in out nocopy  dbms_sql.number_table
                                 , en_notafiscal_id    in             nota_fiscal.id%type );
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento vï¿½lida informaï¿½ï¿½o da transportadora
+-- Procedimento válida informação da transportadora
 procedure pkb_valida_transportadora ( est_log_generico_nf in out nocopy  dbms_sql.number_table
                                     , en_notafiscal_id    in             nota_fiscal.id%type );
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento vï¿½lida informaï¿½ï¿½es do Local de Retirada/Entrega
--- verifica se existe apenas uma informaï¿½ï¿½o para cada registro de Retirada ou Entrega
+-- Procedimento válida informações do Local de Retirada/Entrega
+-- verifica se existe apenas uma informação para cada registro de Retirada ou Entrega
 procedure pkb_valida_nf_local ( est_log_generico_nf in out nocopy  dbms_sql.number_table
                               , en_notafiscal_id    in             nota_fiscal.id%type );
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento vï¿½lida os itens de combustï¿½vel - Sï¿½ pode existir um Item de Combustï¿½vel por item da nota
+-- Procedimento válida os itens de combustível - Só pode existir um Item de Combustível por item da nota
 procedure pkb_valida_item_comb ( est_log_generico_nf in out nocopy  dbms_sql.number_table
                                , en_notafiscal_id    in             nota_fiscal.id%type );
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento vï¿½lida informaï¿½ï¿½es dos totais - Sï¿½ pode existir um ï¿½nico registro de totais
+-- Procedimento válida informações dos totais - Só pode existir um único registro de totais
 procedure pkb_valida_total_nf ( est_log_generico_nf in out nocopy  dbms_sql.number_table
                               , en_notafiscal_id    in             nota_fiscal.id%type );
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento vï¿½lida informaï¿½ï¿½es do Emitente da Nota Fiscal
--- verifica se existe mais de um emitente, ou se nï¿½o foi informado o emitente
+-- Procedimento válida informações do Emitente da Nota Fiscal
+-- verifica se existe mais de um emitente, ou se não foi informado o emitente
 procedure pkb_valida_nf_emit ( est_log_generico_nf in out nocopy  dbms_sql.number_table
                              , en_notafiscal_id    in             nota_fiscal.id%type );
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento vï¿½lida informaï¿½ï¿½es do Destinatï¿½rio da Nota Fiscal
--- verifica se existe mais de um Destinatï¿½rio, ou se nï¿½o foi informado o emitente
+-- Procedimento válida informações do Destinatário da Nota Fiscal
+-- verifica se existe mais de um Destinatário, ou se não foi informado o emitente
 procedure pkb_valida_nf_dest ( est_log_generico_nf in out nocopy  dbms_sql.number_table
                              , en_notafiscal_id    in             nota_fiscal.id%type );
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento vï¿½lida a quantidade de Itema de uma Nota Fiscal - Sï¿½ pode ter atï¿½ 990 itens em uma nota Fiscal
+-- Procedimento válida a quantidade de Itema de uma Nota Fiscal - Só pode ter até 990 itens em uma nota Fiscal
 procedure pkb_valida_qtde_item_nf ( est_log_generico_nf in out nocopy  dbms_sql.number_table
                                   , en_notafiscal_id    in             nota_fiscal.id%type );
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento vï¿½lida a quantidade de impostos por item da Nota Fiscal
--- Sï¿½ pode existir um registro de cada tipo de imposto por Nota Fiscal
+-- Procedimento válida a quantidade de impostos por item da Nota Fiscal
+-- Só pode existir um registro de cada tipo de imposto por Nota Fiscal
 procedure pkb_valida_qtde_imposto_item ( est_log_generico_nf in out nocopy  dbms_sql.number_table
                                        , en_notafiscal_id    in             nota_fiscal.id%type );
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento de vï¿½lidaï¿½ï¿½es de impostos
+-- Procedimento de válidações de impostos
 procedure pkb_valida_imposto_item ( est_log_generico_nf in out nocopy  dbms_sql.number_table
                                   , en_notafiscal_id    in             nota_fiscal.id%type );
 
 -------------------------------------------------------------------------------------------------------
--- Procedimento de validaï¿½ï¿½es de base de impostos de ICMS
+-- Procedimento de validações de base de impostos de ICMS
 
 procedure pkb_valida_base_icms ( est_log_generico_nf  IN OUT NOCOPY  dbms_sql.number_table
                                , en_notafiscal_id     IN             nota_fiscal.id%type );
                                
 -------------------------------------------------------------------------------------------------------
 
--- Funï¿½ï¿½o retorna as notas fiscais que nï¿½o pode ser inutilizadas
+-- Função retorna as notas fiscais que não pode ser inutilizadas
 function fkg_nf_nao_inutiliza ( en_empresa_id   in  inutiliza_nota_fiscal.empresa_id%type
                               , en_dm_tp_amb    in  inutiliza_nota_fiscal.dm_tp_amb%type
                               , ev_cod_mod      in  mod_fiscal.cod_mod%type
@@ -722,19 +732,19 @@ function fkg_nf_nao_inutiliza ( en_empresa_id   in  inutiliza_nota_fiscal.empres
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento faz a integraï¿½ï¿½o da Inutilizaï¿½ï¿½o de Notas Fiscais
+-- Procedimento faz a integração da Inutilização de Notas Fiscais
 procedure pkb_integr_inutilizanf ( est_log_generico_nf            in out nocopy  dbms_sql.number_table
                                  , est_row_inutiliza_nota_fiscal  in out nocopy  inutiliza_nota_fiscal%rowtype
                                  , ev_cod_mod                     in             mod_fiscal.cod_mod%type );
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento que busca todas as Inutilizaï¿½ï¿½es com a situaï¿½ï¿½o "5-Nï¿½o Validada"
+-- Procedimento que busca todas as Inutilizações com a situação "5-Não Validada"
 procedure pkb_consit_inutilizacao ( en_multorg_id  in mult_org.id%type );
 
 -------------------------------------------------------------------------------------------------------
 
--- Funï¿½ï¿½o cria o Lote de Envio da Nota Fiscal e retorna o ID
+-- Função cria o Lote de Envio da Nota Fiscal e retorna o ID
 function fkg_integr_lote ( est_log_generico_nf in out nocopy  dbms_sql.number_table
                          , en_empresa_id       in             empresa.id%type
 			 , en_dm_forma_emiss   in             empresa.dm_forma_emiss%type default null )
@@ -742,18 +752,18 @@ function fkg_integr_lote ( est_log_generico_nf in out nocopy  dbms_sql.number_ta
 
 -------------------------------------------------------------------------------------------------------
 
--- Processo de criaï¿½ï¿½o do Lote de Notas Fiscais
+-- Processo de criação do Lote de Notas Fiscais
 procedure pkb_gera_lote ( en_multorg_id  in mult_org.id%type );
 
 -------------------------------------------------------------------------------------
--- Procedimento realiza a criaï¿½ï¿½o de registro analitico de impostos da Nota Fiscal --
+-- Procedimento realiza a criação de registro analitico de impostos da Nota Fiscal --
 -------------------------------------------------------------------------------------
 PROCEDURE PKB_GERA_REGIST_ANALIT_IMP ( EST_LOG_GENERICO_NF IN OUT NOCOPY DBMS_SQL.NUMBER_TABLE
                                      , EN_NOTAFISCAL_ID IN            NOTA_FISCAL.ID%TYPE );
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento de Cï¿½lculo de ICMS-Normal
+-- Procedimento de Cálculo de ICMS-Normal
 procedure pkb_calc_icms_normal ( est_log_generico_nf in out nocopy  dbms_sql.number_table
                                , en_notafiscal_id    in             nota_fiscal.id%type );
 
@@ -780,43 +790,43 @@ procedure pkb_reenvia_lote ( en_multorg_id  in mult_org.id%type );
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento ajusta lotes que estï¿½o com a situaï¿½ï¿½o 2-concluï¿½do e suas notas nï¿½o
+-- Procedimento ajusta lotes que estão com a situação 2-concluído e suas notas não
 procedure pkb_ajusta_lote_nfe ( en_multorg_id  in mult_org.id%type );
 
 -------------------------------------------------------------------------------------------------------
 
 -- Procedimento de atualiar NF-e inutilizadas
--- Depois de Homologado a Inutilizaï¿½ï¿½o, verifica se tem alguma NFe vinculada e
--- Altera o DM_ST_PROC para 8-Inutilizada e a Situaï¿½ï¿½o do Documento para "05-NF-e ou CT-e - Numeraï¿½ï¿½o inutilizada"
+-- Depois de Homologado a Inutilização, verifica se tem alguma NFe vinculada e
+-- Altera o DM_ST_PROC para 8-Inutilizada e a Situação do Documento para "05-NF-e ou CT-e - Numeração inutilizada"
 procedure pkb_atual_nfe_inut ( en_multorg_id  in mult_org.id%type );
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento de atualizaï¿½ï¿½o do campo NOTAFISCAL_ID da tabela CSF_CONS_SIT
--- Pega todos os registros que o campo NOTAFISCAL_ID estï¿½o nulos, verifica se sua chave de acesso existe
+-- Procedimento de atualização do campo NOTAFISCAL_ID da tabela CSF_CONS_SIT
+-- Pega todos os registros que o campo NOTAFISCAL_ID estão nulos, verifica se sua chave de acesso existe
 -- na tabela NOTA_FISCAL, se exitir relacionar o campo NOTA_FISCCAL.ID com campo CSF_CONS_SIT.NOTAFISCCAL_ID
 procedure pkb_relac_nfe_cons_sit ( en_multorg_id  in mult_org.id%type );
 
 -------------------------------------------------------------------------------------------------------
 
--- Atualiza Situaï¿½ï¿½o do Documento Fiscal
+-- Atualiza Situação do Documento Fiscal
 procedure pkb_atual_sit_docto ( en_multorg_id  in mult_org.id%type );
 
 -------------------------------------------------------------------------------------------------------
 
--- Metodo para consultar NFe de Terceiro, com "Data de Autorizaï¿½ï¿½o" menor que sete dias da data atual
+-- Metodo para consultar NFe de Terceiro, com "Data de Autorização" menor que sete dias da data atual
 -- serve para verificar se o emitente da NFe cancelou a mesma
 procedure pkb_cons_nfe_terc ( en_multorg_id  in mult_org.id%type );
 
 -------------------------------------------------------------------------------------------------------
 
--- Funï¿½ï¿½o retorna a Valor Base de Cï¿½lculo do PIS/Cofins conforme o ITEMNF_ID
+-- Função retorna a Valor Base de Cálculo do PIS/Cofins conforme o ITEMNF_ID
 function fkg_vl_base_calc_pc_itemnf ( en_itemnf_id in item_nota_fiscal.id%type )
          return imp_itemnf.vl_base_calc%type;
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento de acerta pessoa emissï¿½o propria
+-- Procedimento de acerta pessoa emissão propria
 PROCEDURE PKB_ACERTA_PESSOA_EMISS_PROP ( EN_EMPRESA_ID IN EMPRESA.ID%TYPE
                                        , ED_DATA       IN DATE
                                        );
@@ -837,7 +847,7 @@ PROCEDURE PKB_ACERTA_ITEM_NF ( EN_EMPRESA_ID IN EMPRESA.ID%TYPE
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento para gravar o log/alteraï¿½ï¿½o das notas fiscais
+-- Procedimento para gravar o log/alteração das notas fiscais
 procedure pkb_inclui_log_nota_fiscal( en_notafiscal_id in nota_fiscal.id%type
                                     , ev_resumo        in log_nota_fiscal.resumo%type
                                     , ev_mensagem      in log_nota_fiscal.mensagem%type
@@ -874,7 +884,7 @@ procedure pkb_vlr_fiscal_item_nf ( en_itemnf_id           in   item_nota_fiscal.
 
 -------------------------------------------------------------------------------------------------------
 
--- Procedimento de integraï¿½ï¿½o dos dados do ajuste do item.
+-- Procedimento de integração dos dados do ajuste do item.
 procedure pkb_integr_inf_prov_docto_fisc ( est_log_generico_nf           in out nocopy  dbms_sql.number_table
                                          , est_row_inf_prov_docto_fiscal in out nocopy  inf_prov_docto_fiscal%rowtype
                                          , ev_cod_obs                    in             obs_lancto_fiscal.cod_obs%type
@@ -896,7 +906,7 @@ procedure pkb_cria_pessoa_nfe_legado ( en_multorg_id  in mult_org.id%type );
 
 -------------------------------------------------------------------------------------------------------
 
--- Funï¿½ï¿½o para validar as notas fiscais - utilizada na rotina de validaï¿½ï¿½o da GIA-SP - PK_GERA_ARQ_GIA.PKB_VALIDAR
+-- Função para validar as notas fiscais - utilizada na rotina de validação da GIA-SP - PK_GERA_ARQ_GIA.PKB_VALIDAR
 function fkg_valida_nf ( en_empresa_id      in  empresa.id%type
                        , ed_dt_ini          in  date
                        , ed_dt_fin          in  date

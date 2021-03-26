@@ -524,11 +524,19 @@ END PKB_SETA_REFERENCIA_ID;
 --------------------------------------------------
 -- Procedimento exclui dados de uma nota fiscal --         
 --------------------------------------------------
-PROCEDURE PKB_EXCLUIR_DADOS_NF ( EN_NOTAFISCAL_ID  IN NOTA_FISCAL.ID%TYPE ) IS
+PROCEDURE PKB_EXCLUIR_DADOS_NF ( EN_NOTAFISCAL_ID  IN NOTA_FISCAL.ID%TYPE                                
+                               , EV_ROTINA_ORIG    IN VARCHAR2 DEFAULT NULL ) IS
+   --
+   -- EV_ROTINA_ORIG => Incluir nesse parâmetro de entrada o nome do objeto ou tela que está chamando a rotina PKB_EXCLUIR_DADOS_NF
    --
    vn_fase            number := 0;
    vn_dm_arm_nfe_terc nota_fiscal.dm_arm_nfe_terc%type;
    vn_dm_ind_emit     nota_fiscal.dm_ind_emit%type;
+   vn_nro_chave_nfe   nota_fiscal.nro_chave_nfe%type;
+   vn_nro_nf          nota_fiscal.nro_nf%type;
+   vv_serie           nota_fiscal.serie%type;
+   vn_empresa_id      nota_fiscal.empresa_id%type;
+   vn_loggenerico_id  log_generico_nf.id%type;   
    --
    cursor c_item is
    select inf.id
@@ -555,9 +563,34 @@ BEGIN
    if nvl(en_notafiscal_id,0) > 0 then
       --
       vn_fase := 2;
+      --
+      begin
+         select nf.dm_arm_nfe_terc
+	      , nf.dm_ind_emit
+              , nf.nro_chave_nfe
+              , nf.nro_nf
+              , nf.serie
+              , nf.empresa_id
+           into vn_dm_arm_nfe_terc
+              , vn_dm_ind_emit
+              , vn_nro_chave_nfe
+              , vn_nro_nf
+              , vv_serie
+              , vn_empresa_id
+           from nota_fiscal nf
+          where nf.id      = en_notafiscal_id;
+      exception
+         when others then
+            vn_dm_arm_nfe_terc := 0; -- 0-não armazena xml, 1-sim armazena xml
+            vn_dm_ind_emit     := null;
+            vn_nro_chave_nfe   := null;
+            vn_nro_nf          := null;
+            vv_serie           := null;
+            vn_empresa_id      := null;
+      end;
+      --
       -- exclui detalhes dos itens
-      for rec in c_item
-      loop
+      for rec in c_item loop
         --
         exit when c_item%notfound or (c_item%notfound);
         --
@@ -674,21 +707,6 @@ BEGIN
       delete from Nota_Fiscal_Emit
          where notafiscal_id = en_notafiscal_id;		 
       --
-      vn_fase := 14;
-      --
-      begin
-        select nf.dm_arm_nfe_terc
-		     , nf.dm_ind_emit
-          into vn_dm_arm_nfe_terc
-             , vn_dm_ind_emit
-          from nota_fiscal nf		  
-         where nf.id      = en_notafiscal_id;
-      exception
-        when others then
-           vn_dm_arm_nfe_terc := 0; -- 0-não armazena xml, 1-sim armazena xml
-           vn_dm_ind_emit     := null;
-      end;
-      --
       vn_fase := 15;
       --
       if vn_dm_arm_nfe_terc = 0 or nvl( vn_dm_ind_emit, 0 ) = 1 then
@@ -708,8 +726,8 @@ BEGIN
 	  end if; -- vn_dm_arm_nf_terc = 0
       --
       vn_fase := 18;
-      for rec in c_infor
-      loop
+        --
+      for rec in c_infor loop
         --
         exit when c_infor%notfound or (c_infor%notfound) is null;
         --
@@ -758,6 +776,29 @@ BEGIN
       vn_fase := 26;
       --
       commit;
+      --
+      -- ============================================================================================================================
+      -- Gera log da chamada da pkb_excluir_dados_nf para auditoria de exclusao de dados
+      --
+      vn_fase := 90;
+      --
+      gv_mensagem_log := 'Executada a rotina PK_CSF_API_NFCE.PKB_EXCLUIR_DADOS_NF para exclusao do documento fiscal ID: '||en_notafiscal_id||'. '||
+                         'Dados do documento fiscal excluido: nro_chave_nfe('|| vn_nro_chave_nfe||') / '||
+                                                             'nro_nf('||        vn_nro_nf       ||') / '||
+                                                             'serie('||         vv_serie        ||') / '||
+                                                             'empresa_id ('||   vn_empresa_id   ||') / '||
+                         'A rotina de exclusao foi chamada pelo objeto ou tela '||nvl(ev_rotina_orig,'"Rotina nao identificada"')||'.';
+      --
+      vn_loggenerico_id := null;
+      --
+      pkb_log_generico_nf ( sn_loggenericonf_id => vn_loggenerico_id
+                          , ev_mensagem         => nvl(gv_cabec_log, 'Rotina de exclusao do documento fiscal ID: '||en_notafiscal_id||'.')
+                          , ev_resumo           => gv_mensagem_log
+                          , en_tipo_log         => informacao
+                          , en_referencia_id    => en_notafiscal_id
+                          , ev_obj_referencia   => 'NOTA_FISCAL' );
+      --
+      -- ============================================================================================================================
       --
    end if;
    --
@@ -21865,7 +21906,8 @@ BEGIN
       -- Se o Tipo de Integração é 1 (valida e insere)
       if nvl(gn_tipo_integr,0) = 1 then
          --
-         pkb_excluir_dados_nf ( en_notafiscal_id => est_row_Nota_Fiscal.id );
+         pkb_excluir_dados_nf ( en_notafiscal_id => est_row_Nota_Fiscal.id 
+                              , ev_rotina_orig   => 'PK_CSF_API_NFCE.PKB_INTEGR_NOTA_FISCAL' );
          --
       end if;
       --
