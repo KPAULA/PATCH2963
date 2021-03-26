@@ -12065,9 +12065,10 @@ procedure pkb_gera_arq_gia_ba is
            ct.dm_ind_emit,   -- 0-Emissão Própria, 1-Terceiros  
            c.tipooperacao_id,
            top.cd tipooperacao_cd
-      from conhec_transp ct, 
-           ct_reg_anal r, 
-           cfop c, 
+           ,ct.dm_ind_ie_toma --#76564
+      from conhec_transp ct,
+           ct_reg_anal r,
+           cfop c,
            tipo_operacao top
      where ct.empresa_id      = gt_row_abertura_gia.empresa_id
        and ct.dm_st_proc      = 4 -- Autorizada
@@ -14761,8 +14762,8 @@ begin
                           , sv_sigla_estado     => vv_sigla_estado
                           , sv_ibge_estado      => vv_ibge_estado );    
     --
-    vn_fase := 5.21;
-    --    
+    vn_fase := 6.21;
+    --
     if trim(vv_sigla_estado) is null then
       --
       pkb_dados_pessoa(en_pessoa_id    => rec.pessoa_id,
@@ -14770,6 +14771,8 @@ begin
                        sv_sigla_estado => vv_sigla_estado);
       --
     end if;
+    --
+    vn_fase := 6.22;
     --
     if trim(vv_sigla_estado) is null then
       --
@@ -14982,7 +14985,7 @@ begin
         --
         if vn_tipo_det = 0 then -- Estado
           --
-          vn_fase := 6.141;
+          vn_fase := 6.15;
           --
           --
           if vt_bi_tab_tp10(vn_tipo_det)(vn_tipo_detalhamento).tipo_detalhamento = '09' then -- Outras
@@ -14993,6 +14996,8 @@ begin
             vt_tab_tp40(1).vl_outras    := nvl(vt_tab_tp40(1).vl_outras, 0) + (nvl(vn_vl_bc_outra_icms, 0) * 100);
             --
           end if;
+          --
+          vn_fase := 6.16;
           --
           if vt_bi_tab_tp10(vn_tipo_det)(vn_tipo_detalhamento).tipo_detalhamento = '02' then -- Transferência
             --
@@ -15022,6 +15027,7 @@ begin
           --
         elsif vn_tipo_det = 1 then -- Outros Estado
           --
+          vn_fase := 6.17;
           --
           if vt_bi_tab_tp10(vn_tipo_det)(vn_tipo_detalhamento).tipo_detalhamento = '09' then -- Outras
             --
@@ -15059,6 +15065,8 @@ begin
           --
         else
           --
+          vn_fase := 6.18;
+          --
           if vt_bi_tab_tp10(vn_tipo_det)(vn_tipo_detalhamento).tipo_detalhamento = '06' then -- Outras
             --
             -- Tipo 60 - Entradas do Exterior
@@ -15085,6 +15093,266 @@ begin
             -- Tipo 13 - Valores Fiscais dedutíveis
             vt_tab_tp13(1).vl_outras          := vt_tab_tp13(1).vl_outras + (nvl(vn_vl_contabil, 0) * 100);
             vt_tab_tp13(1).vl_total_ent_saida := vt_tab_tp13(1).vl_total_ent_saida + (nvl(vn_vl_contabil, 0) * 100);
+          end if;
+          --
+        end if;
+        --
+      --#76564 inclusao do else
+      else
+        --
+        vn_fase := 6.19;
+        --
+        if vv_sigla_estado not in ('BA', 'EX') then
+          --
+          vn_fase := 6.20;
+          --   
+          vb_achou := false;
+          --
+          begin
+            vb_achou := vt_tab_tp09.exists(vn_estado_id);
+          exception
+            when others then
+              vn_fase := 6.21;
+              vb_achou := false;
+          end;
+          --
+          vn_fase := 6.22;
+          --
+          if not vb_achou then
+            --
+            vn_fase := 6.23;
+            --    
+            -- Tipo 09 - Saídas por UF
+            vt_tab_tp09(vn_estado_id).tipo                  := '09';
+            vt_tab_tp09(vn_estado_id).ano_refer_DMA         := vt_tab_tp01(1).ano_refer_dma;
+            vt_tab_tp09(vn_estado_id).mes_refer_DMA         := vt_tab_tp01(1).mes_refer_dma;
+            vt_tab_tp09(vn_estado_id).num_ie                := vv_num_ie;
+            vt_tab_tp09(vn_estado_id).sigla_uf              := vv_sigla_estado;
+            --
+            if rec.dm_ind_ie_toma in (1, 2) then        
+              vt_tab_tp09(vn_estado_id).vl_contabil_contr     := nvl(vn_vl_contabil, 0) * 100;
+              vt_tab_tp09(vn_estado_id).base_calculo_contr    := nvl(vn_vl_base_calc_icms, 0) * 100;      
+            else
+              vt_tab_tp09(vn_estado_id).vl_contabil_nao_contr  := nvl(vn_vl_contabil, 0) * 100;
+              vt_tab_tp09(vn_estado_id).base_calculo_nao_contr := nvl(vn_vl_base_calc_icms, 0) * 100;
+            end if;
+            --
+            vt_tab_tp09(vn_estado_id).vl_outras             := nvl(vn_vl_bc_outra_icms, 0) * 100;
+            vt_tab_tp09(vn_estado_id).vl_icms_st_aquis_serv := nvl(vn_vl_imp_trib_icmsst, 0) * 100;
+            --
+          else
+            --
+            vn_fase := 6.24;
+            --
+            if rec.dm_ind_ie_toma in (1, 2) then      
+              vt_tab_tp09(vn_estado_id).vl_contabil_contr     := nvl(vt_tab_tp09(vn_estado_id).vl_contabil_contr, 0) + (nvl(vn_vl_contabil, 0) * 100);
+              vt_tab_tp09(vn_estado_id).base_calculo_contr    := nvl(vt_tab_tp09(vn_estado_id).base_calculo_contr, 0) + (nvl(vn_vl_base_calc_icms, 0) * 100);
+            else
+              vt_tab_tp09(vn_estado_id).vl_contabil_nao_contr  := nvl(vt_tab_tp09(vn_estado_id).vl_contabil_nao_contr, 0) + (nvl(vn_vl_contabil, 0) * 100);
+              vt_tab_tp09(vn_estado_id).base_calculo_nao_contr := nvl(vt_tab_tp09(vn_estado_id).base_calculo_nao_contr, 0) + (nvl(vn_vl_base_calc_icms, 0) * 100);
+            end if;
+            --
+            vt_tab_tp09(vn_estado_id).vl_outras             := nvl(vt_tab_tp09(vn_estado_id).vl_outras, 0) + (nvl(vn_vl_bc_outra_icms, 0) * 100);
+            vt_tab_tp09(vn_estado_id).vl_icms_st_aquis_serv := nvl(vt_tab_tp09(vn_estado_id).vl_icms_st_aquis_serv, 0) + (nvl(vn_vl_imp_trib_icmsst, 0) * 100);
+            --
+          end if;
+          --
+          vb_achou := false;
+          --
+          vn_fase := 6.25;
+          --
+          begin
+            vb_achou := vt_tab_tp09.exists(99);
+          exception
+            when others then
+              vb_achou := false;
+          end;
+          --
+          vn_fase := 6.26;
+          --
+          if not vb_achou then
+            --
+            vn_fase := 6.27;
+            --
+            -- Tipo 09 - Saídas por UF (Totalizador)
+            vt_tab_tp09(99).tipo                  := '09';
+            vt_tab_tp09(99).ano_refer_DMA         := vt_tab_tp01(1).ano_refer_dma;
+            vt_tab_tp09(99).mes_refer_DMA         := vt_tab_tp01(1).mes_refer_dma;
+            vt_tab_tp09(99).num_ie                := vv_num_ie;
+            vt_tab_tp09(99).sigla_uf              := 'ZZ';
+            --
+            if rec.dm_ind_ie_toma in (1, 2) then      
+              vt_tab_tp09(99).vl_contabil_contr     := nvl(vn_vl_contabil, 0) * 100;
+              vt_tab_tp09(99).base_calculo_contr    := nvl(vn_vl_base_calc_icms, 0) * 100;
+            else      
+              vt_tab_tp09(99).vl_contabil_nao_contr  := nvl(vn_vl_contabil, 0) * 100;
+              vt_tab_tp09(99).base_calculo_nao_contr := nvl(vn_vl_base_calc_icms, 0) * 100;
+            end if;
+            --
+            vt_tab_tp09(99).vl_outras             := nvl(vn_vl_bc_outra_icms, 0) * 100;
+            vt_tab_tp09(99).vl_icms_st_aquis_serv := nvl(vn_vl_imp_trib_icmsst, 0) * 100;
+            --
+          else
+            --
+            vn_fase := 6.28;
+            --
+            if rec.dm_ind_ie_toma in (1, 2) then      
+              vt_tab_tp09(99).vl_contabil_contr     := nvl(vt_tab_tp09(99).vl_contabil_contr, 0) + (nvl(vn_vl_contabil, 0) * 100);
+              vt_tab_tp09(99).base_calculo_contr    := nvl(vt_tab_tp09(99).base_calculo_contr, 0) + (nvl(vn_vl_base_calc_icms, 0) * 100);
+            else
+              vt_tab_tp09(99).vl_contabil_nao_contr  := nvl(vt_tab_tp09(99).vl_contabil_nao_contr, 0) + (nvl(vn_vl_contabil, 0) * 100);
+              vt_tab_tp09(99).base_calculo_nao_contr := nvl(vt_tab_tp09(99).base_calculo_nao_contr, 0) + (nvl(vn_vl_base_calc_icms, 0) * 100);
+            end if;
+            --
+            vt_tab_tp09(99).vl_outras             := nvl(vt_tab_tp09(99).vl_outras, 0) + (nvl(vn_vl_bc_outra_icms, 0) * 100);
+            vt_tab_tp09(99).vl_icms_st_aquis_serv := nvl(vt_tab_tp09(vn_estado_id).vl_icms_st_aquis_serv, 0) + (nvl(vn_vl_imp_trib_icmsst, 0) * 100);
+            --
+          end if;
+          --
+        end if; -- 'BA'
+        --
+        vn_fase := 6.29;
+        --
+        vn_tipo_detalhamento := fkg_tipo_detalhamento(en_oper            => rec.dm_ind_oper,
+                                                      en_tipo_det        => vn_tipo_det,
+                                                      en_tipooperacao_cd => vn_tipooperacao_cd);
+        --
+        vb_achou := false;
+        --
+        vn_fase := 6.30;
+        --
+        begin
+          vb_achou := vt_bi_tab_tp11(vn_tipo_det).exists(vn_tipo_detalhamento);
+        exception
+          when others then
+            vb_achou := false;
+        end;
+        --
+        vn_fase := 6.31;
+        --
+        if not vb_achou then
+          --
+          vn_fase := 6.32;
+          --
+          -- Tipo 11 - Saídas por operação
+          vt_bi_tab_tp11(vn_tipo_det)(vn_tipo_detalhamento).tipo              := '11';
+          vt_bi_tab_tp11(vn_tipo_det)(vn_tipo_detalhamento).ano_refer_DMA     := vt_tab_tp01(1).ano_refer_dma;
+          vt_bi_tab_tp11(vn_tipo_det)(vn_tipo_detalhamento).mes_refer_DMA     := vt_tab_tp01(1).mes_refer_dma;
+          vt_bi_tab_tp11(vn_tipo_det)(vn_tipo_detalhamento).num_ie            := vv_num_ie;
+          vt_bi_tab_tp11(vn_tipo_det)(vn_tipo_detalhamento).status_ent_saida  := 'S';
+          vt_bi_tab_tp11(vn_tipo_det)(vn_tipo_detalhamento).num_detalhamento  := vn_tipo_det;
+          vt_bi_tab_tp11(vn_tipo_det)(vn_tipo_detalhamento).tipo_detalhamento := lpad(vn_tipo_detalhamento, 2, '0');
+          vt_bi_tab_tp11(vn_tipo_det)(vn_tipo_detalhamento).vl_contabil       := nvl(vn_vl_contabil, 0) * 100;
+          vt_bi_tab_tp11(vn_tipo_det)(vn_tipo_detalhamento).base_calculo      := nvl(vn_vl_base_calc_icms, 0) * 100;
+          vt_bi_tab_tp11(vn_tipo_det)(vn_tipo_detalhamento).vl_isentas        := nvl(vn_vl_bc_isenta_icms, 0) * 100;
+          vt_bi_tab_tp11(vn_tipo_det)(vn_tipo_detalhamento).vl_outras         := nvl(vn_vl_bc_outra_icms, 0) * 100;
+          --
+        else
+          --
+          vn_fase := 6.33;
+          --
+          vt_bi_tab_tp11(vn_tipo_det)(vn_tipo_detalhamento).vl_contabil  := nvl(vt_bi_tab_tp11(vn_tipo_det)(vn_tipo_detalhamento).vl_contabil, 0) + (nvl(vn_vl_contabil, 0) * 100);
+          vt_bi_tab_tp11(vn_tipo_det)(vn_tipo_detalhamento).base_calculo := nvl(vt_bi_tab_tp11(vn_tipo_det)(vn_tipo_detalhamento).base_calculo, 0) + (nvl(vn_vl_base_calc_icms, 0) * 100);
+          vt_bi_tab_tp11(vn_tipo_det)(vn_tipo_detalhamento).vl_isentas   := nvl(vt_bi_tab_tp11(vn_tipo_det)(vn_tipo_detalhamento).vl_isentas, 0) + (nvl(vn_vl_bc_isenta_icms, 0) * 100);
+          vt_bi_tab_tp11(vn_tipo_det)(vn_tipo_detalhamento).vl_outras    := nvl(vt_bi_tab_tp11(vn_tipo_det)(vn_tipo_detalhamento).vl_outras, 0) + (nvl(vn_vl_bc_outra_icms, 0) * 100);
+          --
+        end if;
+        --
+        vn_fase := 6.34;
+        --
+        vb_achou := false;
+        --
+        begin
+          vb_achou := vt_bi_tab_tp11(9).exists(99);
+        exception
+          when others then
+            vb_achou := false;
+        end;
+        --
+        vn_fase := 6.35;
+        --
+        if not vb_achou then
+          --
+          vn_fase := 6.36;
+          --
+          -- Tipo 11 - Saídas por operação
+          vt_bi_tab_tp11(9)(99).tipo              := '11';
+          vt_bi_tab_tp11(9)(99).ano_refer_DMA     := vt_tab_tp01(1).ano_refer_dma;
+          vt_bi_tab_tp11(9)(99).mes_refer_DMA     := vt_tab_tp01(1).mes_refer_dma;
+          vt_bi_tab_tp11(9)(99).num_ie            := vv_num_ie;
+          vt_bi_tab_tp11(9)(99).status_ent_saida  := 'S';
+          vt_bi_tab_tp11(9)(99).num_detalhamento  := 9;
+          vt_bi_tab_tp11(9)(99).tipo_detalhamento := '99';
+          vt_bi_tab_tp11(9)(99).vl_contabil       := nvl(vn_vl_contabil, 0) * 100;
+          vt_bi_tab_tp11(9)(99).base_calculo      := nvl(vn_vl_base_calc_icms, 0) * 100;
+          vt_bi_tab_tp11(9)(99).vl_isentas        := nvl(vn_vl_bc_isenta_icms, 0) * 100;
+          vt_bi_tab_tp11(9)(99).vl_outras         := nvl(vn_vl_bc_outra_icms, 0) * 100;
+          --
+        else
+          --
+          vn_fase := 6.37;
+          --
+          vt_bi_tab_tp11(9)(99).vl_contabil  := nvl(vt_bi_tab_tp11(9)(99).vl_contabil, 0) + (nvl(vn_vl_contabil, 0) * 100);
+          vt_bi_tab_tp11(9)(99).base_calculo := nvl(vt_bi_tab_tp11(9)(99).base_calculo, 0) + (nvl(vn_vl_base_calc_icms, 0) * 100);
+          vt_bi_tab_tp11(9)(99).vl_isentas   := nvl(vt_bi_tab_tp11(9)(99).vl_isentas, 0) + (nvl(vn_vl_bc_isenta_icms, 0) * 100);
+          vt_bi_tab_tp11(9)(99).vl_outras    := nvl(vt_bi_tab_tp11(9)(99).vl_outras, 0) + (nvl(vn_vl_bc_outra_icms, 0) * 100);
+          --
+        end if;
+        --
+        vn_fase := 6.38;
+        --
+        if vn_tipo_det = 0 then -- Estado
+          --
+          vn_fase := 6.39;
+          --
+          /*
+             1 Vendas
+             2 Transferências
+             3 Devoluções/Anulações
+             4 Energia Elétrica
+             5 Comunicações
+             6 Transportes
+             7 Outras
+          */
+          --
+          if vt_bi_tab_tp11(vn_tipo_det)(vn_tipo_detalhamento).tipo_detalhamento = '07' then -- Outras
+            --
+            vn_fase := 6.40;
+            --
+            vt_tab_tp66(1).vl_base_calc       := nvl(vt_tab_tp66(1).vl_base_calc, 0) + (nvl(vn_vl_base_calc_icms, 0) * 100);
+            vt_tab_tp66(1).vl_isent_nt        := nvl(vt_tab_tp66(1).vl_isent_nt, 0) + (nvl(vn_vl_bc_isenta_icms, 0) * 100);
+            vt_tab_tp66(1).vl_outras          := nvl(vt_tab_tp66(1).vl_outras, 0) + (nvl(vn_vl_bc_outra_icms, 0) * 100);
+            vt_tab_tp13(2).vl_outras          := vt_tab_tp13(2).vl_outras + (nvl(vn_vl_contabil, 0) * 100);
+            vt_tab_tp13(2).vl_total_ent_saida := vt_tab_tp13(2).vl_total_ent_saida + (nvl(vn_vl_contabil, 0) * 100);
+            --
+          end if;
+          --
+        elsif vn_tipo_det = 1 then -- Outros Estado
+          --
+          vn_fase := 6.41;
+          --
+          if vt_bi_tab_tp11(vn_tipo_det)(vn_tipo_detalhamento).tipo_detalhamento = '07' then -- Outras
+            --
+            vt_tab_tp77(1).vl_base_calc       := nvl(vt_tab_tp77(1).vl_base_calc, 0) + (nvl(vn_vl_base_calc_icms, 0) * 100);
+            vt_tab_tp77(1).vl_isent_nt        := nvl(vt_tab_tp77(1).vl_isent_nt, 0) + (nvl(vn_vl_bc_isenta_icms, 0) * 100);
+            vt_tab_tp77(1).vl_outras          := nvl(vt_tab_tp77(1).vl_outras, 0) + (nvl(vn_vl_bc_outra_icms, 0) * 100);
+            vt_tab_tp13(2).vl_outras          := vt_tab_tp13(2).vl_outras + (nvl(vn_vl_contabil, 0) * 100);
+            vt_tab_tp13(2).vl_total_ent_saida := vt_tab_tp13(2).vl_total_ent_saida + (nvl(vn_vl_contabil, 0) * 100);
+            --
+          end if;
+          --
+        else
+          --
+          vn_fase := 6.42;
+          --
+          if vt_bi_tab_tp11(vn_tipo_det)(vn_tipo_detalhamento).tipo_detalhamento = '04' then -- Outras
+            --
+            vt_tab_tp88(1).vl_base_calc       := nvl(vt_tab_tp88(1).vl_base_calc, 0) + (nvl(vn_vl_base_calc_icms, 0) * 100);
+            vt_tab_tp88(1).vl_isent_nt        := nvl(vt_tab_tp88(1).vl_isent_nt, 0) + (nvl(vn_vl_bc_isenta_icms, 0) * 100);
+            vt_tab_tp88(1).vl_outras          := nvl(vt_tab_tp88(1).vl_outras, 0) + (nvl(vn_vl_bc_outra_icms, 0) * 100);
+            vt_tab_tp13(2).vl_outras          := vt_tab_tp13(2).vl_outras + (nvl(vn_vl_contabil, 0) * 100);
+            vt_tab_tp13(2).vl_total_ent_saida := vt_tab_tp13(2).vl_total_ent_saida + (nvl(vn_vl_contabil, 0) * 100);
+            --
           end if;
           --
         end if;
@@ -31342,6 +31610,8 @@ procedure pkb_gera_arq_gia_sc is
   vn_filial                     number := 0;
   vv_cod_receita                varchar2(100);
   vn_erro_registro              number := 0;
+  --#76847
+  vn_c_cfop_item                number := 0;
   --
   -- TP20 - Dados do Contabilista / Responsável
   type tab_tp20 is record(
@@ -33985,9 +34255,15 @@ begin
           --
         else
           --
+          vn_fase := 10.111;
+          vn_c_cfop_item := 0;
+          --
           -- Recupera o valor do imposto diferencial alíquota por CFOP
           for rec_item in c_cfop_item(rec.itemnf_id) loop
             exit when c_cfop_item%notfound or(c_cfop_item%notfound) is null;
+            --
+            --variavel q mostra se entrou no cursor
+            vn_c_cfop_item := 1 ;
             --
             vn_fase := 10.11;
             --
@@ -34022,8 +34298,32 @@ begin
             end if;
             --
           end loop;
-          --
-          vt_bi_tab_tp22(1)(vn_cfop).dif_aliq  := vt_bi_tab_tp22(1)(vn_cfop).dif_aliq + (nvl(vn_vl_dif_aliq, 0) * 100); -- Valor do imposto diferencial de alíquota --76025
+		  --
+          --#76847
+          if vn_c_cfop_item = 0 then
+            --
+            vn_fase := 10.151;
+            begin
+              vt_bi_tab_tp22(1)(vn_cfop).dif_aliq  := 0;
+            exception 
+              when others then 
+                vt_bi_tab_tp22(1)(vn_cfop).dif_aliq  := 0;
+            end;
+            --
+          else 
+            --
+            vn_fase := 10.152;
+            begin  
+               vt_bi_tab_tp22(1)(vn_cfop).dif_aliq  := nvl(vt_bi_tab_tp22(1)(vn_cfop).dif_aliq,0) + (nvl(vn_vl_dif_aliq, 0) * 100); -- Valor do imposto diferencial de alíquota --76025
+            exception 
+              when no_data_found then
+                vt_bi_tab_tp22(1)(vn_cfop).dif_aliq := 0;
+              when others then 
+                raise_application_error(-20101, ' Erro ao atribuir o calculo de dif. aliquota ('||vn_vl_dif_aliq||') para o cfop ('||vn_cfop 
+                                              ||') para o registro TP22 - Valores Fiscais Entradas na fase: '||vn_fase);
+            end;
+            --
+          end if;
           --
         end if;
         --
@@ -34501,11 +34801,18 @@ begin
           --
         else
           --
+          --#76847
+          vn_fase := 11.511;          
+          vn_c_cfop_item := 0;
+          --
           -- Recupera o valor do imposto diferencial alíquota por CFOP
           for rec_item in c_ct_dif_aliq(rec.conhectransp_id) loop
             exit when c_ct_dif_aliq%notfound or(c_ct_dif_aliq%notfound) is null;
             --
             vn_fase := 11.52;
+            --#76847
+            --variavel q mostra se entrou no cursor
+            vn_c_cfop_item := 1 ;
             --
             if substr(vn_cfop,1,1) = 2 then
               --
@@ -34517,7 +34824,35 @@ begin
             --
           end loop;
           --
-          vt_bi_tab_tp22(1)(vn_cfop).dif_aliq  := vt_bi_tab_tp22(1)(vn_cfop).dif_aliq + (nvl(vn_vl_dif_aliq_ct, 0) * 100); -- Valor do imposto diferencial de alíquota --76025
+          vn_fase := 11.521;   
+		  --
+          --#76847
+          if vn_c_cfop_item = 0 then
+            --    
+            vn_fase := 11.522;
+            --        
+            begin
+                vt_bi_tab_tp22(1)(vn_cfop).dif_aliq := 0;
+            exception 
+              when others then 
+                vt_bi_tab_tp22(1)(vn_cfop).dif_aliq := 0;
+            end;
+            --
+          else   
+            --
+            vn_fase := 11.523;
+            --
+            begin  
+               vt_bi_tab_tp22(1)(vn_cfop).dif_aliq  := vt_bi_tab_tp22(1)(vn_cfop).dif_aliq + (nvl(vn_vl_dif_aliq_ct, 0) * 100); -- Valor do imposto diferencial de alíquota --76025
+            exception 
+             when no_data_found then
+                vt_bi_tab_tp22(1)(vn_cfop).dif_aliq  := 0; 
+             when others then 
+                raise_application_error(-20101, ' Erro ao atribuir o calculo de dif. aliquota ('||vn_vl_dif_aliq_ct||') para o cfop ('||vn_cfop 
+                                              ||') para o registro TP22 de CTE - Valores Fiscais Entradas na fase: '||vn_fase);
+            end;
+            --
+          end if;
           --
         end if; --76025
         --
@@ -35538,8 +35873,8 @@ begin
     */
     --
     vn_fase := 14.12;
-    --
-    if ((nvl(rec.vl_total_ajust_deb, 0) + nvl(rec.vl_ajust_debito, 0)) - (nvl(vn_vl_dif_aliq20, 0) + nvl(vn_vl_dif_aliq30, 0) + nvl(vn_vl_dif_aliq40, 0)) - nvl(vn_tp30_020_vl_aj_apur, 0)) > 0 then
+    --#76025
+    if ((nvl(rec.vl_total_ajust_deb, 0) + nvl(rec.vl_ajust_debito, 0)) - (nvl(vn_vl_dif_aliq20, 0) + nvl(vn_vl_dif_aliq30, 0) + nvl(vn_vl_dif_aliq40, 0) + nvl(vn_vl_dif_aliq30_ct, 0) + nvl(vn_vl_dif_aliq40_ct, 0)) - nvl(vn_tp30_020_vl_aj_apur, 0)) > 0 then
       --
       vn_fase := 14.13;
       --
@@ -35549,7 +35884,7 @@ begin
       vt_tab_tp25(k).tp_reg := '25'; -- Tipo de registro
       vt_tab_tp25(k).quadro := '04'; -- Quadro
       vt_tab_tp25(k).item   := '070'; -- Item
-      vt_tab_tp25(k).valor  := (((nvl(rec.vl_total_ajust_deb, 0) + nvl(rec.vl_ajust_debito, 0)) - (nvl(vn_vl_dif_aliq20, 0) + nvl(vn_vl_dif_aliq30, 0) + nvl(vn_vl_dif_aliq40, 0))) - nvl(vn_tp30_020_vl_aj_apur, 0)) * 100; -- Outros débitos
+      vt_tab_tp25(k).valor  := (((nvl(rec.vl_total_ajust_deb, 0) + nvl(rec.vl_ajust_debito, 0)) - (nvl(vn_vl_dif_aliq20, 0) + nvl(vn_vl_dif_aliq30, 0) + nvl(vn_vl_dif_aliq40, 0) + nvl(vn_vl_dif_aliq30_ct, 0) + nvl(vn_vl_dif_aliq40_ct, 0))) - nvl(vn_tp30_020_vl_aj_apur, 0)) * 100; -- Outros débitos
       --
       vn_qtde_tp25 := nvl(vn_qtde_tp25, 0) + 1;
       --
@@ -37052,8 +37387,8 @@ begin
   end if;
   --
   vn_fase := 20.14;
-  --
-  if (nvl(vn_vl_dif_aliq20, 0) + nvl(vn_vl_dif_aliq30, 0) + nvl(vn_vl_dif_aliq40, 0)) > 0 then
+  --#76025
+  if (nvl(vn_vl_dif_aliq20, 0) + nvl(vn_vl_dif_aliq30, 0) + nvl(vn_vl_dif_aliq40, 0) + nvl(vn_vl_dif_aliq30_ct, 0) + nvl(vn_vl_dif_aliq40_ct, 0)) > 0 then
     --
     k := k + 1;
     --
@@ -37063,7 +37398,7 @@ begin
     vt_tab_tp24(k).tp_reg := '24'; -- Tipo de registro
     vt_tab_tp24(k).quadro := '03'; -- Quadro
     vt_tab_tp24(k).item   := '057'; -- Item
-    vt_tab_tp24(k).valor  := (nvl(vn_vl_dif_aliq20, 0) + nvl(vn_vl_dif_aliq30, 0) + nvl(vn_vl_dif_aliq40, 0)) * 100; -- Valor
+    vt_tab_tp24(k).valor  := (nvl(vn_vl_dif_aliq20, 0) + nvl(vn_vl_dif_aliq30, 0) + nvl(vn_vl_dif_aliq40, 0) + nvl(vn_vl_dif_aliq30_ct, 0) + nvl(vn_vl_dif_aliq40_ct, 0)) * 100; -- Valor
     --
     vn_qtde_tp24 := nvl(vn_qtde_tp24, 0) + 1;
     --

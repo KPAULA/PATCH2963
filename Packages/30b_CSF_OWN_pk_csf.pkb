@@ -16985,6 +16985,55 @@ exception
    when others then
       null;
 end pkb_cria_dominio;    
--- 
+-------------------------------------------------------------------------------------------------------
+--| Função para checar se uma tabela já existe
+-------------------------------------------------------------------------------------------------------
+function fkg_tabela_existe (ev_tabela_nome varchar2)
+                             return boolean
+is
+  vn_existe number(1) := 0;
+begin
+   begin
+      select 1 
+         into vn_existe
+      from user_tables ut
+      where upper(ut.table_name) = upper(trim(ev_tabela_nome));
+   exception
+      when no_data_found then
+         return false;
+   end;   
+   --
+   return true;
+   -- 
+exception
+   when others then
+      raise;
+end fkg_tabela_existe;
+--
+-------------------------------------------------------------------------------------------------------
+--| Função retorna o ID da tabela Modelo_Danfe
+-------------------------------------------------------------------------------------------------------
+function fkg_Modelo_Danfe_id ( ev_cd          in modelo_danfe.codigo%TYPE )
+         return modelo_danfe.id%TYPE
+is
+
+   vn_modelodanfe_id  modelo_danfe.id%TYPE;
+
+begin
+
+   select id
+     into vn_modelodanfe_id
+     from modelo_danfe
+    where codigo = ev_cd;
+
+   return vn_modelodanfe_id;
+
+exception
+   when no_data_found then
+      return (null);
+   when others then
+      raise_application_error(-20101, 'Erro na fkg_Modelo_Danfe_id:' || sqlerrm);
+end fkg_Modelo_Danfe_id;
+--
 end pk_csf;
 /

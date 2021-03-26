@@ -25,11 +25,71 @@ prompt 41b_CSF_OWN_pk_valida_ambiente_ct.pkb
 @@41b_CSF_OWN_pk_valida_ambiente_ct.pkb
 show err
 
+prompt 42a_csf_own_pk_integr_view_ct.pks
+@@42a_csf_own_pk_integr_view_ct.pks
+show err
+prompt 42b_csf_own_pk_integr_view_ct.pkb
+@@42b_csf_own_pk_integr_view_ct.pkb
+show err
+
+prompt 54a_pk_gera_arq_ecd
+@@54a_pk_gera_arq_ecd.pks
+show err
+prompt 54b_pk_gera_arq_ecd
+@@54b_pk_gera_arq_ecd.pkb
+show err
+
 prompt 58a_pk_integr_bloco_ecd
 @@58a_pk_integr_bloco_ecd.pks
 show err
 prompt 58b_pk_integr_bloco_ecd
 @@58b_pk_integr_bloco_ecd.pkb
+show err
+
+prompt 62a_pk_int_view_cad
+@@62a_pk_int_view_cad.pks
+show err
+prompt 62b_pk_int_view_cad
+@@62b_pk_int_view_cad.pkb
+show err
+
+prompt 65a_pk_csf_api_d100.pks
+@@65a_pk_csf_api_d100.pks
+show err
+prompt 65b_pk_csf_api_d100.pkb 
+@@65b_pk_csf_api_d100.pkb
+show err
+
+prompt 67a_pk_int_view_sc
+@@67a_pk_int_view_sc.pks
+show err
+prompt 67b_pk_int_view_sc
+@@67b_pk_int_view_sc.pkb
+show err
+
+prompt 73a_pk_gera_arq_efd
+@@73a_pk_gera_arq_efd.pks
+show err
+prompt 73b_pk_gera_arq_efd
+@@73b_pk_gera_arq_efd.pkb
+show err
+
+prompt 74a_pk_apur_icms
+@@74a_pk_apur_icms.pks
+show err
+prompt 74b_pk_apur_icms
+@@74b_pk_apur_icms.pkb
+show err
+
+prompt 76a_pk_apur_icms_st
+@@76a_pk_apur_icms_st.pks
+show err
+prompt 76b_pk_apur_icms_st
+@@76b_pk_apur_icms_st.pkb
+show err
+
+prompt 120a_pk_csf_efd_pc.pks
+@@120a_pk_csf_efd_pc.pks
 show err
 
 prompt 60a_pk_csf_api_sc
@@ -81,6 +141,43 @@ prompt 221b_csf_own_pk_csf_api_nfs
 @@221b_csf_own_pk_csf_api_nfs.pkb
 show err
 
+prompt 223a_csf_own_pk_integr_view_nfs
+@@223a_csf_own_pk_integr_view_nfs.pks
+show err
+prompt 223b_csf_own_pk_integr_view_nfs
+@@223b_csf_own_pk_integr_view_nfs.pkb
+show err
+
+prompt 251a_pk_gera_arq_gia
+@@251a_pk_gera_arq_gia.pks
+show err
+prompt 251b_pk_gera_arq_gia
+@@251b_pk_gera_arq_gia.pkb
+show err
+
+prompt 320a_pk_gera_arq_sint
+@@320a_pk_gera_arq_sint.pks
+show err
+prompt 320b_pk_gera_arq_sint
+@@320b_pk_gera_arq_sint.pkb
+show err
+
+prompt 341a_pk_csf_api_dirf
+@@341a_pk_csf_api_dirf.pks
+show err
+prompt 341b_pk_csf_api_dirf
+@@341b_pk_csf_api_dirf.pkb
+show err
+
+prompt 346a_pk_gera_inf_rend_dirf
+@@346a_pk_gera_inf_rend_dirf.pks
+show err
+prompt 346b_pk_gera_inf_rend_dirf
+@@346b_pk_gera_inf_rend_dirf.pkb
+show err
+
+prompt 371a_pk_csf_api_pgto_imp_ret.pks
+@@371a_pk_csf_api_pgto_imp_ret.pks
 prompt 360a_pk_entr_nfe_terceiro
 @@360a_pk_entr_nfe_terceiro.pks
 show err

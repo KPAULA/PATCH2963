@@ -4,6 +4,11 @@ create or replace package csf_own.pk_csf_api_nfs is
 -- Especificação do pacote de integração de notas fiscais de serviços para o CSF
 -------------------------------------------------------------------------------------------------------
 --
+-- Em 23/03/2021   - Luis Marques - 2.9.5-6 / 2.9.6-3 / 2.9.7
+-- Redmine #77042  - Validação Nota de Debito
+-- Rotina Alterada - pkb_integr_itemnf_compl_serv - Incluida verificação se for nota de debido ND e o Código da Base de Cálculo do Crédito
+--                   for nulo só validará se for operação de entrada (DM_IND_OPER = 0).
+--
 -- Em 16/02/2021   - Allan Magrini
 -- Redmine #75526  - Limpeza indevida de caracteres NFSe (MSX)
 -- Rotina alterada - Alterado na pkb_integr_NFInfor_Adic a chamada da pk_csf.fkg_converte para pk_csf.fkg_converte_p na fase 1.1

@@ -4780,6 +4780,8 @@ begin
       pk_csf_api.gt_row_nota_fiscal.dm_ind_intermed      := rec.dm_ind_intermed;
       pk_csf_api.gt_row_nota_fiscal.pessoa_id_intermed   := rec.pessoa_id_intermed;
       --
+	  pk_csf_api.gt_row_nota_fiscal.modelodanfe_id       := rec.modelodanfe_id; --#77044
+	  --
       vn_fase := 4;
       -- Chama o Processo de validação dos dados da Nota Fiscal
       pk_csf_api.pkb_integr_Nota_Fiscal ( est_log_generico_nf  => vt_log_generico_nf
@@ -4880,7 +4882,9 @@ begin
          --
          pk_csf_api.gt_row_nota_fiscal.dm_ind_intermed      := rec.dm_ind_intermed;
          pk_csf_api.gt_row_nota_fiscal.pessoa_id_intermed   := rec.pessoa_id_intermed;
-         --         
+         --
+		 pk_csf_api.gt_row_nota_fiscal.modelodanfe_id       := rec.modelodanfe_id; --#77044
+	     --         
       end if;
       --
       vn_fase := 5;

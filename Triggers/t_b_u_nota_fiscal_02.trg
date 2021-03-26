@@ -34,10 +34,19 @@ declare
    --
    vn_qtde           number :=0;
    vv_erro           varchar2(4000);
+   --   
+   vn_loggenerico_id  log_generico_nf.id%type;   
+   vv_resumo_nf       log_generico_nf.resumo%type;
+   vv_mensagem_nf     log_generico_nf.mensagem%type; 
    --
 begin
    -------------------------------------------------------------------------------
    -- 
+   -- Em 22/03/2021 - Luis Marques - 2.9.5-6 / 2.9.6-3 / 2.9.7
+   -- #76937 - Impossível gerar erro em NFe (Com carta de correção)
+   -- Colocada verificação para só voltar DM_ST_PROC só se a nota fiscal não for de legado e mediante verificação se não é cancelada ou com
+   -- carta de correção, inserida mensagem de log para documentos legado e permitido alterar o DM_ST_PROC.   
+   --    
    -- Em 27/01/2021 - Wendel Albino
    -- #75567 permitido alterar se houver cnacelamento ou carta de correcao 
    -- 
@@ -96,6 +105,7 @@ begin
      --
    end if;
    --
+   
    vv_resumo   := 'Log da T_B_U_Nota_Fiscal_02: Foi executado '|| vv_acao || ' na Nota Fiscal, pelo objeto ('||vv_objeto||'), na fase ('||vn_fase||')';
    vv_mensagem := 'Valores novos: ' ||
                   'dm_st_proc ('    ||  nvl(:new.dm_st_proc,0)||'), '||
@@ -162,9 +172,24 @@ begin
                                          , ev_maquina       => vv_maquina );
    --
    -- #73274 if adicionado para monitorar alteração do dm_st_proc de 4 para 1 sem ter dados na tabela nota_fiscal_canc as empresas do if são da usina ester
-   if vn_qtde = 0 then --and :new.empresa_id in (511,2957,2958,2959,2960,2961,2962,2963,2964,2965,2966,2967,2968,2969,2970,2971,2972,2973,2974) then
+   if vn_qtde = 0 and :old.dm_legado = 0 then --and :new.empresa_id in (511,2957,2958,2959,2960,2961,2962,2963,2964,2965,2966,2967,2968,2969,2970,2971,2972,2973,2974) then
       :new.dm_st_proc := :old.dm_st_proc;
    end if;
+   --
+   if :old.dm_legado <> 0 then  -- Nota Fiscal Legado
+      --
+      vv_resumo_nf   := 'Log da T_B_U_Nota_Fiscal_02: Foi executado alteração na Nota Fiscal, pelo objeto ('||vv_objeto||'), na fase ('||vn_fase||')';
+      vv_mensagem_nf := 'Nota Fiscal id: '||:old.id||' Nro.: '||:old.nro_nf||' / '||:old.serie||' Dt. Emissão: '||:new.dt_emiss||' Empresa: '||:new.empresa_id||'. Foi alterado o DM_ST_PROC de '||:old.dm_st_proc||' para '||:new.dm_st_proc||'.';	  
+      --	  
+      pk_csf_api.pkb_log_generico_nf ( sn_loggenericonf_id  => vn_loggenerico_id
+                                     , ev_mensagem          => vv_mensagem_nf
+                                     , ev_resumo            => vv_resumo_nf
+                                     , en_tipo_log          => 35
+                                     , en_referencia_id     => :old.id
+                                     , ev_obj_referencia    => 'NOTA_FISCAL'
+                                     , en_empresa_id        => :old.empresa_id );
+     --									 
+   end if;   
    --   
    -- MANTER O XML DA NFE_PROC_XML
    :new.nfe_proc_xml := :old.nfe_proc_xml;

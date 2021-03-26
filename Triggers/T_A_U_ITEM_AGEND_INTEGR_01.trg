@@ -4,6 +4,11 @@ CREATE OR REPLACE TRIGGER csf_own.T_A_U_ITEM_AGEND_INTEGR_01
   FOR EACH ROW when (nvl (old.DM_SITUACAO, 0) != nvl (new.DM_SITUACAO, 0))
 declare
   --
+  -- Em 03/03/2021  - Wendel Albino - Patchs 295-6, 296-3, Release 297
+  -- Redmine #76700 - Falha no agendamento de integração - status agendado (SPANI)
+  -- Redmine #76654 - Falha no agendamento de integração - status agendado (ACECO)
+  --                - criada validacao que se a data do agendamento for <= sysdate, adiciona 15 segundos na data. 
+  --
   -- Em 23/02/2021  - Wendel Albino - Patch 295-5, 296-2, Release 297
   -- Redmine #76492 - Falha no agendamento de integração AMAZON-PRD (CEVA)
   --                - Foi criada validacao para quando a data do agendamento for menor que sysdate o sistema considera sysdate + 15segundos
@@ -131,8 +136,8 @@ begin
        from agend_integr a
       where a.id = vn_id;
      exception
-      when others then
-        vd_dt_agend := sysdate+((1/24)/60/4);
+      when others then --#76700
+        vd_dt_agend := to_date(to_char(sysdate+((1/24)/60/4),'DD/MM/RRRR HH24:MI:SS'),'DD/MM/RRRR HH24:MI:SS') ;
     end;
     --
     if vn_dm_sit_new = 1 then -- 1-Agendado
@@ -194,6 +199,13 @@ begin
             --
             vn_fase := 10;
             --
+            --#76700
+            if to_date(vd_dt_agend,'DD/MM/RRRR HH24:MI:SS') <= to_date(sysdate,'DD/MM/RRRR HH24:MI:SS') then
+              --
+              vd_dt_agend :=  to_date(to_char(sysdate+((1/24)/60/4),'DD/MM/RRRR HH24:MI:SS'),'DD/MM/RRRR HH24:MI:SS') ;
+              --
+            end if;
+            --
             begin
               --
               vv_sql := vv_sql || 'BEGIN ';
@@ -201,8 +213,8 @@ begin
               vv_sql := vv_sql || 'job_name => ' || '''' || vv_job_name || '''';
               vv_sql := vv_sql || ', job_type => ' || '''' || 'PLSQL_BLOCK' || '''';
               vv_sql := vv_sql || ', job_action => ' || '''' || 'begin pk_agend_integr.pkb_inic_agendintegr_multorg(' || vn_multorg_id || ');end;' || '''';
-              --vv_sql := vv_sql || ', start_date => TO_DATE('||''''||to_char(vd_dt_agend,'DD/MM/RRRR HH24:MI:SS')||''''||','||'''DD/MM/RRRR HH24:MI:SS'')';
-              vv_sql := vv_sql || ', start_date => TO_DATE('||''''||to_char(vd_dt_agend+((1/24)/60/4),'DD/MM/RRRR HH24:MI:SS')||''''||','||'''DD/MM/RRRR HH24:MI:SS'')';
+              vv_sql := vv_sql || ', start_date => TO_DATE('||''''||to_char(vd_dt_agend,'DD/MM/RRRR HH24:MI:SS')||''''||','||'''DD/MM/RRRR HH24:MI:SS'')'; --#76700
+              --vv_sql := vv_sql || ', start_date => TO_DATE('||''''||vd_dt_agend||''''||','||'''DD/MM/RRRR HH24:MI:SS'')';
               vv_sql := vv_sql || ', auto_drop => true ';
               vv_sql := vv_sql || ', enabled =>  TRUE); ';
               vv_sql := vv_sql || 'END;';
@@ -274,6 +286,13 @@ begin
             --
             vn_fase := 15;
             --
+            --#76700
+            if to_date(vd_dt_agend,'DD/MM/RRRR HH24:MI:SS') <= to_date(sysdate,'DD/MM/RRRR HH24:MI:SS') then
+              --
+              vd_dt_agend :=  to_date(to_char(sysdate+((1/24)/60/4),'DD/MM/RRRR HH24:MI:SS'),'DD/MM/RRRR HH24:MI:SS') ;
+              --
+            end if;
+            --
             begin
               --
               vv_sql := vv_sql || 'BEGIN ';
@@ -281,7 +300,7 @@ begin
               vv_sql := vv_sql || 'job_name => ' || '''' || vv_job_name || '''';
               vv_sql := vv_sql || ', job_type => ' || '''' || 'PLSQL_BLOCK' || '''';
               vv_sql := vv_sql || ', job_action => ' || '''' || 'begin pk_agend_integr.pkb_inic_agendintegr_multorg(' || vn_multorg_id || ');end;' || '''';
-              vv_sql := vv_sql || ', start_date => TO_DATE('||''''||to_char(vd_dt_agend+((1/24)/60/4),'DD/MM/RRRR HH24:MI:SS')||''''||','||'''DD/MM/RRRR HH24:MI:SS'')';
+              vv_sql := vv_sql || ', start_date => TO_DATE('||''''||to_char(vd_dt_agend,'DD/MM/RRRR HH24:MI:SS')||''''||','||'''DD/MM/RRRR HH24:MI:SS'')';
               vv_sql := vv_sql || ', auto_drop => true ';
               vv_sql := vv_sql || ', enabled =>  TRUE); ';
               vv_sql := vv_sql || 'END;';
