@@ -971,6 +971,36 @@ Prompt FIM - Redmine #76568 Criação de padrão betha a adição de PASSO FUNDO - RS
 Prompt FIM Redmine #
 -------------------------------------------------------------------------------------------------------------------------------
 
+-------------------------------------------------------------------------------------------------------------------------------
+Prompt INI - Redmine 77017 - Tirar obrigatoriedade de campo PARAM_GERAL_SISTEMA.VLR_PARAM
+-------------------------------------------------------------------------------------------------------------------------------
+declare
+   vn_existe number := null;
+begin 
+   select count(*)
+     into vn_existe
+     from all_tab_columns ac 
+    where upper(ac.OWNER)       = upper('CSF_OWN')
+      and upper(ac.TABLE_NAME)  = upper('PARAM_GERAL_SISTEMA')
+      and upper(ac.COLUMN_NAME) = upper('VLR_PARAM')
+      and upper(ac.NULLABLE)    = upper('N');
+   --
+   if nvl(vn_existe,0) > 0 then
+      --
+      execute immediate 'alter table CSF_OWN.PARAM_GERAL_SISTEMA modify VLR_PARAM null';
+      --
+   end if;
+   --
+exception
+   when others then
+      raise_application_error(-20001, 'Erro no script 77017. Campo VLR_PARAM. Erro: ' || sqlerrm);      
+end;
+/
+
+-------------------------------------------------------------------------------------------------------------------------------
+Prompt FIM - Redmine 77017 - Tirar obrigatoriedade de campo PARAM_GERAL_SISTEMA.VLR_PARAM
+-------------------------------------------------------------------------------------------------------------------------------
+
 ------------------------------------------------------------------------------------------
 Prompt FIM Patch 2.9.6.3 - Alteracoes no CSF_OWN
 ------------------------------------------------------------------------------------------
