@@ -4241,7 +4241,8 @@ end pkb_ler_nota_fiscal_serv_ff;
                      goto ler_outro;
                   else
                      --
-                     pk_csf_api_sc.pkb_excluir_dados_nf(en_notafiscal_id => vn_notafiscal_id);
+                     pk_csf_api_sc.pkb_excluir_dados_nf( en_notafiscal_id => vn_notafiscal_id
+                                                       , ev_rotina_orig   => 'PK_INT_VIEW_SC.PKB_NF_SERV_CONT' );
                      --
                   end if;
                   --

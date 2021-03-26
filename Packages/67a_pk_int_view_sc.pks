@@ -7,6 +7,11 @@ create or replace package pk_int_view_sc is
    -- Rotina Alterada   - pkb_nf_serv_cont - Incluido validação de DM_ST_PROC (9 - Conciliação EPEC Rejeitada) para não ser processado
    --                     no processo de integração.
    --
+   -- Em 04/03/2021      - Karina de Paula
+   -- Redmine #75869     - Falha no retorno de cancelamento
+   -- Rotina Alterada    - PKB_NF_SERV_CONT => Incluido o parametro EV_ROTINA_ORIG na chamada da PKB_EXCLUIR_DADOS_NF
+   -- Liberado na versão - Release_2.9.7 e Patch_2.9.6.3
+   --
    -- Em 06/07/2020   - Wendel Albino
    -- Redmine #69101  - Log do agendamento não exporta - Objeto 05
    -- Rotina alterada:  PKB_NF_SERV_CONT. Inserida clausula de if que valida se existe erro apos tentar integrar
