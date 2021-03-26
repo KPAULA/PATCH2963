@@ -9,6 +9,11 @@ create or replace package csf_own.pk_csf_api_nfs is
 -- Rotina Alterada - pkb_integr_itemnf_compl_serv - Incluida verificação se for nota de debido ND e o Código da Base de Cálculo do Crédito
 --                   for nulo só validará se for operação de entrada (DM_IND_OPER = 0).
 --
+-- Em 04/03/2021      - Karina de Paula
+-- Redmine #75869     -	Falha no retorno de cancelamento
+-- Rotina Alterada    - PKB_INTEGR_NOTA_FISCAL_SERV => Incluido o parametro EV_ROTINA_ORIG na chamada da PKB_EXCLUIR_DADOS_NF
+-- Liberado na versão - Release_2.9.7 e Patch_2.9.6.3
+--
 -- Em 16/02/2021   - Allan Magrini
 -- Redmine #75526  - Limpeza indevida de caracteres NFSe (MSX)
 -- Rotina alterada - Alterado na pkb_integr_NFInfor_Adic a chamada da pk_csf.fkg_converte para pk_csf.fkg_converte_p na fase 1.1

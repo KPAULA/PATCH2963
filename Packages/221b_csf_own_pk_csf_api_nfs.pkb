@@ -9773,7 +9773,8 @@ begin
       -- Se o Tipo de Integração é 1 (válida e insere)
       if nvl(gn_tipo_integr,0) = 1 then
          --
-         pk_csf_api.pkb_excluir_dados_nf ( en_notafiscal_id => est_row_Nota_Fiscal.id );
+         pk_csf_api.pkb_excluir_dados_nf ( en_notafiscal_id => est_row_Nota_Fiscal.id 
+                                         , ev_rotina_orig   => 'PK_CSF_API_NFS.PKB_INTEGR_NOTA_FISCAL_SERV' );
          --
       end if;
       --
