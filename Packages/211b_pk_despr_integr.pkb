@@ -957,7 +957,8 @@ begin
             vn_nro_nf := rec.nro_nf;
             vv_serie  := rec.serie;
             --
-            pk_csf_api.pkb_excluir_dados_nf(rec.id);
+            pk_csf_api.pkb_excluir_dados_nf( en_notafiscal_id => rec.id
+                                           , ev_rotina_orig   => 'PK_DESPR_INTEGR.PKB_DESPR_NF_SERV_CONT' );
             --
             vn_fase := 6.1;
             --
@@ -1297,7 +1298,8 @@ begin
                        --
                        vn_fase := 17;
                        --
-                       pk_csf_api.pkb_excluir_dados_nf(rec.id);
+                       pk_csf_api.pkb_excluir_dados_nf( en_notafiscal_id => rec.id
+                                                      , ev_rotina_orig   => 'PK_DESPR_INTEGR.PKB_DESPR_NOTA_FISCAL' );
                        --
                        vn_fase := 18;
                        --
@@ -1682,7 +1684,8 @@ begin
                if nvl(vn_lotenfs_id,0) <= 0
                 and nvl(vn_rnfestrarqimportnfse_id,0) <= 0 then
                   --
-                  pk_csf_api.pkb_excluir_dados_nf(rec.id);
+                  pk_csf_api.pkb_excluir_dados_nf( en_notafiscal_id => rec.id
+                                                 , ev_rotina_orig   => 'PK_DESPR_INTEGR.PKB_DESPR_NF_SERV_EFD' );
                   --
                   vn_fase := 7.1;
                   --

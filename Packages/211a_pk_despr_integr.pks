@@ -4,6 +4,11 @@ create or replace package csf_own.pk_despr_integr is
 -- Especificação da package de Desprocessar Integração de Dados Fiscais
 ------------------------------------------------------------------------------------------
 --
+-- Em 04/03/2021      - Karina de Paula
+-- Redmine #75869     -	Falha no retorno de cancelamento
+-- Rotina Alterada    - PKB_DESPR_NF_SERV_CONT/PKB_DESPR_NOTA_FISCAL/PKB_DESPR_NF_SERV_EFD => Incluido o parametro EV_ROTINA_ORIG na chamada da PKB_EXCLUIR_DADOS_NF
+-- Liberado na versão - Release_2.9.7 e Patch_2.9.6.3
+--
 -- Em 01/02/2021   - Karina de Paula
 -- Redmine #75607  - Ajustes na rotina de integração do CTe
 -- Rotina Alterada - pkb_despr_conhec_transp => Incluída a verificação se o conhecimento de transporte está inutilizado, se estiver não pode ser excluído
